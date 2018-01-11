@@ -1,0 +1,89 @@
+.solunes-sales {
+  /* Sales: Table */
+  /* Sales: Form */ }
+  .solunes-sales h1 {
+    font-size: 30px; }
+  .solunes-sales h3 {
+    font-size: 26px; }
+  .solunes-sales p {
+    margin-top: 0;
+    margin-bottom: 15px; }
+  .solunes-sales .order-block {
+    background: #f2f2f2;
+    padding: 30px 40px 45px; }
+  .solunes-sales .table-bordered-top {
+    border-top: 1px solid #ddd; }
+    .solunes-sales .table-bordered-top td, .solunes-sales .table-bordered-top th {
+      border-bottom: 1px solid #ddd; }
+  .solunes-sales .method-title {
+    margin-top: 30px; }
+  .solunes-sales .panel-title {
+    font-weight: bold; }
+  .solunes-sales .payment-method {
+    margin-bottom: 30px;
+    margin-top: 20px; }
+  .solunes-sales table.table-sales {
+    margin-bottom: 30px; }
+    .solunes-sales table.table-sales td.strong {
+      font-weight: bold; }
+    .solunes-sales table.table-sales tr {
+      display: table-row; }
+    .solunes-sales table.table-sales th {
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      white-space: nowrap; }
+    .solunes-sales table.table-sales td, .solunes-sales table.table-sales th {
+      border-bottom: 1px solid #ddd !important;
+      border-top: medium none;
+      padding: 20px 10px;
+      vertical-align: middle;
+      text-align: center; }
+    .solunes-sales table.table-sales td input {
+      background: #e5e5e5;
+      border: none;
+      border-radius: 3px;
+      color: #6f6f6f;
+      font-size: 15px;
+      font-weight: 400;
+      height: 40px;
+      padding: 0 5px 0 10px;
+      width: 60px; }
+    .solunes-sales table.table-sales .product-thumbnail {
+      width: 80px;
+      padding: 10px; }
+    .solunes-sales table.table-sales .product-price {
+      width: 130px; }
+    .solunes-sales table.table-sales .product-quantity {
+      width: 180px; }
+    .solunes-sales table.table-sales .product-name {
+      width: 270px; }
+    .solunes-sales table.table-sales .amount {
+      font-size: 15px;
+      font-weight: 700; }
+  .solunes-sales .sales-form {
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #e5e5e5; }
+  .solunes-sales .checkout-form-list {
+    margin-bottom: 30px; }
+  .solunes-sales input {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #e5e5e5;
+    border-radius: 0;
+    height: 42px;
+    width: 100%;
+    padding: 0 0 0 10px; }
+  .solunes-sales select {
+    width: 100%;
+    background: #eceff8;
+    border: 2px solid #eceff8;
+    height: 45px;
+    padding-left: 10px;
+    box-shadow: none;
+    font-size: 14px;
+    color: #626262; }
+  .solunes-sales input.btn-site {
+    width: auto;
+    padding-left: 15px;
+    padding-right: 15px; }
