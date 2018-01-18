@@ -11,7 +11,7 @@ class ComposerServiceProvider extends ServiceProvider
     public function boot(ViewFactory $view)
     {
         view()->composer(['layouts.master'], function ($view) {
-            if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->with('cart_items','cart_items.product')->first()){
+            if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->with('cart_items','cart_items.product_bridge')->first()){
                 $array['cart_items'] = $cart->cart_items;
             } else {
                 $array['cart_items'] = [];

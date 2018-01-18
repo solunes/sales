@@ -15,12 +15,12 @@ use App\Http\Controllers\Controller;
 
 class ProcessController extends Controller {
 
-	protected $request;
-	protected $url;
+  protected $request;
+  protected $url;
 
-	public function __construct(UrlGenerator $url) {
-	  $this->prev = $url->previous();
-	}
+  public function __construct(UrlGenerator $url) {
+    $this->prev = $url->previous();
+  }
 
   public function getCalculateShipping($shipping_id, $city_id, $weight) {
     $shipping_array = \Sales::calculate_shipping_cost($shipping_id, $city_id, $weight);

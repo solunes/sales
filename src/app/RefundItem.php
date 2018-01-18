@@ -40,7 +40,7 @@ class RefundItem extends Model {
     }
 
     public function product_bridge() {
-        return $this->belongsTo('Solunes\Sales\App\ProductBridge');
+        return $this->belongsTo('Solunes\Business\App\ProductBridge');
     }
 
 }

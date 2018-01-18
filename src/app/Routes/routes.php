@@ -13,17 +13,15 @@
 
 Route::group(['prefix'=>'process'], function(){
     Route::get('/calculate-shipping/{shipping_id}/{city_id}/{weight}', 'ProcessController@getCalculateShipping');
-});
-
-Route::group(['prefix'=>'gitlab'], function(){
-    Route::get('/group-saless/{group_name}', 'GitlabController@getGroupSaless');
-    Route::get('/sales/{sales_name}/{group_name}', 'GitlabController@getSales');
-    Route::get('/sales-commits/{sales_name}/{group_name}', 'GitlabController@getSalesCommits');
-});
-
-Route::group(['prefix'=>'hubspot'], function(){
-    Route::get('/import-companies/{count?}', 'Integrations\HubspotController@getImportCompanies');
-    Route::get('/import-contacts/{count?}', 'Integrations\HubspotController@getImportContacts');
-    Route::get('/import-deals/{count?}', 'Integrations\HubspotController@getImportDeals');
-    Route::post('/webhook', 'Integrations\HubspotController@postHubspotWebhook');
+    Route::get('/add-cart-item/{id}', 'ProcessController@getAddCartItem');
+    Route::get('/delete-cart-item/{id}', 'ProcessController@getDeleteCartItem');
+    Route::post('/add-cart-item', 'ProcessController@postAddCartItem');
+    Route::get('/confirmar-compra/{type}', 'ProcessController@getCheckCart');
+    Route::post('/update-cart', 'ProcessController@postUpdateCart');
+    Route::get('/comprar-ahora/{slug}', 'ProcessController@getBuyNow');
+    Route::post('/buy-now', 'ProcessController@postBuyNow');
+    Route::get('/finalizar-compra/{cart_id?}', 'ProcessController@getFinishSale');
+    Route::post('/finish-sale', 'ProcessController@postFinishSale');
+    Route::get('/sale/{id}', 'ProcessController@getSale')->middleware('auth');
+    Route::post('/sp-bank-deposit', 'ProcessController@postSpBankDeposit');
 });
