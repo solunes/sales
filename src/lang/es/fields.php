@@ -34,6 +34,7 @@ return [
     'invoice_name' => 'Nombre de Factura',
     'invoice_nit' => 'NIT de Factura',
     'name' => 'Nombre',
+    'node' => 'ID de Nodo',
     'node_id' => 'ID de Nodo',
     'node_name' => 'Nombre de Nodo',
     'observations' => 'Observaciones',

@@ -15,8 +15,6 @@ class MasterSeeder extends Seeder {
     {
 
         // Módulo de Ventas
-        $node_product_bridge = \Solunes\Master\App\Node::create(['name'=>'product-bridge', 'location'=>'sales', 'folder'=>'company']);
-        $node_payment = \Solunes\Master\App\Node::create(['name'=>'payment', 'location'=>'sales', 'folder'=>'company']);
         $node_shipping = \Solunes\Master\App\Node::create(['name'=>'shipping', 'location'=>'sales', 'folder'=>'company']);
         $node_shipping_city = \Solunes\Master\App\Node::create(['name'=>'shipping-city', 'table_name'=>'shipping_cities', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_shipping->id]);
         $node_cart = \Solunes\Master\App\Node::create(['name'=>'cart', 'location'=>'sales', 'folder'=>'sales']);
@@ -28,7 +26,6 @@ class MasterSeeder extends Seeder {
         $node_sale_credit = \Solunes\Master\App\Node::create(['name'=>'sale-credit', 'type'=>'child', 'location'=>'sales', 'parent_id'=>$node_sale->id]);
         $node_refund = \Solunes\Master\App\Node::create(['name'=>'refund', 'location'=>'sales', 'folder'=>'sales']);
         $node_refund_item = \Solunes\Master\App\Node::create(['name'=>'refund-item', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_refund->id]);
-        $node_sp_bank_deposit = \Solunes\Master\App\Node::create(['name'=>'sp-bank-deposit', 'location'=>'sales', 'folder'=>'company']);
 
         // Usuarios
         $admin = \Solunes\Master\App\Role::where('name', 'admin')->first();

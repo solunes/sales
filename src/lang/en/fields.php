@@ -34,6 +34,7 @@ return [
     'invoice_name' => 'Invoice Name',
     'invoice_nit' => 'Invoice Nit',
     'name' => 'Name',
+    'node' => 'Node Id',
     'node_id' => 'Node Id',
     'node_name' => 'Node Name',
     'observations' => 'Observations',

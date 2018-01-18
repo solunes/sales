@@ -13,7 +13,6 @@ class TruncateSeeder extends Seeder {
      */
     public function run()
     {
-        \Solunes\Sales\App\SpBankDeposit::truncate();
         \Solunes\Sales\App\RefundItem::truncate();
         \Solunes\Sales\App\Refund::truncate();
         \Solunes\Sales\App\SaleCredit::truncate();
@@ -25,7 +24,5 @@ class TruncateSeeder extends Seeder {
         \Solunes\Sales\App\Cart::truncate();
         \Solunes\Sales\App\ShippingCity::truncate();
         \Solunes\Sales\App\Shipping::truncate();
-        \Solunes\Sales\App\Payment::truncate();
-        \Solunes\Sales\App\ProductBridge::truncate();
     }
 }

@@ -81,5 +81,68 @@ class ReportController extends Controller {
     $array['graphs']['type'] = ['type'=>'pie', 'graph_name'=>'type', 'name'=>'type', 'label'=>'Tipo de Ventas', 'items'=>$type_items, 'subitems'=>[], 'field_names'=>$type_field_names];
     return \Sales::check_report_view('sales::list.sales-report', $array);
   }
+  
+  public function getSalesDetailReport() {
+    $model = \Solunes\Store\App\Sale::where('status','!=','holding');
+    $array = \Store::check_report_header($model, ['web'=>'Web', 'online'=>'Online', 'pos'=>'POS']);
+    $array['show_place'] = true;
+
+    $sales = \Solunes\Store\App\Sale::where('status','!=','holding')->where('created_at', '>=', $array['i_date'])->where('created_at', '<=', $array['e_date']);
+    if($array['place']!='all'){
+      if($array['place']=='web'){
+        $sales = $sales->where('type', 'web');
+      } else if($array['place']=='online'){
+        $sales = $sales->where('type', 'online');
+      } else if($array['place']=='pos'){
+        $sales = $sales->where('type', 'pos');
+      } else {
+        $sales = $sales->where('place_id', $array['place']);
+      }
+    }
+    $sales = $sales->with('sale_items')->get();
+    $array_items = [];
+    $paid = 0;
+    $pending = 0;
+    $shipping = 0;
+    $count = 1;
+    foreach($sales as $sale){
+      $new_total = \Store::calculate_currency($sale->amount, $array['currency'], $sale->currency);
+      if($sale->shipping_cost>0){
+        $shipping_cost = \Store::calculate_currency($sale->shipping_cost, $array['currency'], $sale->currency);
+        $shipping += $shipping_cost;
+        $new_total -= $shipping_cost;
+      }
+      if($pending_payment = $sale->pending_payment){
+        $new_pending = \Store::calculate_currency($pending_payment->amount, $array['currency'], $pending_payment->currency);
+        $pending_amount = \Store::calculate_currency($pending_payment->amount, $sale->currency, $pending_payment->currency);
+        $paid += ($new_total - $new_pending);
+        $pending += $new_pending;
+      } else {
+        $pending_amount = 0;
+        $paid += $new_total;
+      }
+      foreach($sale->sale_items as $item){
+        $subtotal = round($item->price * $item->quantity);
+        $array_items[$item->id] = ['count'=>$count++, 'sale'=>$sale, 'item'=>$item, 'total'=>$subtotal];
+        $subpending = 0;
+        if($pending_amount>0){
+          if($subtotal>$pending_amount){
+            $subpending = $pending_amount;
+            $pending_amount = 0;
+          } else {
+            $subpending = $subtotal;
+            $pending_amount -= $subtotal;
+          }
+        }
+        $array_items[$item->id]['pending'] = number_format($subpending, 2, '.', '').' '.$item->currency->name;
+      }
+    }
+    $array['pending'] = $pending;
+    $array['paid'] = $paid;
+    $array['shipping'] = $shipping;
+    $array['total'] = $pending + $paid;
+    $array['items'] = $array_items;
+    return \Store::check_report_view('store::list.sales-detail-report', $array);
+  }
 
 }
