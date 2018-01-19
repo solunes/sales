@@ -63,7 +63,7 @@ class ProcessController extends Controller {
       $page = \Solunes\Master\App\Page::find(2);
       $view = 'process.confirmar-compra';
       if(!view()->exists($view)){
-        $view = 'store::'.$view;
+        $view = 'sales::'.$view;
       }
       $total = 0;
       foreach($cart->cart_items as $cart_item){
@@ -97,7 +97,7 @@ class ProcessController extends Controller {
       $page = \Solunes\Master\App\Page::find(2);
       $view = 'process.comprar-ahora';
       if(!view()->exists($view)){
-        $view = 'store::'.$view;
+        $view = 'sales::'.$view;
       }
       return view($view, ['product'=>$item, 'page'=>$page]);
     } else {
@@ -151,8 +151,8 @@ class ProcessController extends Controller {
       $array['cities'] = \Solunes\Business\App\City::lists('name','id');
       $array['shipping_options'] = \Solunes\Sales\App\Shipping::active()->order()->lists('name','id');
       $array['shipping_descriptions'] = \Solunes\Sales\App\Shipping::active()->order()->get();
-      $array['payment_options'] = \Solunes\Sales\App\Payment::active()->order()->lists('name','id');
-      $array['payment_descriptions'] = \Solunes\Sales\App\Payment::active()->order()->get();
+      $array['payment_options'] = \Solunes\Payments\App\PaymentMethod::active()->order()->lists('name','id');
+      $array['payment_descriptions'] = \Solunes\Payments\App\PaymentMethod::active()->order()->get();
       $array['page'] = \Solunes\Master\App\Page::find(2);
       $total = 0;
       $weight = 0;
@@ -164,7 +164,7 @@ class ProcessController extends Controller {
       $array['weight'] = $weight;
       $view = 'process.finalizar-compra';
       if(!view()->exists($view)){
-        $view = 'store::'.$view;
+        $view = 'sales::'.$view;
       }
       return view($view, $array);
     } else {
@@ -298,7 +298,7 @@ class ProcessController extends Controller {
       $array['sale_payments'] = $sale->sale_payments;
       $view = 'process.sale';
       if(!view()->exists($view)){
-        $view = 'store::'.$view;
+        $view = 'sales::'.$view;
       }
       return view($view, $array);
     } else {
@@ -315,7 +315,7 @@ class ProcessController extends Controller {
       if(count($sale->payment_receipts)>0){
         $payment_receipt = $sale->payment_receipts->first();
       } else {
-        $payment_receipt = new \Solunes\SSalestore\App\SpBankDeposit;
+        $payment_receipt = new \Solunes\Sales\App\SpBankDeposit;
         $payment_receipt->sale_id = $sale->id;
         $payment_receipt->sale_payment_id = $sale->sale_payments()->first()->id;
         $payment_receipt->status = 'holding';

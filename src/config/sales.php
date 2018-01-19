@@ -4,6 +4,7 @@ return [
 
 	// GENERAL
 	'after_seed' => true,
+	'seed_shipping' => true,
 
 	// CUSTOM FORMS
     'item_get_after_vars' => ['purchase','product'], // array de nodos: 'node'
