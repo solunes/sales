@@ -285,6 +285,12 @@ class ProcessController extends Controller {
       $vars = ['@name@'=>$user->name, '@total_cost@'=>$sale->total_cost, '@sale_link@'=>url('process/sale/'.$sale->id)];
       \FuncNode::make_email('new-sale', [$user->email], $vars);
 
+      if(config('solunes.payments')){
+        $model = '\\'.$sale_payment->payment->model;
+        $model = new $model;
+        return $model->generateSalePayment($sale, $this->prev);
+      }
+
       return redirect('process/sale/'.$sale->id)->with('message_success', 'Su compra fue confirmada correctamente, ahora debe proceder al pago para finalizarla.');
     } else {
       return redirect($this->prev)->with('message_error', 'Hubo un error al actualizar su carro de compras.');
