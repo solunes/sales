@@ -23,7 +23,7 @@
         <h4>{{ mb_strtoupper($payment->payment->name, 'UTF-8') }}</h4>
         {!! $payment->payment->content !!}
       </div>
-      @include('sales::includes.sp-'.$payment->payment->code)
+      @include('payments::includes.sp-'.$payment->payment->code)
     @endforeach
   </div>  
 </div>
