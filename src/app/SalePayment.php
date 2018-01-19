@@ -34,7 +34,7 @@ class SalePayment extends Model {
     }
 
     public function payment() {
-        return $this->belongsTo('Solunes\Sales\App\Payment');
+        return $this->belongsTo('Solunes\Payments\App\PaymentMethod');
     }
 
 }

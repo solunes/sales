@@ -13,6 +13,13 @@ class NodesSales extends Migration
     public function up()
     {
         // Módulo de Ventas
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('address_extra')->nullable()->after('username');
+            $table->string('address')->nullable()->after('username');
+            $table->integer('city_id')->nullable()->after('username');
+            $table->string('last_name')->nullable()->after('username');
+            $table->string('first_name')->nullable()->after('username');
+        });
         Schema::create('shippings', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('order')->nullable()->default(0);
@@ -90,6 +97,7 @@ class NodesSales extends Migration
             $table->increments('id');
             $table->integer('parent_id')->unsigned();
             $table->integer('currency_id')->unsigned();
+            $table->integer('payment_id')->nullable();
             $table->decimal('amount', 10, 2)->default(0);
             $table->decimal('pending_amount', 10, 2)->default(0);
             $table->enum('status', ['holding','paid','accounted'])->nullable()->default('holding');

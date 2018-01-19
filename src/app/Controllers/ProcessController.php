@@ -221,11 +221,11 @@ class ProcessController extends Controller {
       
       // Sale
       $total_cost = $order_cost + $shipping_cost;
-      $place = \Solunes\Business\App\Agency::find(1); // Parametrizar tienda en config
+      $agency = \Solunes\Business\App\Agency::find(1); // Parametrizar tienda en config
       $currency = \Solunes\Business\App\Currency::find(1); // Parametrizar tienda en config
       $sale = new \Solunes\Sales\App\Sale;
       $sale->user_id = $user->id;
-      $sale->place_id = $place->id;
+      $sale->agency_id = $agency->id;
       $sale->currency_id = $currency->id;
       $sale->order_amount = $order_cost;
       $sale->amount = $total_cost;
@@ -264,7 +264,7 @@ class ProcessController extends Controller {
       foreach($cart->cart_items as $cart_item){
         $sale_item = new \Solunes\Sales\App\SaleItem;
         $sale_item->parent_id = $sale->id;
-        $sale_item->product_id = $cart_item->product_id;
+        $sale_item->product_bridge_id = $cart_item->product_bridge_id;
         $sale_item->currency_id = $currency->id;
         $sale_item->price = $cart_item->price;
         $sale_item->quantity = $cart_item->quantity;
