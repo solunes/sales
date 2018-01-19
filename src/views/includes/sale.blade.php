@@ -3,7 +3,7 @@
 
     <div class="order-block">
       <h3>SU ORDEN</h3>
-      @include('store::includes.cart-summary', ['items'=>$sale->sale_items, 'order_amount'=>$sale->order_amount, 'deliveries'=>$sale->sale_deliveries, 'total_amount'=>$sale->amount])
+      @include('sales::includes.cart-summary', ['items'=>$sale->sale_items, 'order_amount'=>$sale->order_amount, 'deliveries'=>$sale->sale_deliveries, 'total_amount'=>$sale->amount])
 
     </div>
 
@@ -23,7 +23,7 @@
         <h4>{{ mb_strtoupper($payment->payment->name, 'UTF-8') }}</h4>
         {!! $payment->payment->content !!}
       </div>
-      @include('store::includes.sp-'.$payment->payment->code)
+      @include('sales::includes.sp-'.$payment->payment->code)
     @endforeach
   </div>  
 </div>

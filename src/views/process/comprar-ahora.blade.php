@@ -2,7 +2,7 @@
 @include('helpers.meta')
 
 @section('css')
-  <link rel="stylesheet" href="{{ asset('assets/sales/sales.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/sales/store.css') }}">
 @endsection
 
 @section('header')
@@ -24,7 +24,7 @@
 @endsection
 
 @section('content')
-<div class="container solunes-sales">
+<div class="container solunes-store">
   @include('sales::includes.buy-now')
 </div>
 @endsection

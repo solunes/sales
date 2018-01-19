@@ -1,7 +1,7 @@
 <div class="row">
  <div class="col-md-12 col-sm-12 col-xs-12">
   <form action="{{ url('process/update-cart') }}" method="post">       
-    @include('store::includes.cart-full', ['items'=>$cart->cart_items, 'editable'=>true, 'delete'=>true])
+    @include('sales::includes.cart-full', ['items'=>$cart->cart_items, 'editable'=>true, 'delete'=>true])
     <div class="row">
       <div class="col-md-9 col-sm-7 col-xs-12">
         <div class="buttons-cart">

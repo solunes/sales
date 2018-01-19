@@ -10,7 +10,7 @@
 		@foreach($items as $item)
 		  <tr class="cart_item">
 			<td>
-				{{ $item->product->name }} <strong>(x{{ $item->quantity }})</strong>
+				{{ $item->product_bridge->name }} <strong>(x{{ $item->quantity }})</strong>
 			</td>
 			<td class="strong">
 				<span class="amount">Bs. {{ $item->total_price }}</span>
