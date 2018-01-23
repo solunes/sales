@@ -22,11 +22,13 @@ class ProcessController extends Controller {
     $this->prev = $url->previous();
   }
 
+  /* Ruta para calcular precio de envio en AJAX segun envio, ciudad y peso */
   public function getCalculateShipping($shipping_id, $city_id, $weight) {
     $shipping_array = \Sales::calculate_shipping_cost($shipping_id, $city_id, $weight);
     return $shipping_array;
   }
 
+  /* Ruta GET para añadir un item de carro de compras. Cantidad: 1 */
   public function getAddCartItem($product_id) {
     if($product = \Solunes\Business\App\ProductBridge::find($product_id)){
       $cart = \Sales::get_cart();
@@ -37,13 +39,7 @@ class ProcessController extends Controller {
     }
   }
 
-  public function getDeleteCartItem($cart_item_id) {
-    if($cart_item = \Solunes\Sales\App\CartItem::find($cart_item_id)){
-      $cart_item->delete();
-    }
-    return redirect($this->prev);
-  }
-
+  /* Ruta POST para añadir un carro de compras. Cantidad: Definida en input */
   public function postAddCartItem(Request $request) {
     if($product = \Solunes\Business\App\ProductBridge::find($request->input('product_id'))){
       if($request->input('quantity')>0){
@@ -58,6 +54,58 @@ class ProcessController extends Controller {
     }
   }
 
+  /* Ruta GET para borrar un item de carro de compras */
+  public function getDeleteCartItem($cart_item_id) {
+    if($cart_item = \Solunes\Sales\App\CartItem::find($cart_item_id)){
+      $cart_item->delete();
+    }
+    return redirect($this->prev);
+  }
+
+  /* Ruta GET para hacer el comprar ahora de un producto */
+  public function getBuyNow($slug) {
+    if($item_trans = \Solunes\Business\App\ProductBridgeTranslation::findBySlug($slug)){
+      $item = $item_trans->product_bridge;
+      $page = \Solunes\Master\App\Page::find(2);
+      $view = 'process.comprar-ahora';
+      if(!view()->exists($view)){
+        $view = 'sales::'.$view;
+      }
+      return view($view, ['product'=>$item, 'page'=>$page]);
+    } else {
+      return redirect('')->with('message_error', 'No se encuentra el producto para ser comprado.');
+    }
+  }
+
+  /* Ruta POST para comprar ahora un producto */
+  public function postBuyNow(Request $request) {
+    $validator = \Validator::make($request->all(), \Solunes\Sales\App\Cart::$rules_send);
+    if(!$validator->passes()){
+      return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
+    } else if($request->input('quantity')>0&&$product = \Solunes\Business\App\ProductBridge::find($request->input('product_id'))){
+      $cart = new \Solunes\Sales\App\Cart;
+      if(\Auth::check()){
+        $cart->user_id = \Auth::user()->id;
+      }
+      $cart->session_id = \Session::getId();
+      $cart->type = 'buy-now';
+      $cart->save();
+
+      $cart_item = new \Solunes\Sales\App\CartItem;
+      $cart_item->parent_id = $cart->id;
+      $cart_item->product_bridge_id = $product->id;
+      $cart_item->quantity = $request->input('quantity');
+      $cart_item->price = $product->real_price;
+      $cart_item->weight = $product->weight;
+      $cart_item->save();
+
+      return redirect('process/finalizar-compra/'.$cart->id)->with('message_success', 'Ahora puede confirmar los datos de su pedido.');
+    } else {
+      return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
+    }
+  }
+
+  /* Ruta GET para revisar el carro de compras */
   public function getCheckCart($type) {
     if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->first()){
       $page = \Solunes\Master\App\Page::find(2);
@@ -75,6 +123,7 @@ class ProcessController extends Controller {
     }
   }
 
+  /* Ruta POST para editar el carro de compras */
   public function postUpdateCart(Request $request) {
     if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->first()){
       $cart->touch();
@@ -92,46 +141,7 @@ class ProcessController extends Controller {
     }
   }
 
-  public function getBuyNow($slug) {
-    if($item = \Solunes\Business\App\ProductBridge::findBySlug($slug)){
-      $page = \Solunes\Master\App\Page::find(2);
-      $view = 'process.comprar-ahora';
-      if(!view()->exists($view)){
-        $view = 'sales::'.$view;
-      }
-      return view($view, ['product'=>$item, 'page'=>$page]);
-    } else {
-      return redirect('')->with('message_error', 'No se encuentra el producto para ser comprado.');
-    }
-  }
-
-  public function postBuyNow(Request $request) {
-    $validator = \Validator::make($request->all(), \Solunes\Sales\App\Cart::$rules_send);
-    if(!$validator->passes()){
-      return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
-    } else if($request->input('quantity')>0&&$product = \Solunes\Sales\App\Product::find($request->input('product_id'))){
-      $cart = new \Solunes\Sales\App\Cart;
-      if(\Auth::check()){
-        $cart->user_id = \Auth::user()->id;
-      }
-      $cart->session_id = \Session::getId();
-      $cart->type = 'buy-now';
-      $cart->save();
-
-      $cart_item = new \Solunes\Sales\App\CartItem;
-      $cart_item->parent_id = $cart->id;
-      $cart_item->product_id = $product->id;
-      $cart_item->quantity = $request->input('quantity');
-      $cart_item->price = $product->real_price;
-      $cart_item->weight = $product->weight;
-      $cart_item->save();
-
-      return redirect('process/finalizar-compra/'.$cart->id)->with('message_success', 'Ahora puede confirmar los datos de su pedido.');
-    } else {
-      return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
-    }
-  }
-
+  /* Ruta GET para finalizar la compra */
   public function getFinishSale($cart_id = NULL) {
     if(($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkBuyNow()->checkOwner()->status('holding')->first())||($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->first())){
       if(\Auth::check()){
@@ -172,6 +182,7 @@ class ProcessController extends Controller {
     }
   }
 
+  /* Ruta POST para confirmar su compra */
   public function postFinishSale(Request $request) {
     $cart_id = $request->input('cart_id');
     if(auth()->check()){
@@ -289,8 +300,7 @@ class ProcessController extends Controller {
 
       if(config('solunes.payments')){
         $model = '\\'.$sale_payment->payment->model;
-        $model = new $model;
-        return $model->generateSalePayment($sale, $redirect);
+        return \Payments::generateSalePayment($sale, $model, $redirect);
       }
 
       return redirect($redirect)->with('message_success', 'Su compra fue confirmada correctamente, ahora debe proceder al pago para finalizarla.');
@@ -299,6 +309,7 @@ class ProcessController extends Controller {
     }
   }
 
+  /* Ruta GET para revisar venta pendiente */
   public function getSale($sale_id) {
     if($sale = \Solunes\Sales\App\Sale::findId($sale_id)->checkOwner()->with('cart','cart.cart_items')->first()){
       $array['page'] = \Solunes\Master\App\Page::find(2);
@@ -314,6 +325,7 @@ class ProcessController extends Controller {
     }
   }
 
+  /* Ruta POST para deposito bancario */
   public function postSpBankDeposit(Request $request) {
     $sale_id = $request->input('sale_id');
     $validator = \Validator::make($request->all(), \Solunes\Sales\App\SpBankDeposit::$rules_send);
