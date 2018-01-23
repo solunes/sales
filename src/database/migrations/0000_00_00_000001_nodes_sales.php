@@ -69,7 +69,7 @@ class NodesSales extends Migration
             $table->decimal('paid_amount', 10, 2)->nullable();
             $table->decimal('change', 10, 2)->nullable()->default(0);
             $table->enum('status', ['holding','paid','accounted'])->nullable()->default('holding');
-            $table->boolean('invoice')->nullable()->default(0);
+            $table->boolean('invoice')->default(0);
             $table->string('invoice_name')->nullable();
             $table->string('invoice_nit')->nullable();
             $table->enum('type', ['normal','online'])->nullable()->default('normal');
@@ -112,17 +112,23 @@ class NodesSales extends Migration
             $table->integer('parent_id')->unsigned();
             $table->integer('shipping_id')->unsigned();
             $table->integer('currency_id')->unsigned();
+            $table->string('country_code')->nullable()->default('BO');
+            $table->integer('region_id')->unsigned();
+            $table->string('region_other')->nullable();
             $table->integer('city_id')->unsigned();
             $table->string('city_other')->nullable();
             $table->string('name')->nullable();
             $table->enum('status', ['holding','confirmed','paid','delivered'])->default('holding');
+            $table->string('postal_code')->nullable();
             $table->string('address')->nullable();
             $table->string('address_extra')->nullable();
+            $table->string('phone')->nullable();
             $table->decimal('total_weight', 10, 2)->nullable();
             $table->decimal('shipping_cost', 10, 2)->nullable();
             $table->foreign('parent_id')->references('id')->on('sales')->onDelete('cascade');
             $table->foreign('shipping_id')->references('id')->on('shippings')->onDelete('cascade');
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
+            $table->foreign('region_id')->references('id')->on('regions')->onDelete('cascade');
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
         });
         Schema::create('sale_credits', function (Blueprint $table) {

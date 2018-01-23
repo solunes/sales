@@ -41,4 +41,12 @@ class SaleDelivery extends Model {
         return $this->belongsTo('Solunes\Sales\App\Shipping');
     }
 
+    public function region() {
+        return $this->belongsTo('Solunes\Business\App\Region');
+    }
+
+    public function city() {
+        return $this->belongsTo('Solunes\Business\App\City');
+    }
+
 }

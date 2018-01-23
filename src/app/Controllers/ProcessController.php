@@ -223,7 +223,8 @@ class ProcessController extends Controller {
         $user->last_name = $last_name;
         $user->password = $request->input('password');
       }
-      $user->city_id = $request->input('city_id');
+      $city = \Solunes\Business\App\City::find($request->input('city_id'));
+      $user->city_id = $city->id;
       $user->address = $request->input('address');
       $user->address_extra = $request->input('address_extra');
       $user->save();
@@ -260,13 +261,19 @@ class ProcessController extends Controller {
       $sale_delivery->parent_id = $sale->id;
       $sale_delivery->shipping_id = $request->input('shipping_id');
       $sale_delivery->currency_id = $sale->currency_id;
-      $sale_delivery->city_id = $request->input('city_id');
+      $sale_delivery->region_id = $city->region_id;
+      $sale_delivery->city_id = $city->id;
       if($request->has('city_other')){
         $sale_delivery->city_other = $request->input('city_other');
+      }
+      if($request->has('region_other')){
+        $sale_delivery->region_other = $request->input('region_other');
       }
       $sale_delivery->name = 'Pedido de venta en linea';
       $sale_delivery->address = $request->input('address');
       $sale_delivery->address_extra = $request->input('address_extra');
+      $sale_delivery->postal_code = 'LP01';
+      $sale_delivery->phone = $user->cellphone;
       $sale_delivery->total_weight = $order_weight;
       $sale_delivery->shipping_cost = $shipping_cost;
       $sale_delivery->save();
@@ -276,6 +283,7 @@ class ProcessController extends Controller {
         $sale_item = new \Solunes\Sales\App\SaleItem;
         $sale_item->parent_id = $sale->id;
         $sale_item->product_bridge_id = $cart_item->product_bridge_id;
+        $sale_item->name = $cart_item->product_bridge->name;
         $sale_item->currency_id = $currency->id;
         $sale_item->price = $cart_item->price;
         $sale_item->quantity = $cart_item->quantity;

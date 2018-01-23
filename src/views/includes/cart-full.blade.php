@@ -15,18 +15,18 @@
     <tbody>
       @foreach($items as $item)
         <tr>
-          <td class="product-thumbnail"><a target="_blank" href="{{ url('producto/'.$item->product_bridge->slug) }}">
-            {!! Asset::get_image('product-image', 'cart', $item->product_bridge->image) !!}
+          <td class="product-thumbnail"><a target="_blank" href="{{ url('product/'.$item->product_bridge->slug) }}">
+            {!! Asset::get_image('product-bridge-image', 'subdetail', $item->product_bridge->image) !!}
           </a></td>
-          <td class="product-name"><a target="_blank" href="{{ url('producto/'.$item->product_bridge->slug) }}">{{ $item->product_bridge->name }}</a></td>
+          <td class="product-name"><a target="_blank" href="{{ url('product/'.$item->product_bridge->slug) }}">{{ $item->product_bridge->name }}</a></td>
           <td class="product-price"><span class="amount">Bs. {{ $item->price }}</span></td>
           <td class="product-quantity">
-          	@if($editable)
-	            <input name="quantity[{{ $item->id }}]" type="number" value="{{ $item->quantity }}">
-	            <input name="product_id[{{ $item->id }}]" type="hidden" value="{{ $item->id }}">
-			      @else
-				      <span class="amount">{{ $item->quantity }}</span>
-	          @endif
+            @if($editable)
+              <input name="quantity[{{ $item->id }}]" type="number" value="{{ $item->quantity }}">
+              <input name="product_id[{{ $item->id }}]" type="hidden" value="{{ $item->id }}">
+            @else
+              <span class="amount">{{ $item->quantity }}</span>
+            @endif
           </td>
           <td class="product-subtotal">Bs. {{ $item->total_price }}</td>
           @if($delete)
