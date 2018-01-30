@@ -5,7 +5,12 @@ return [
 	// GENERAL
 	'after_seed' => true,
 	'seed_shipping' => true,
-
+	
+	// ACTIVE SHIPPING METHODS
+	'own-office' => true,
+	'unibol' => true,
+	'dhl' => false,
+	
 	// CUSTOM FORMS
     'item_get_after_vars' => ['purchase','product'], // array de nodos: 'node'
     'item_child_after_vars' => ['product'],
