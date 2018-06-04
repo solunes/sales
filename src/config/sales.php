@@ -4,11 +4,20 @@ return [
 
 	// GENERAL
 	'after_seed' => true,
-	'seed_shipping' => true,
+	'desk_sale' => false,
+	'delivery' => false,
+	'credit' => false,
+	'refunds' => false,
+	'seed_shipping' => false,
+	'company_relation' => false,
+	'contact_relation' => false,
 	
+	// INTEGRATIONS
+	'solunes_project' => false,
+
 	// ACTIVE SHIPPING METHODS
-	'own-office' => true,
-	'unibol' => true,
+	'own-office' => false,
+	'unibol' => false,
 	'dhl' => false,
 	
 	// CUSTOM FORMS

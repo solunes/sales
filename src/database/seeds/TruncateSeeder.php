@@ -13,16 +13,24 @@ class TruncateSeeder extends Seeder {
      */
     public function run()
     {
-        \Solunes\Sales\App\RefundItem::truncate();
-        \Solunes\Sales\App\Refund::truncate();
-        \Solunes\Sales\App\SaleCredit::truncate();
-        \Solunes\Sales\App\SaleDelivery::truncate();
+        if(config('sales.refunds')){
+            \Solunes\Sales\App\RefundItem::truncate();
+            \Solunes\Sales\App\Refund::truncate();
+        }
+        if(config('sales.credit')){
+            \Solunes\Sales\App\SaleCredit::truncate();
+        }
+        if(config('sales.delivery')){
+            \Solunes\Sales\App\SaleDelivery::truncate();
+        }
         \Solunes\Sales\App\SalePayment::truncate();
         \Solunes\Sales\App\SaleItem::truncate();
         \Solunes\Sales\App\Sale::truncate();
         \Solunes\Sales\App\CartItem::truncate();
         \Solunes\Sales\App\Cart::truncate();
-        \Solunes\Sales\App\ShippingCity::truncate();
-        \Solunes\Sales\App\Shipping::truncate();
+        if(config('sales.delivery')){
+            \Solunes\Sales\App\ShippingCity::truncate();
+            \Solunes\Sales\App\Shipping::truncate();
+        }
     }
 }

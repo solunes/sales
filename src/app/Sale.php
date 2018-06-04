@@ -86,7 +86,15 @@ class Sale extends Model {
 		
     public function user() {
         return $this->belongsTo('App\User');
-    }	
+    }
+
+    public function company() {
+        return $this->belongsTo('Solunes\Business\App\Contact');
+    }   
+
+    public function contact() {
+        return $this->belongsTo('Solunes\Business\App\Contact');
+    }   
 
     public function sale_items() {
         return $this->hasMany('Solunes\Sales\App\SaleItem', 'parent_id');
@@ -102,6 +110,10 @@ class Sale extends Model {
 
     public function sale_deliveries() {
         return $this->hasMany('Solunes\Sales\App\SaleDelivery', 'parent_id');
+    }
+
+    public function project() {
+        return $this->hasOne('Solunes\Project\App\Project');
     }
 
 }

@@ -15,19 +15,26 @@ class MasterSeeder extends Seeder {
     {
 
         // Módulo de Ventas
-        $node_shipping = \Solunes\Master\App\Node::create(['name'=>'shipping', 'location'=>'sales', 'folder'=>'company']);
-        $node_shipping_city = \Solunes\Master\App\Node::create(['name'=>'shipping-city', 'table_name'=>'shipping_cities', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_shipping->id]);
+        if(config('sales.delivery')){
+            $node_shipping = \Solunes\Master\App\Node::create(['name'=>'shipping', 'location'=>'sales', 'folder'=>'company']);
+            $node_shipping_city = \Solunes\Master\App\Node::create(['name'=>'shipping-city', 'table_name'=>'shipping_cities', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_shipping->id]);
+        }
         $node_cart = \Solunes\Master\App\Node::create(['name'=>'cart', 'location'=>'sales', 'folder'=>'sales']);
         $node_cart_item = \Solunes\Master\App\Node::create(['name'=>'cart-item', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_cart->id]);
         $node_sale = \Solunes\Master\App\Node::create(['name'=>'sale', 'location'=>'sales', 'folder'=>'sales']);
         $node_sale_item = \Solunes\Master\App\Node::create(['name'=>'sale-item', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_sale->id]);
         $node_sale_payment = \Solunes\Master\App\Node::create(['name'=>'sale-payment', 'type'=>'child', 'location'=>'sales', 'parent_id'=>$node_sale->id]);
-        $node_sale_delivery = \Solunes\Master\App\Node::create(['name'=>'sale-delivery', 'table_name'=>'sale_deliveries', 'type'=>'child', 'location'=>'sales', 'parent_id'=>$node_sale->id]);
-        $node_sale_credit = \Solunes\Master\App\Node::create(['name'=>'sale-credit', 'type'=>'child', 'location'=>'sales', 'parent_id'=>$node_sale->id]);
-        $node_refund = \Solunes\Master\App\Node::create(['name'=>'refund', 'location'=>'sales', 'folder'=>'sales']);
-        $node_refund_item = \Solunes\Master\App\Node::create(['name'=>'refund-item', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_refund->id]);
-
-        if(config('business.seed_regions')&&config('sales.seed_shipping')){
+        if(config('sales.delivery')){
+            $node_sale_delivery = \Solunes\Master\App\Node::create(['name'=>'sale-delivery', 'table_name'=>'sale_deliveries', 'type'=>'child', 'location'=>'sales', 'parent_id'=>$node_sale->id]);
+        }
+        if(config('sales.credit')){
+            $node_sale_credit = \Solunes\Master\App\Node::create(['name'=>'sale-credit', 'type'=>'child', 'location'=>'sales', 'parent_id'=>$node_sale->id]);
+        }
+        if(config('sales.refunds')){
+            $node_refund = \Solunes\Master\App\Node::create(['name'=>'refund', 'location'=>'sales', 'folder'=>'sales']);
+            $node_refund_item = \Solunes\Master\App\Node::create(['name'=>'refund-item', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_refund->id]);
+        }   
+        if(config('business.seed_regions')&&config('sales.delivery')&&config('sales.seed_shipping')){
             if(config('sales.own-office')){
                 $shipping_office = \Solunes\Sales\App\Shipping::create(['name'=>'Recógela de Nuestra Oficina','city_id'=>1,'content'=>'<p>Si vives en La Paz, puedes recoger el producto directamente de nuestras oficinas ubicadas en "Dirección de ejemplo" sin costo adicional.</p>']);
                 \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_office->id,'city_id'=>1,'shipping_days'=>0,'shipping_cost'=>0,'shipping_cost_extra'=>0]);
