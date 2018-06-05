@@ -10,15 +10,18 @@ return array(
 	'1' => 'Yes',
 	'accounted' => 'Accounted',
 	'buy-now' => 'Buy Now',
+	'cancelled' => 'Cancelled',
 	'cart' => 'Cart',
 	'company' => 'Company',
 	'confirmed' => 'Confirmed',
 	'delivered' => 'Delivered',
 	'denied' => 'Denied',
+	'frozen' => 'Frozen',
 	'holding' => 'Holding',
 	'normal' => 'Normal',
 	'online' => 'Online',
 	'paid' => 'Paid',
 	'sale' => 'Sale',
+	'to-pay' => 'To Pay',	
 
 );

@@ -112,6 +112,22 @@ class Sale extends Model {
         return $this->hasMany('Solunes\Sales\App\SaleDelivery', 'parent_id');
     }
 
+    public function getTotalPendingAttribute() {
+        $total = 0;
+        foreach($this->sale_payments()->where('status','!=','paid')->get() as $payment){
+            $total += $payment->amount;
+        }
+        return $total;
+    }
+
+    public function getTotalPaidAttribute() {
+        $total = 0;
+        foreach($this->sale_payments()->where('status','paid')->get() as $payment){
+            $total += $payment->amount;
+        }
+        return $total;
+    }
+
     public function project() {
         return $this->hasOne('Solunes\Project\App\Project');
     }

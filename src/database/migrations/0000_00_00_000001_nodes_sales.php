@@ -87,6 +87,7 @@ class NodesSales extends Migration
                 $table->enum('type', ['normal','online'])->nullable()->default('normal');
             }
             $table->string('transaction_code')->nullable();
+            $table->string('proposal_file')->nullable();
             if(config('sales.solunes_project')){
                 $table->boolean('solunes_project')->default(1);
             }
@@ -117,8 +118,8 @@ class NodesSales extends Migration
             $table->integer('payment_id')->nullable();
             $table->decimal('amount', 10, 2)->default(0);
             $table->decimal('pending_amount', 10, 2)->default(0);
-            $table->enum('status', ['holding','paid','accounted'])->nullable()->default('holding');
-            $table->string('detail')->nullable();
+            $table->enum('status', ['holding','to-pay','paid','accounted','frozen','cancelled'])->nullable()->default('holding');
+            $table->text('detail')->nullable();
             $table->decimal('exchange', 10, 2)->default(1);
             $table->foreign('parent_id')->references('id')->on('sales')->onDelete('cascade');
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
