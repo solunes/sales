@@ -43,7 +43,7 @@ return [
     'order_amount' => 'Monto de la Orden',
     'paid_amount' => 'Monto Pagado',
     'parent' => 'De',
-    'payment' => 'Método de Pago',
+    'payment' => 'Pago Registrado',
     'pending' => 'Pendiente',
     'pending_amount' => 'Monto Pendiente',
     'price' => 'Precio',
@@ -59,7 +59,7 @@ return [
     'sale_item' => 'Item de Venta',
     'sale_items' => 'Items de Venta',
     'sale_payment' => 'Pago de Venta',
-    'sale_payments' => 'Pagos de Vent',
+    'sale_payments' => 'Pagos de Venta',
     'session' => 'Sesión',
     'shipping' => 'Método de Envío',
     'shipping_cities' => 'Ciudades de Envío',
@@ -74,6 +74,7 @@ return [
     'updated_at' => 'Fecha de Edición',
     'user' => 'Usuario',
     'weight' => 'Peso',
-
+    'company' => 'Compañia',
+    'proposal_file' => 'Archivo con Propuesta',
 
 ];

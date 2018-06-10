@@ -43,7 +43,7 @@ return [
     'order_amount' => 'Order Amount',
     'paid_amount' => 'Paid Amount',
     'parent' => 'Parent',
-    'payment' => 'Payment Method',
+    'payment' => 'Registered Payment',
     'pending' => 'Pending',
     'pending_amount' => 'Pending Amount',
     'price' => 'Price',
@@ -74,5 +74,7 @@ return [
     'updated_at' => 'Updated At',
     'user' => 'User',
     'weight' => 'Weight',
-
+    'company' => 'Compañia',
+    'proposal_file' => 'Archivo con Propuesta',
+    
 ];
