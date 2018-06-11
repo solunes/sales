@@ -65,13 +65,13 @@ class NodesSales extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('agency_id')->unsigned();
-            $table->integer('currency_id')->unsigned();
             if(config('sales.company_relation')){
                 $table->integer('company_id')->nullable();
             }
             if(config('sales.contact_relation')){
                 $table->integer('contact_id')->nullable();
             }
+            $table->integer('currency_id')->unsigned();
             if(config('sales.desk_sale')){
                 $table->decimal('order_amount', 10, 2)->nullable();
                 $table->decimal('change', 10, 2)->nullable()->default(0);

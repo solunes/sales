@@ -89,7 +89,7 @@ class Sale extends Model {
     }
 
     public function company() {
-        return $this->belongsTo('Solunes\Business\App\Contact');
+        return $this->belongsTo('Solunes\Business\App\Company');
     }   
 
     public function contact() {
