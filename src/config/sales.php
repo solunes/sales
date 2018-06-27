@@ -6,6 +6,7 @@ return [
 	'after_seed' => true,
 	'desk_sale' => false,
 	'delivery' => false,
+	'ask_address' => false,
 	'credit' => false,
 	'refunds' => false,
 	'seed_shipping' => false,

@@ -158,9 +158,11 @@ class ProcessController extends Controller {
         $array['address_extra'] = NULL;
       }
       $array['cart'] = $cart;
-      $array['cities'] = \Solunes\Business\App\City::lists('name','id');
-      $array['shipping_options'] = \Solunes\Sales\App\Shipping::active()->order()->lists('name','id');
-      $array['shipping_descriptions'] = \Solunes\Sales\App\Shipping::active()->order()->get();
+      $array['cities'] = \Solunes\Business\App\City::get()->lists('name','id')->toArray();
+      if(config('sales.delivery')){
+        $array['shipping_options'] = \Solunes\Sales\App\Shipping::active()->order()->lists('name','id');
+        $array['shipping_descriptions'] = \Solunes\Sales\App\Shipping::active()->order()->get();
+      }
       $array['payment_options'] = \Solunes\Payments\App\PaymentMethod::active()->order()->lists('name','id');
       $array['payment_descriptions'] = \Solunes\Payments\App\PaymentMethod::active()->order()->get();
       $array['page'] = \Solunes\Master\App\Page::find(2);
@@ -190,6 +192,11 @@ class ProcessController extends Controller {
     } else {
       $rules = \Solunes\Sales\App\Sale::$rules_send;
     }
+    if(!config('sales.delivery')){
+      unset($rules['city_id']);
+      unset($rules['address']);
+      unset($rules['shipping_id']);
+    }
     $validator = \Validator::make($request->all(), $rules);
     if(!$validator->passes()){
       return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
@@ -202,11 +209,15 @@ class ProcessController extends Controller {
         $order_cost += $item->total_price;
         $order_weight += $item->total_weight;
       }
-      $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $request->input('city_id'), $order_weight);
-      if($shipping_array['shipping']===false){
-        return redirect($this->prev)->with('message_error', 'No se encontró el método de envío para esta ciudad, seleccione otro.')->withInput();
+      if(config('sales.delivery')){
+        $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $request->input('city_id'), $order_weight);
+        if($shipping_array['shipping']===false){
+          return redirect($this->prev)->with('message_error', 'No se encontró el método de envío para esta ciudad, seleccione otro.')->withInput();
+        }
+        $shipping_cost = $shipping_array['shipping_cost'];
+      } else {
+        $shipping_cost = 0;
       }
-      $shipping_cost = $shipping_array['shipping_cost'];
 
       // User
       if(\Auth::check()) {
@@ -223,10 +234,12 @@ class ProcessController extends Controller {
         $user->last_name = $last_name;
         $user->password = $request->input('password');
       }
-      $city = \Solunes\Business\App\City::find($request->input('city_id'));
-      $user->city_id = $city->id;
-      $user->address = $request->input('address');
-      $user->address_extra = $request->input('address_extra');
+      if(config('sales.delivery')){
+        $city = \Solunes\Business\App\City::find($request->input('city_id'));
+        $user->city_id = $city->id;
+        $user->address = $request->input('address');
+        $user->address_extra = $request->input('address_extra');
+      }
       $user->save();
       $member = \Solunes\Master\App\Role::where('name', 'member')->first();
       $user->role_user()->sync([$member->id]);
@@ -239,10 +252,10 @@ class ProcessController extends Controller {
       $sale->user_id = $user->id;
       $sale->agency_id = $agency->id;
       $sale->currency_id = $currency->id;
-      $sale->order_amount = $order_cost;
+      //$sale->order_amount = $order_cost;
       $sale->amount = $total_cost;
       $sale->invoice = false;
-      $sale->type = 'online';
+      //$sale->type = 'online';
       $sale->save();
 
       // Sale Payment
@@ -257,37 +270,39 @@ class ProcessController extends Controller {
       $sale_payment->save();
 
       // Sale Delivery
-      $sale_delivery = new \Solunes\Sales\App\SaleDelivery;
-      $sale_delivery->parent_id = $sale->id;
-      $sale_delivery->shipping_id = $request->input('shipping_id');
-      $sale_delivery->currency_id = $sale->currency_id;
-      $sale_delivery->region_id = $city->region_id;
-      $sale_delivery->city_id = $city->id;
-      if($request->has('city_other')){
-        $sale_delivery->city_other = $request->input('city_other');
+      if(config('sales.delivery')){
+        $sale_delivery = new \Solunes\Sales\App\SaleDelivery;
+        $sale_delivery->parent_id = $sale->id;
+        $sale_delivery->shipping_id = $request->input('shipping_id');
+        $sale_delivery->currency_id = $sale->currency_id;
+        $sale_delivery->region_id = $city->region_id;
+        $sale_delivery->city_id = $city->id;
+        if($request->has('city_other')){
+          $sale_delivery->city_other = $request->input('city_other');
+        }
+        if($request->has('region_other')){
+          $sale_delivery->region_other = $request->input('region_other');
+        }
+        $sale_delivery->name = 'Pedido de venta en linea';
+        $sale_delivery->address = $request->input('address');
+        $sale_delivery->address_extra = $request->input('address_extra');
+        $sale_delivery->postal_code = 'LP01';
+        $sale_delivery->phone = $user->cellphone;
+        $sale_delivery->total_weight = $order_weight;
+        $sale_delivery->shipping_cost = $shipping_cost;
+        $sale_delivery->save();
       }
-      if($request->has('region_other')){
-        $sale_delivery->region_other = $request->input('region_other');
-      }
-      $sale_delivery->name = 'Pedido de venta en linea';
-      $sale_delivery->address = $request->input('address');
-      $sale_delivery->address_extra = $request->input('address_extra');
-      $sale_delivery->postal_code = 'LP01';
-      $sale_delivery->phone = $user->cellphone;
-      $sale_delivery->total_weight = $order_weight;
-      $sale_delivery->shipping_cost = $shipping_cost;
-      $sale_delivery->save();
 
       // Sale Items
       foreach($cart->cart_items as $cart_item){
         $sale_item = new \Solunes\Sales\App\SaleItem;
         $sale_item->parent_id = $sale->id;
         $sale_item->product_bridge_id = $cart_item->product_bridge_id;
-        $sale_item->name = $cart_item->product_bridge->name;
+        //$sale_item->name = $cart_item->product_bridge->name;
         $sale_item->currency_id = $currency->id;
         $sale_item->price = $cart_item->price;
         $sale_item->quantity = $cart_item->quantity;
-        $sale_item->weight = $cart_item->weight;
+        //$sale_item->weight = $cart_item->weight;
         $sale_item->save();
       }
 
@@ -306,10 +321,11 @@ class ProcessController extends Controller {
 
       $redirect = 'process/sale/'.$sale->id;
 
-      if(config('solunes.payments')){
+      // Revisar redirección a método de pago antes.
+      /*if(config('solunes.payments')){
         $model = '\\'.$sale_payment->payment->model;
         return \Payments::generateSalePayment($sale, $model, $redirect);
-      }
+      }*/
 
       return redirect($redirect)->with('message_success', 'Su compra fue confirmada correctamente, ahora debe proceder al pago para finalizarla.');
     } else {

@@ -40,7 +40,7 @@
         </table>
       </div>
 
-      @if(count($shipping_descriptions)>0)
+      @if(config('sales.delivery')&&count($shipping_descriptions)>0)
         <h3>MÉTODOS DE ENVÍO</h3>
         <div class="payment-method">
           <div class="payment-accordion">
@@ -112,6 +112,7 @@
       @endif
       <div class="store-form">           
         <div class="row">
+          @if(config('sales.delivery'))
           <div class="col-md-12">
             <div class="checkout-form-list">
               <label>Ciudad <span class="required">*</span></label>
@@ -124,6 +125,7 @@
               {!! Form::text('city_other', NULL) !!}
             </div>
           </div>
+          @endif
           @if(!$auth)
             <div class="col-md-6">
               <div class="checkout-form-list">
@@ -138,6 +140,7 @@
               </div>
             </div>
           @endif
+          @if(config('sales.ask_address'))
           <div class="col-md-12">
             <div class="checkout-form-list">
               <label>Dirección <span class="required">*</span></label>
@@ -149,6 +152,7 @@
               {!! Form::text('address_extra', $address_extra, ['placeholder'=>'Otros detalles como color, referencias, etc. (Opcional)']) !!}
             </div>
           </div>
+          @endif
           @if(!$auth)
             <div class="col-md-6">
               <div class="checkout-form-list">
@@ -163,12 +167,14 @@
               </div>
             </div>
           @endif
+          @if(config('sales.delivery'))
           <div class="col-md-6">
             <div class="checkout-form-list">
               <label>Método de Envío <span class="required">*</span></label>                   
               {!! Form::select('shipping_id', $shipping_options, NULL, ['id'=>'shipping_id', 'class'=>'query_shipping']) !!}
             </div>
           </div>
+          @endif
           <div class="col-md-6">
             <div class="checkout-form-list">
               <label>Método de Pago <span class="required">*</span></label>                    
