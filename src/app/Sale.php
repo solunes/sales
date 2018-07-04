@@ -108,6 +108,14 @@ class Sale extends Model {
         return $this->hasMany('Solunes\Sales\App\SaleCredit', 'parent_id');
     }
 
+    public function getDeliveriesAttribute() {
+        if(config('sales.delivery')){
+            return $this->sale_deliveries;
+        } else {
+            return [];
+        }
+    }
+
     public function sale_deliveries() {
         return $this->hasMany('Solunes\Sales\App\SaleDelivery', 'parent_id');
     }
