@@ -54,9 +54,12 @@ class NodesSales extends Migration
             $table->increments('id');
             $table->integer('parent_id')->unsigned();
             $table->integer('product_bridge_id')->unsigned();
-            $table->integer('quantity');
+            $table->integer('quantity')->default(1);
+            $table->string('detail')->nullable();
             $table->decimal('price', 10, 2);
-            $table->decimal('weight', 10, 2);
+            if(config('sales.delivery')){
+                $table->decimal('weight', 10, 2)->nullable();
+            }
             $table->timestamps();
             $table->foreign('parent_id')->references('id')->on('carts')->onDelete('cascade');
             $table->foreign('product_bridge_id')->references('id')->on('product_bridges')->onDelete('cascade');
@@ -103,6 +106,7 @@ class NodesSales extends Migration
             $table->integer('currency_id')->unsigned();
             $table->decimal('price', 10, 2)->default(0);
             $table->integer('quantity')->nullable();
+            $table->string('detail')->nullable();
             $table->decimal('total', 10, 2)->default(0);
             if(config('sales.delivery')){
                 $table->decimal('weight', 10, 2)->default(0);
@@ -140,6 +144,8 @@ class NodesSales extends Migration
                 $table->string('postal_code')->nullable();
                 $table->string('address')->nullable();
                 $table->string('address_extra')->nullable();
+                $table->string('latitude')->nullable();
+                $table->string('longitude')->nullable();
                 $table->string('phone')->nullable();
                 $table->decimal('total_weight', 10, 2)->nullable();
                 $table->decimal('shipping_cost', 10, 2)->nullable();
