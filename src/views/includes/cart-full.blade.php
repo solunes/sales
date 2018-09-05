@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <th class="product-thumbnail">Imagen</th>
-        <th class="product-name">Producto</th>
+        <th class="product-name" style="max-width: 200px;">Producto</th>
         <th class="product-price">Precio</th>
         <th class="product-quantity">Cantidad</th>
         <th class="product-subtotal">Total</th>
@@ -18,7 +18,7 @@
           <td class="product-thumbnail"><a target="_blank" href="{{ url('product/'.$item->product_bridge->slug) }}">
             {!! Asset::get_image('product-bridge-image', 'subdetail', $item->product_bridge->image) !!}
           </a></td>
-          <td class="product-name"><a target="_blank" href="{{ url('product/'.$item->product_bridge->slug) }}">{{ $item->product_bridge->name }}</a></td>
+          <td class="product-name" style="max-width: 200px;"><a target="_blank" href="{{ url('product/'.$item->product_bridge->slug) }}">{{ $item->product_bridge->name }} - {{ $item->detail }}</a></td>
           <td class="product-price"><span class="amount">Bs. {{ $item->price }}</span></td>
           <td class="product-quantity">
             @if($editable)

@@ -44,7 +44,33 @@ class ProcessController extends Controller {
     if($product = \Solunes\Business\App\ProductBridge::find($request->input('product_id'))){
       if($request->input('quantity')>0){
         $cart = \Sales::get_cart();
-        \Sales::add_cart_item($cart, $product, $request->input('quantity'));
+        $detail = NULL;
+        $count = 0;
+        $custom_price = $product->real_price;
+        foreach($product->product_bridge_variation as $product_bridge_variation){
+          if($request->has('variation_'.$product_bridge_variation->id)){
+            $count++;
+            if($count>1){
+              $detail .= ' | ';
+            }
+            $detail .= $product_bridge_variation->name.': ';
+            $subarray = $request->input('variation_'.$product_bridge_variation->id);
+            if(!is_array($subarray)){
+              $subarray = [$subarray];
+            }
+            foreach($product_bridge_variation->variation_options()->whereIn('id', $subarray)->get() as $key => $option){
+              if($key>0){
+                $detail .= ', ';
+              }
+              $detail .= $option->name.' ';
+              $custom_price += $option->extra_price;
+            }
+          }
+        }
+        if($request->has('detail')){
+          $detail .= ' | Requerimientos Adicionales: '.$request->input('detail');
+        }
+        \Sales::add_cart_item($cart, $product, $request->input('quantity'), $detail, $custom_price);
         return redirect($this->prev)->with('message_success', 'Se añadió su producto al carro de compras.');
       } else {
         return redirect($this->prev)->with('message_error', 'Debe seleccionar una cantidad positiva.');
@@ -300,6 +326,7 @@ class ProcessController extends Controller {
         $sale_item->product_bridge_id = $cart_item->product_bridge_id;
         //$sale_item->name = $cart_item->product_bridge->name;
         $sale_item->currency_id = $currency->id;
+        $sale_item->detail = $cart_item->detail;
         $sale_item->price = $cart_item->price;
         $sale_item->quantity = $cart_item->quantity;
         //$sale_item->weight = $cart_item->weight;

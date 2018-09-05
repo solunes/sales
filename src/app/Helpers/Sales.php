@@ -17,17 +17,24 @@ class Sales {
         return $cart;
     }
 
-    public static function add_cart_item($cart, $product, $quantity) {
-        if($cart_item = $cart->cart_items->where('product_bridge_id', $product->id)->first()){
+    public static function add_cart_item($cart, $product, $quantity, $detail = NULL, $custom_price = NULL) {
+        if($cart_item = $cart->cart_items()->where('product_bridge_id', $product->id)->where('detail', $detail)->where('price', $custom_price)->first()){
           $cart_item->quantity = $cart_item->quantity + $quantity;
         } else {
           $cart_item = new \Solunes\Sales\App\CartItem;
           $cart_item->parent_id = $cart->id;
           $cart_item->product_bridge_id = $product->id;
           $cart_item->quantity = $quantity;
+          if($custom_price){
+            $cart_item->price = $custom_price;
+          } else {
+            $cart_item->price = $product->real_price;
+          }
+          $cart_item->detail = $detail;
         }
-        $cart_item->price = $product->real_price;
-        $cart_item->weight = $product->weight;
+        if(config('sales.delivery')){
+            $cart_item->weight = $product->weight;
+        }
         $cart_item->save();
         return $cart_item;
     }

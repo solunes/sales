@@ -7,6 +7,7 @@ return [
 	'desk_sale' => false,
 	'delivery' => false,
 	'ask_address' => false,
+	'ask_coordinates' => false,
 	'credit' => false,
 	'refunds' => false,
 	'seed_shipping' => false,

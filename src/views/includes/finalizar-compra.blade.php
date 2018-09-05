@@ -153,6 +153,9 @@
             </div>
           </div>
           @endif
+          @if(config('sales.ask_coordinates'))
+            <p>En construcción, selector de mapa aqui.</p>
+          @endif
           @if(!$auth)
             <div class="col-md-6">
               <div class="checkout-form-list">

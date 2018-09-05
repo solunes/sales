@@ -55,7 +55,7 @@ class NodesSales extends Migration
             $table->integer('parent_id')->unsigned();
             $table->integer('product_bridge_id')->unsigned();
             $table->integer('quantity')->default(1);
-            $table->string('detail')->nullable();
+            $table->text('detail')->nullable();
             $table->decimal('price', 10, 2);
             if(config('sales.delivery')){
                 $table->decimal('weight', 10, 2)->nullable();
@@ -106,7 +106,7 @@ class NodesSales extends Migration
             $table->integer('currency_id')->unsigned();
             $table->decimal('price', 10, 2)->default(0);
             $table->integer('quantity')->nullable();
-            $table->string('detail')->nullable();
+            $table->text('detail')->nullable();
             $table->decimal('total', 10, 2)->default(0);
             if(config('sales.delivery')){
                 $table->decimal('weight', 10, 2)->default(0);
