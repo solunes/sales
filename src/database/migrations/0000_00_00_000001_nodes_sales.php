@@ -28,6 +28,10 @@ class NodesSales extends Migration
                     $table->integer('city_id')->nullable()->after('username');
                 }
             }
+            if(config('sales.ask_invoice')){
+                $table->string('nit_name')->nullable()->after('username');
+                $table->string('nit_number')->nullable()->after('username');
+            }
             $table->string('last_name')->nullable()->after('username');
             $table->string('first_name')->nullable()->after('username');
         });

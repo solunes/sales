@@ -68,6 +68,20 @@
     </div>
   @endif
 @endif
+@if(config('sales.ask_invoice'))
+  <div class="col-md-6">
+    <div class="checkout-form-list">
+      <label>Número de NIT <span class="required">*</span></label>                   
+      {!! Form::text('nit_number', NULL, ['placeholder'=>'Número de NIT']) !!}
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="checkout-form-list">
+      <label>Razón Social <span class="required">*</span></label>                   
+      {!! Form::text('nit_name', NULL, ['placeholder'=>'Razón Social']) !!}
+    </div>
+  </div>
+@endif
 @if($user_cart_registration)
   @if(config('sales.delivery'))
     <div class="col-md-6">

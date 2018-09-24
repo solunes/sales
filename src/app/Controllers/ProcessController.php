@@ -236,6 +236,10 @@ class ProcessController extends Controller {
       }
       unset($rules['shipping_id']);
     }
+    if(!config('sales.invoice_data')){
+      unset($rules['nit_number']);
+      unset($rules['nit_name']);
+    }
     $validator = \Validator::make($request->all(), $rules);
     if(!$validator->passes()){
       return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
@@ -274,7 +278,13 @@ class ProcessController extends Controller {
       $sale->currency_id = $currency->id;
       //$sale->order_amount = $order_cost;
       $sale->amount = $total_cost;
-      $sale->invoice = true;
+      if(config('sales.ask_invoice')){
+        $sale->invoice = true;
+        $sale->invoice_nit = $request->input('invoice_nit');
+        $sale->invoice_name = $request->input('invoice_name');
+      } else {
+        $sale->invoice = false;
+      }
       //$sale->type = 'online';
       $sale->save();
 

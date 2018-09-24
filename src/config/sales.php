@@ -14,6 +14,7 @@ return [
 	'sales_email' => true,
 	'sales_cellphone' => true,
 	'sales_username' => false,
+	'ask_invoice' => true,
 	'credit' => false,
 	'refunds' => false,
 	'company_relation' => false,
