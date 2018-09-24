@@ -295,13 +295,18 @@ class ProcessController extends Controller {
         $sale_delivery->parent_id = $sale->id;
         $sale_delivery->shipping_id = $request->input('shipping_id');
         $sale_delivery->currency_id = $sale->currency_id;
-        $sale_delivery->region_id = $city->region_id;
-        $sale_delivery->city_id = $city->id;
-        if($request->has('city_other')){
-          $sale_delivery->city_other = $request->input('city_other');
-        }
-        if($request->has('region_other')){
-          $sale_delivery->region_other = $request->input('region_other');
+        if(config('sales.delivery_city')){
+          $sale_delivery->region_id = $user->city->region_id;
+          $sale_delivery->city_id = $user->city->id;
+          if($request->has('city_other')){
+            $sale_delivery->city_other = $request->input('city_other');
+          }
+          if($request->has('region_other')){
+            $sale_delivery->region_other = $request->input('region_other');
+          }
+        } else {
+          $sale_delivery->region_id = 1;
+          $sale_delivery->city_id = 1;
         }
         $sale_delivery->name = 'Pedido de venta en linea';
         $sale_delivery->address = $request->input('address');
