@@ -81,4 +81,62 @@ class Sales {
         return $sale_payment;
     }
 
+    public static function userRegistration($product_type, $product_id, $array, $lang_array) {
+      $new_user = false;
+      if(\Auth::check()) {
+        $user = \Auth::user();
+      } else {
+        $new_user = true;
+        if(config('sales.sales_email')&&\App\User::where('email', $request->input('email'))->first()){
+          return 'El correo introducido ya fue registrado.';
+        }
+        if(config('sales.sales_cellphone')&&\App\User::where('cellphone', $request->input('cellphone'))->first()){
+          return 'El teléfono introducido ya fue registrado.';
+        }
+        if(config('sales.sales_username')&&\App\User::where('username', $request->input('username'))->first()){
+          return 'El carnet de identidad ya fue registrado.';
+        }
+        $first_name = $request->input('first_name');
+        $last_name = $request->input('last_name');
+        $user = new \App\User;
+        $user->name = $first_name.' '.$last_name;
+        if(config('sales.sales_email')){
+          $user->email = $request->input('email');
+        } else {
+          $user->email = rand(10000000000,99999999999).'@noemail.com';
+        }
+        if(config('sales.sales_cellphone')){
+          $user->cellphone = $request->input('cellphone');
+        }
+        if(config('sales.sales_username')){
+          $user->username = $request->input('username');
+        }
+        $user->first_name = $first_name;
+        $user->last_name = $last_name;
+        $user->password = $request->input('password');
+      }
+      if(config('sales.delivery')){
+        if(config('sales.delivery_city')){
+          $city = \Solunes\Business\App\City::find($request->input('city_id'));
+          $user->city_id = $city->id;
+          $user->city_other = $request->input('city_other');
+        }
+        if(config('sales.ask_address')){
+          $user->address = $request->input('address');
+          $user->address_extra = $request->input('address_extra');
+        }
+        if(config('sales.ask_coordinates')){
+          $user->latitude = $request->input('latitude');
+          $user->longitude = $request->input('longitude');
+        }
+      }
+      $user->save();
+      if($new_user){
+        $member = \Solunes\Master\App\Role::where('name', 'member')->first();
+        $user->role_user()->attach([$member->id]);
+        \Auth::loginUsingId($user->id);
+      }
+      return $user;
+    }
+
 }

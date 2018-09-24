@@ -14,9 +14,20 @@ class NodesSales extends Migration
     {
         // Módulo de Ventas
         Schema::table('users', function (Blueprint $table) {
-            $table->string('address_extra')->nullable()->after('username');
-            $table->string('address')->nullable()->after('username');
-            $table->integer('city_id')->nullable()->after('username');
+            if(config('sales.delivery')){
+                if(config('sales.ask_coordinates')){
+                    $table->string('latitude')->nullable()->after('username');
+                    $table->string('longitude')->nullable()->after('username');
+                }
+                if(config('sales.ask_address')){
+                    $table->string('address_extra')->nullable()->after('username');
+                    $table->string('address')->nullable()->after('username');
+                }
+                if(config('sales.delivery_city')){
+                    $table->string('city_other')->nullable()->after('username');
+                    $table->integer('city_id')->nullable()->after('username');
+                }
+            }
             $table->string('last_name')->nullable()->after('username');
             $table->string('first_name')->nullable()->after('username');
         });

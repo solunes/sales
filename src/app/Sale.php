@@ -23,6 +23,7 @@ class Sale extends Model {
         'address'=>'required',
         'email'=>'required',
         'cellphone'=>'required',
+        'username'=>'required',
         'shipping_id'=>'required',
         'payment_id'=>'required',
         'password'=>'required',

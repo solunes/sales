@@ -219,8 +219,21 @@ class ProcessController extends Controller {
       $rules = \Solunes\Sales\App\Sale::$rules_send;
     }
     if(!config('sales.delivery')){
-      unset($rules['city_id']);
-      unset($rules['address']);
+      if(!config('sales.delivery_city')){
+        unset($rules['city_id']);
+      }
+      if(!config('sales.ask_address')){
+        unset($rules['address']);
+      }
+      if(!config('sales.sales_email')){
+        unset($rules['email']);
+      }
+      if(!config('sales.sales_cellphone')){
+        unset($rules['cellphone']);
+      }
+      if(!config('sales.sales_username')){
+        unset($rules['username']);
+      }
       unset($rules['shipping_id']);
     }
     $validator = \Validator::make($request->all(), $rules);
@@ -246,29 +259,10 @@ class ProcessController extends Controller {
       }
 
       // User
-      if(\Auth::check()) {
-        $user = \Auth::user();
-      } else {
-        $new_user = true;
-        $first_name = $request->input('first_name');
-        $last_name = $request->input('last_name');
-        $user = new \App\User;
-        $user->name = $first_name.' '.$last_name;
-        $user->email = $request->input('email');
-        $user->cellphone = $request->input('cellphone');
-        $user->first_name = $first_name;
-        $user->last_name = $last_name;
-        $user->password = $request->input('password');
+      $user = \Business::userRegistration();
+      if(is_string($user)){
+        return redirect($this->prev)->with('message_error', 'Hubo un error al finalizar el registro: '.$user);
       }
-      if(config('sales.delivery')){
-        $city = \Solunes\Business\App\City::find($request->input('city_id'));
-        $user->city_id = $city->id;
-        $user->address = $request->input('address');
-        $user->address_extra = $request->input('address_extra');
-      }
-      $user->save();
-      $member = \Solunes\Master\App\Role::where('name', 'member')->first();
-      $user->role_user()->sync([$member->id]);
       
       // Sale
       $total_cost = $order_cost + $shipping_cost;
@@ -280,7 +274,7 @@ class ProcessController extends Controller {
       $sale->currency_id = $currency->id;
       //$sale->order_amount = $order_cost;
       $sale->amount = $total_cost;
-      $sale->invoice = false;
+      $sale->invoice = true;
       //$sale->type = 'online';
       $sale->save();
 
@@ -292,7 +286,7 @@ class ProcessController extends Controller {
       $sale_payment->exchange = $currency->main_exchange;
       $sale_payment->amount = $total_cost;
       $sale_payment->pending_amount = $total_cost;
-      $sale_payment->detail = 'Pago por compra online';
+      $sale_payment->detail = 'Pago por compra online: #'.$sale_payment->id;
       $sale_payment->save();
 
       // Sale Delivery
@@ -336,11 +330,6 @@ class ProcessController extends Controller {
       $cart->status = 'sale';
       $cart->user_id = $user->id;
       $cart->save();
-
-      if($new_user){
-        $user->role_user()->attach(2);
-        \Auth::loginUsingId($user->id);
-      }
 
       // Send Email
       $vars = ['@name@'=>$user->name, '@total_cost@'=>$sale->total_cost, '@sale_link@'=>url('process/sale/'.$sale->id)];
