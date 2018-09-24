@@ -287,6 +287,8 @@ class ProcessController extends Controller {
       }
       //$sale->type = 'online';
       $sale->save();
+      $sale->name = 'Venta Online: #'.$sale->id;
+      $sale->save();
 
       // Sale Payment
       $sale_payment = new \Solunes\Sales\App\SalePayment;
