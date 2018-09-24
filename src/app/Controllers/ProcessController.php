@@ -218,7 +218,7 @@ class ProcessController extends Controller {
     } else {
       $rules = \Solunes\Sales\App\Sale::$rules_send;
     }
-    if(!config('sales.delivery')){
+    if(config('sales.delivery')){
       if(!config('sales.delivery_city')){
         unset($rules['city_id']);
       }
@@ -259,7 +259,7 @@ class ProcessController extends Controller {
       }
 
       // User
-      $user = \Sales::userRegistration();
+      $user = \Sales::userRegistration($request);
       if(is_string($user)){
         return redirect($this->prev)->with('message_error', 'Hubo un error al finalizar su registro: '.$user);
       }
