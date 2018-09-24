@@ -31,16 +31,24 @@
   }
 
   $( document ).ready(function() {
-    queryShipping();
-    updateOtherCity();
+    @if(config('sales.delivery'))
+      queryShipping();
+    @endif
+    @if(config('sales.delivery')&&config('sales.delivery_city'))
+      updateOtherCity();
+    @endif
   });
 
-  $(document).on('change', 'select.query_shipping', function() {
-    queryShipping();
-  });
+  @if(config('sales.delivery'))
+    $(document).on('change', 'select.query_shipping', function() {
+      queryShipping();
+    });
+  @endif
 
-  $(document).on('change', 'select#city_id', function() {
-    updateOtherCity();
-  });
+  @if(config('sales.delivery')&&config('sales.delivery_city'))
+    $(document).on('change', 'select#city_id', function() {
+      updateOtherCity();
+    });
+  @endif
 
 </script>
