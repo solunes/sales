@@ -25,7 +25,7 @@ class Sale extends Model {
         'cellphone'=>'required',
         'username'=>'required',
         'nit_number'=>'required',
-        'nit_name'=>'required',
+        'nit_social'=>'required',
         'shipping_id'=>'required',
         'payment_id'=>'required',
         'password'=>'required',
@@ -36,7 +36,7 @@ class Sale extends Model {
         'city_id'=>'required',
         'address'=>'required',
         'nit_number'=>'required',
-        'nit_name'=>'required',
+        'nit_social'=>'required',
         'shipping_id'=>'required',
         'payment_id'=>'required',
     );

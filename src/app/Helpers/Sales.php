@@ -132,7 +132,7 @@ class Sales {
       }
       if(config('sales.ask_invoice')){
         $user->nit_number = $request->input('nit_number');
-        $user->nit_name = $request->input('nit_name');
+        $user->nit_name = $request->input('nit_social');
       }
       $user->save();
       if($new_user){

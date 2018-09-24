@@ -238,7 +238,7 @@ class ProcessController extends Controller {
     }
     if(!config('sales.ask_invoice')){
       unset($rules['nit_number']);
-      unset($rules['nit_name']);
+      unset($rules['nit_social']);
     }
     $validator = \Validator::make($request->all(), $rules);
     if(!$validator->passes()){
@@ -281,7 +281,7 @@ class ProcessController extends Controller {
       if(config('sales.ask_invoice')){
         $sale->invoice = true;
         $sale->nit_number = $request->input('nit_number');
-        $sale->nit_name = $request->input('nit_name');
+        $sale->nit_name = $request->input('nit_social');
       } else {
         $sale->invoice = false;
       }
