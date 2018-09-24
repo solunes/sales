@@ -259,9 +259,9 @@ class ProcessController extends Controller {
       }
 
       // User
-      $user = \Business::userRegistration();
+      $user = \Sales::userRegistration();
       if(is_string($user)){
-        return redirect($this->prev)->with('message_error', 'Hubo un error al finalizar el registro: '.$user);
+        return redirect($this->prev)->with('message_error', 'Hubo un error al finalizar su registro: '.$user);
       }
       
       // Sale

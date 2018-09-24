@@ -81,7 +81,7 @@ class Sales {
         return $sale_payment;
     }
 
-    public static function userRegistration($product_type, $product_id, $array, $lang_array) {
+    public static function userRegistration() {
       $new_user = false;
       if(\Auth::check()) {
         $user = \Auth::user();
