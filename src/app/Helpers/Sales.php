@@ -130,6 +130,10 @@ class Sales {
           $user->longitude = $request->input('longitude');
         }
       }
+      if(config('sales.ask_invoice')){
+        $user->nit_number = $request->input('nit_number');
+        $user->nit_name = $request->input('nit_name');
+      }
       $user->save();
       if($new_user){
         $member = \Solunes\Master\App\Role::where('name', 'member')->first();

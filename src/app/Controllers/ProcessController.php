@@ -236,7 +236,7 @@ class ProcessController extends Controller {
       }
       unset($rules['shipping_id']);
     }
-    if(!config('sales.invoice_data')){
+    if(!config('sales.ask_invoice')){
       unset($rules['nit_number']);
       unset($rules['nit_name']);
     }
@@ -280,8 +280,8 @@ class ProcessController extends Controller {
       $sale->amount = $total_cost;
       if(config('sales.ask_invoice')){
         $sale->invoice = true;
-        $sale->invoice_nit = $request->input('invoice_nit');
-        $sale->invoice_name = $request->input('invoice_name');
+        $sale->nit_number = $request->input('nit_number');
+        $sale->nit_name = $request->input('nit_name');
       } else {
         $sale->invoice = false;
       }
