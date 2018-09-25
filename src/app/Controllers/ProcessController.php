@@ -68,7 +68,7 @@ class ProcessController extends Controller {
           }
         }
         if($request->has('detail')){
-          $detail .= ' | Requerimientos Adicionales: '.$request->input('detail');
+          $detail .= ' | Detalle: '.$request->input('detail');
         }
         \Sales::add_cart_item($cart, $product, $request->input('quantity'), $detail, $custom_price);
         return redirect($this->prev)->with('message_success', 'Se añadió su producto al carro de compras.');
@@ -280,8 +280,8 @@ class ProcessController extends Controller {
       $sale->amount = $total_cost;
       if(config('sales.ask_invoice')){
         $sale->invoice = true;
-        $sale->nit_number = $request->input('nit_number');
-        $sale->nit_name = $request->input('nit_social');
+        $sale->invoice_nit = $request->input('nit_number');
+        $sale->invoice_name = $request->input('nit_social');
       } else {
         $sale->invoice = false;
       }
