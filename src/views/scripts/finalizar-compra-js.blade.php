@@ -23,7 +23,7 @@
   function updateOtherCity(){
     var city_id = $('#city_id').val();
     console.log('City ID: ' + city_id)
-    if(city_id==11){
+    if(city_id==13){
       $('.city_other').fadeIn();
     } else {
       $('.city_other').fadeOut();
