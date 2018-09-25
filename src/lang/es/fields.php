@@ -76,5 +76,12 @@ return [
     'weight' => 'Peso',
     'company' => 'Compañia',
     'proposal_file' => 'Archivo con Propuesta',
+    'country_code' => 'Código de País',
+    'latitude' => 'Latitud',
+    'longitude' => 'Longitud',
+    'phone' => 'Teléfono',
+    'postal_code' => 'Código Postal',
+    'region' => 'Región',
+    'region_other' => 'Otra Región',
 
 ];

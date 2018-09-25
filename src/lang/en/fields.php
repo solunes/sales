@@ -74,7 +74,14 @@ return [
     'updated_at' => 'Updated At',
     'user' => 'User',
     'weight' => 'Weight',
-    'company' => 'Compañia',
-    'proposal_file' => 'Archivo con Propuesta',
-    
+    'company' => 'Company',
+    'proposal_file' => 'Proposal File',
+    'country_code' => 'Country Code',
+    'latitude' => 'Latitude',
+    'longitude' => 'Longitude',
+    'phone' => 'Phone',
+    'postal_code' => 'Postal Code',
+    'region' => 'Region',
+    'region_other' => 'Other Region',
+
 ];
