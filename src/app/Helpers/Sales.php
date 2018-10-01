@@ -159,7 +159,7 @@ class Sales {
         } else {
           $external_response = false;
         }
-        if(config('sales.sales_email')&&\Solunes\Customer\App\Customer::where('email', $request->input('email'))->first()&&$external_response)){
+        if(config('sales.sales_email')&&\Solunes\Customer\App\Customer::where('email', $request->input('email'))->first()&&$external_response){
           return 'El correo introducido ya fue registrado.';
         }
         if(config('sales.sales_cellphone')&&\Solunes\Customer\App\Customer::where('phone', $request->input('cellphone'))->first()&&$external_response){

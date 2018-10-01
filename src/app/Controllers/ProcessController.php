@@ -77,7 +77,7 @@ class ProcessController extends Controller {
         if(config('sales.custom_add_cart_detail')){
           $custom_detail = \CustomFunc::checkCustomAddCartDetail($product, $request);
           if($custom_detail){
-            $detail .= ' | Detalle: '.;
+            $detail .= ' | Detalle: '.$custom_detail;
           }
         } else if($request->has('detail')){
           $detail .= ' | Detalle: '.$request->input('detail');
