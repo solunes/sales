@@ -140,12 +140,13 @@ class Sales {
         $user->role_user()->attach([$member->id]);
         \Auth::loginUsingId($user->id);
       }
-      return $user;
+      return $customer;
     }
 
     public static function customerRegistration($request) {
       $new_user = false;
       $user = NULL;
+      $external_id = NULL;
       if(\Auth::check()) {
         $user = \Auth::user();
         $customer = $user->customer;
@@ -162,7 +163,7 @@ class Sales {
         if(config('sales.sales_email')&&\Solunes\Customer\App\Customer::where('email', $request->input('email'))->first()&&$external_response){
           return 'El correo introducido ya fue registrado.';
         }
-        if(config('sales.sales_cellphone')&&\Solunes\Customer\App\Customer::where('phone', $request->input('cellphone'))->first()&&$external_response){
+        if(config('sales.sales_cellphone')&&\Solunes\Customer\App\Customer::where('cellphone', $request->input('cellphone'))->first()&&$external_response){
           return 'El teléfono introducido ya fue registrado.';
         }
         if(config('sales.sales_username')&&\Solunes\Customer\App\Customer::where('ci_number', $request->input('username'))->first()&&$external_response){
@@ -170,7 +171,6 @@ class Sales {
         }
         $first_name = $request->input('first_name');
         $last_name = $request->input('last_name');
-        $external_id = NULL;
         if(config('solunes.customer')&&config('customer.api_slave')){
           $external_id = \Customer::registerExternalCustomer($request);
         }
@@ -182,7 +182,7 @@ class Sales {
           $customer->email = rand(10000000000,99999999999).'@noemail.com';
         }
         if(config('sales.sales_cellphone')){
-          $customer->phone = $request->input('cellphone');
+          $customer->cellphone = $request->input('cellphone');
         }
         if(config('sales.sales_username')){
           $customer->ci_number = $request->input('username');

@@ -93,6 +93,16 @@ class Sale extends Model {
         return $this->belongsTo('App\User');
     }
 
+    public function customer() {
+        if(config('solunes.todotix-customer')){
+            return $this->belongsTo('Todotix\Customer\App\Customer');
+        } else if(config('solunes.customer')){
+            return $this->belongsTo('Solunes\Customer\App\Customer');
+        } else {
+            return $this->belongsTo('App\Customer');
+        }
+    }   
+
     public function company() {
         return $this->belongsTo('Solunes\Business\App\Company');
     }   

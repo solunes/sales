@@ -82,6 +82,7 @@ class NodesSales extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
+            $table->integer('customer_id')->nullable();
             $table->integer('agency_id')->unsigned();
             if(config('sales.company_relation')){
                 $table->integer('company_id')->nullable();
