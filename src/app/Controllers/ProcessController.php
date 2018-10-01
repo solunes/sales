@@ -75,7 +75,10 @@ class ProcessController extends Controller {
           }
         }
         if(config('sales.custom_add_cart_detail')){
-          $detail .= ' | Detalle: '.\CustomFunc::checkCustomAddCartDetail($product, $request);
+          $custom_detail = \CustomFunc::checkCustomAddCartDetail($product, $request);
+          if($custom_detail){
+            $detail .= ' | Detalle: '.;
+          }
         } else if($request->has('detail')){
           $detail .= ' | Detalle: '.$request->input('detail');
         }
