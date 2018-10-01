@@ -42,13 +42,18 @@ class ProcessController extends Controller {
   /* Ruta POST para añadir un carro de compras. Cantidad: Definida en input */
   public function postAddCartItem(Request $request) {
     if($product = \Solunes\Business\App\ProductBridge::find($request->input('product_id'))){
+      if(config('sales.custom_add_cart')){
+        if(!\CustomFunc::checkCustomAddCart($product, $request)){
+          return redirect($this->prev)->with('message_error', 'Hubo un error al agregar su producto.');
+        }
+      }
       if($request->input('quantity')>0){
         $cart = \Sales::get_cart();
         $detail = NULL;
         $count = 0;
         $custom_price = $product->real_price;
         foreach($product->product_bridge_variation as $product_bridge_variation){
-          if($request->has('variation_'.$product_bridge_variation->id)){
+          if($request->has('variation_'.$product_bridge_variation->id)&&$request->input('variation_'.$product_bridge_variation->id)!=0){
             $count++;
             if($count>1){
               $detail .= ' | ';
@@ -65,9 +70,13 @@ class ProcessController extends Controller {
               $detail .= $option->name.' ';
               $custom_price += $option->extra_price;
             }
+          } else if($product_bridge_variation->optional==0){
+            return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
           }
         }
-        if($request->has('detail')){
+        if(config('sales.custom_add_cart_detail')){
+          $detail .= ' | Detalle: '.\CustomFunc::checkCustomAddCartDetail($product, $request);
+        } else if($request->has('detail')){
           $detail .= ' | Detalle: '.$request->input('detail');
         }
         \Sales::add_cart_item($cart, $product, $request->input('quantity'), $detail, $custom_price);
