@@ -263,7 +263,11 @@ class ProcessController extends Controller {
       }
 
       // User
-      $user = \Sales::userRegistration($request);
+      if(config('solunes.customer')){
+        $user = \Sales::customerRegistration($request);
+      } else {
+        $user = \Sales::userRegistration($request);
+      }
       if(is_string($user)){
         return redirect($this->prev)->with('message_error', 'Hubo un error al finalizar su registro: '.$user);
       }

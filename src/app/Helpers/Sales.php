@@ -143,4 +143,80 @@ class Sales {
       return $user;
     }
 
+    public static function customerRegistration($request) {
+      $new_user = false;
+      $user = NULL;
+      if(\Auth::check()) {
+        $user = \Auth::user();
+        $customer = $user->customer;
+        if(!$customer){
+          return 'Su usuario no tiene un cliente asociado.';
+        }
+      } else {
+        $new_user = true;
+        if(config('solunes.customer')&&config('customer.api_slave')){
+          $external_response = \Customer::checkExternalCustomerByParameters($request);
+        } else {
+          $external_response = false;
+        }
+        if(config('sales.sales_email')&&\Solunes\Customer\App\Customer::where('email', $request->input('email'))->first()&&$external_response)){
+          return 'El correo introducido ya fue registrado.';
+        }
+        if(config('sales.sales_cellphone')&&\Solunes\Customer\App\Customer::where('phone', $request->input('cellphone'))->first()&&$external_response){
+          return 'El teléfono introducido ya fue registrado.';
+        }
+        if(config('sales.sales_username')&&\Solunes\Customer\App\Customer::where('ci_number', $request->input('username'))->first()&&$external_response){
+          return 'El carnet de identidad ya fue registrado.';
+        }
+        $first_name = $request->input('first_name');
+        $last_name = $request->input('last_name');
+        $external_id = NULL;
+        if(config('solunes.customer')&&config('customer.api_slave')){
+          $external_id = \Customer::registerExternalCustomer($request);
+        }
+        $customer = new \Solunes\Customer\App\Customer;
+        $customer->name = $first_name.' '.$last_name;
+        if(config('sales.sales_email')){
+          $customer->email = $request->input('email');
+        } else {
+          $customer->email = rand(10000000000,99999999999).'@noemail.com';
+        }
+        if(config('sales.sales_cellphone')){
+          $customer->phone = $request->input('cellphone');
+        }
+        if(config('sales.sales_username')){
+          $customer->ci_number = $request->input('username');
+        }
+        $customer->first_name = $first_name;
+        $customer->last_name = $last_name;
+        $customer->password = $request->input('password');
+      }
+      if(config('sales.delivery')){
+        if(config('sales.delivery_city')){
+          $city = \Solunes\Business\App\City::find($request->input('city_id'));
+          $customer->city_id = $city->id;
+          $customer->city_other = $request->input('city_other');
+        }
+        if(config('sales.ask_address')){
+          $customer->address = $request->input('address');
+          $customer->address_extra = $request->input('address_extra');
+        }
+        if(config('sales.ask_coordinates')){
+          $customer->latitude = $request->input('latitude');
+          $customer->longitude = $request->input('longitude');
+        }
+      }
+      if(config('sales.ask_invoice')){
+        $customer->nit_number = $request->input('nit_number');
+        $customer->nit_name = $request->input('nit_social');
+      }
+      $customer->external_id = $external_id;
+      $customer->save();
+      if($new_user){
+        $user = $customer->user;
+        \Auth::loginUsingId($user->id);
+      }
+      return $user;
+    }
+
 }
