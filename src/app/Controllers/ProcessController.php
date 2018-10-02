@@ -276,7 +276,8 @@ class ProcessController extends Controller {
 
       // User
       if(config('solunes.customer')){
-        $user = \Sales::customerRegistration($request);
+        $customer = \Sales::customerRegistration($request);
+        $user = $customer;
       } else {
         $user = \Sales::userRegistration($request);
       }
@@ -290,6 +291,9 @@ class ProcessController extends Controller {
       $currency = \Solunes\Business\App\Currency::find(1); // Parametrizar tienda en config
       $sale = new \Solunes\Sales\App\Sale;
       $sale->user_id = $user->id;
+      if($customer){
+        $sale->customer_id = $customer->id;
+      }
       $sale->agency_id = $agency->id;
       $sale->currency_id = $currency->id;
       //$sale->order_amount = $order_cost;

@@ -210,13 +210,15 @@ class Sales {
         $customer->nit_number = $request->input('nit_number');
         $customer->nit_name = $request->input('nit_social');
       }
-      $customer->external_id = $external_id;
+      if(config('customer.api_slave')){
+        $customer->external_id = $external_id;
+      }
       $customer->save();
       if($new_user){
         $user = $customer->user;
         \Auth::loginUsingId($user->id);
       }
-      return $user;
+      return $customer;
     }
 
 }
