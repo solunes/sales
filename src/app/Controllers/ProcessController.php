@@ -186,14 +186,25 @@ class ProcessController extends Controller {
         $user = \Auth::user();
         $array['auth'] = true;
         $array['city_id'] = 1;
-        $array['address'] = $user->address;
-        $array['address_extra'] = $user->address_extra;
+        if('solunes.customer'){
+          $array['address'] = $user->customer->address;
+          $array['address_extra'] = $user->customer->address_extra;
+          $array['nit_number'] = $user->customer->nit_number;
+          $array['nit_social'] = $user->customer->nit_name;
+        } else {
+          $array['address'] = $user->address;
+          $array['address_extra'] = $user->address_extra;
+          $array['nit_number'] = $user->nit_number;
+          $array['nit_social'] = $user->nit_name;
+        }
       } else {
         session()->set('url.intended', url()->current());
         $array['auth'] = false;
         $array['city_id'] = 1;
         $array['address'] = NULL;
         $array['address_extra'] = NULL;
+        $array['nit_number'] = NULL;
+        $array['nit_social'] = NULL;
       }
       $array['cart'] = $cart;
       $array['cities'] = \Solunes\Business\App\City::get()->lists('name','id')->toArray();
@@ -277,8 +288,9 @@ class ProcessController extends Controller {
       // User
       if(config('solunes.customer')){
         $customer = \Sales::customerRegistration($request);
-        $user = $customer;
+        $user = $customer->user;
       } else {
+        $customer = NULL;
         $user = \Sales::userRegistration($request);
       }
       if(is_string($user)){

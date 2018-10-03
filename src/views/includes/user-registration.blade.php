@@ -72,13 +72,13 @@
   <div class="col-md-6">
     <div class="checkout-form-list">
       <label>Número de NIT <span class="required">*</span></label>                   
-      {!! Form::text('nit_number', NULL, ['spellcheck'=>'false','placeholder'=>'Número de NIT']) !!}
+      {!! Form::text('nit_number', $nit_number, ['spellcheck'=>'false','placeholder'=>'Número de NIT']) !!}
     </div>
   </div>
   <div class="col-md-6">
     <div class="checkout-form-list">
       <label>Razón Social <span class="required">*</span></label>                   
-      {!! Form::text('nit_social', NULL, ['spellcheck'=>'false','placeholder'=>'Razón Social']) !!}
+      {!! Form::text('nit_social', $nit_social, ['spellcheck'=>'false','placeholder'=>'Razón Social']) !!}
     </div>
   </div>
 @endif

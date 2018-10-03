@@ -6,7 +6,7 @@
       <div class="col-md-9 col-sm-7 col-xs-12">
         <div class="buttons-cart">
           <input type="submit" value="Actualizar Carro">
-          <a href="{{ url('productos') }}">Seguir comprando</a>
+          <a href="{{ url(config('business.products_page')) }}">Seguir comprando</a>
         </div>
       </div>
       <div class="col-md-3 col-sm-5 col-xs-12">
