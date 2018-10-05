@@ -151,7 +151,27 @@ class Sales {
         $user = \Auth::user();
         $customer = $user->customer;
         if(!$customer){
-          return 'Su usuario no tiene un cliente asociado.';
+          $name = \External::reduceName($user->name);
+          $customer = new \Solunes\Customer\App\Customer;
+          $customer->user_id = $user->id;
+          $customer->email = $user->email;
+          $customer->ci_number = $user->username;
+          $customer->cellphone = $user->cellphone;
+          $customer->email = $user->email;
+          $customer->first_name = $name['first_name'];
+          $customer->last_name = $name['last_name'];
+          $customer->nit_number = $customer->ci_number;
+          $customer->nit_name = $name['last_name'];
+          if($user->city_id){
+            $customer->city_id = $user->city_id;
+          } else {
+            if($first_city = \Solunes\Business\App\City::first()){
+              $customer->city_id = $first_city->id;
+              $user->city_id = $first_city->id;
+            }
+          }
+          $user->save();
+          $customer->save();
         }
       } else {
         $new_user = true;
