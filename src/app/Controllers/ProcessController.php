@@ -186,7 +186,7 @@ class ProcessController extends Controller {
         $user = \Auth::user();
         $array['auth'] = true;
         $array['city_id'] = 1;
-        if('solunes.customer'){
+        if('solunes.customer'&&$user->customer){
           $array['address'] = $user->customer->address;
           $array['address_extra'] = $user->customer->address_extra;
           $array['nit_number'] = $user->customer->nit_number;
