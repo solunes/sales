@@ -4,7 +4,11 @@ namespace Solunes\Sales\App\Helpers;
 
 class Sales {
     public static function get_cart() {
-        if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->with('cart_items','cart_items.product_bridge')->first()){
+        if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->where('status','holding')->with('cart_items','cart_items.product_bridge')->first()){
+          if($cart->session_id!=session()->getId()){
+            $cart->session_id = session()->getId();
+            $cart->save();
+          }
           $cart->touch();
         } else {
           $cart = new \Solunes\Sales\App\Cart;
@@ -172,6 +176,7 @@ class Sales {
           }
           $user->save();
           $customer->save();
+          $user->load('customer');
         }
       } else {
         $new_user = true;
