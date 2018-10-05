@@ -85,6 +85,24 @@
   </div>  
   <div class="col-lg-6 col-md-6">
     @if(!$auth)
+      @if(config('solunes.socialite'))
+      <h3>VÍA REDES SOCIALES</h3>
+      <div class="store-form left">
+        <p>Si deseas, puedes registrar tu cuenta con nuestras redes sociales:</p>
+        @if(config('solunes.socialite_google'))
+          <a href="{{ url('/auth/google') }}" class="auth-btn auth-btn-google"><button class="btn btn-site"><i class="fa fa-google"></i> Google Plus</button></a>
+        @endif
+        @if(config('solunes.socialite_facebook'))
+          <a href="{{ url('/auth/facebook') }}" class="auth-btn auth-btn-facebook"><button class="btn btn-site"><i class="fa fa-facebook"></i> Facebook</button></a>
+        @endif
+        @if(config('solunes.socialite_twitter'))
+          <a href="{{ url('/auth/twitter') }}" class="auth-btn auth-btn-twitter"><button class="btn btn-site"><i class="fa fa-twitter"></i> Twitter</button></a>
+        @endif
+        @if(config('solunes.socialite_github'))
+          <a href="{{ url('/auth/github') }}" class="auth-btn auth-btn-github"><button class="btn btn-site"><i class="fa fa-github"></i> GitHub</button></a>
+        @endif
+      </div>
+      @endif
       <h3>INICIAR SESIÓN</h3>
       <div class="store-form">
         <p>Si ya tiene una cuenta de usuario, inicie sesión con su usuario y contraseña. Si no recuerda su contraseña, puede <a href="{{ url('') }}">recuperarla aquí</a>.</p>
