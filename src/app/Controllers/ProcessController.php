@@ -325,7 +325,7 @@ class ProcessController extends Controller {
       // Sale Payment
       $sale_payment = new \Solunes\Sales\App\SalePayment;
       $sale_payment->parent_id = $sale->id;
-      $sale_payment->payment_id = $request->input('payment_id');
+      $sale_payment->payment_method_id = $request->input('payment_method_id');
       $sale_payment->currency_id = $currency->id;
       $sale_payment->exchange = $currency->main_exchange;
       $sale_payment->amount = $total_cost;

@@ -136,6 +136,7 @@ class NodesSales extends Migration
             $table->integer('parent_id')->unsigned();
             $table->integer('currency_id')->unsigned();
             $table->integer('payment_id')->nullable();
+            $table->integer('payment_method_id')->nullable();
             $table->decimal('amount', 10, 2)->default(0);
             $table->decimal('pending_amount', 10, 2)->default(0);
             $table->enum('status', ['holding','to-pay','paid','accounted','frozen','cancelled'])->nullable()->default('holding');

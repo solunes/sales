@@ -20,12 +20,12 @@
       @endforeach
     @endif
     <h3>MÉTODO DE PAGO</h3>
-    @foreach($sale_payments as $payment)
+    @foreach($sale_payments as $sale_payment)
       <div class="store-form">           
-        <h4>{{ mb_strtoupper($payment->payment->name, 'UTF-8') }}</h4>
-        {!! $payment->payment->content !!}
+        <h4>{{ mb_strtoupper($sale_payment->payment_method->name, 'UTF-8') }}</h4>
+        {!! $sale_payment->payment_method->content !!}
       </div>
-      @include('payments::includes.sp-'.$payment->payment->code)
+      @include('payments::includes.sp-'.$sale_payment->payment_method->code)
     @endforeach
   </div>  
 </div>

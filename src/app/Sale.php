@@ -27,7 +27,7 @@ class Sale extends Model {
         'nit_number'=>'required',
         'nit_social'=>'required',
         'shipping_id'=>'required',
-        'payment_id'=>'required',
+        'payment_method_id'=>'required',
         'password'=>'required',
     );
 
@@ -38,7 +38,7 @@ class Sale extends Model {
         'nit_number'=>'required',
         'nit_social'=>'required',
         'shipping_id'=>'required',
-        'payment_id'=>'required',
+        'payment_method_id'=>'required',
     );
 
 	/* Creating rules */

@@ -43,10 +43,10 @@ class Sales {
         return $cart_item;
     }
 
-    public static function register_sale_payment($sale, $payment_id, $currency_id, $status, $amount, $detail, $exchange = 1) {
+    public static function register_sale_payment($sale, $payment_method_id, $currency_id, $status, $amount, $detail, $exchange = 1) {
         $sale_payment = new \Solunes\Sales\App\SalePayment;
         $sale_payment->parent_id = $sale->id;
-        $sale_payment->payment_id = $payment_id;
+        $sale_payment->payment_method_id = $payment_method_id;
         $sale_payment->currency_id = $currency_id;
         $sale_payment->status = $status;
         $sale_payment->amount = $amount;
@@ -70,19 +70,6 @@ class Sales {
             $new_shipping_id = 2;
             return ['shipping'=>false, 'shipping_cost'=>0, 'new_shipping_id'=>$new_shipping_id];
         }
-    }
-
-    public static function create_sale_payment($payment, $sale, $amount, $detail) {
-        $sale_payment = new \Solunes\Sales\App\SalePayment;
-        $sale_payment->parent_id = $sale->id;
-        $sale_payment->payment_id = $payment->id;
-        $sale_payment->currency_id = $sale->currency_id;
-        $sale_payment->exchange = $sale->exchange;
-        $sale_payment->amount = $amount;
-        $sale_payment->pending_amount = $amount;
-        $sale_payment->detail = $detail;
-        $sale_payment->save();
-        return $sale_payment;
     }
 
     public static function userRegistration($request) {
