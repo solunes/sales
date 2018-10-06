@@ -22,6 +22,7 @@ return [
     'content' => 'Contenido',
     'created_at' => 'Fecha de Creación',
     'currency' => 'Moneda',
+    'customer' => 'Cliente',
     'description' => 'Descripción',
     'detail' => 'Detalle',
     'due_date' => 'Fecha de Vencimiento',

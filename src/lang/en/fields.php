@@ -22,6 +22,7 @@ return [
     'content' => 'Content',
     'created_at' => 'Created At',
     'currency' => 'Currency',
+    'customer' => 'Customer',
     'description' => 'Description',
     'detail' => 'Detail',
     'due_date' => 'Due Date',
