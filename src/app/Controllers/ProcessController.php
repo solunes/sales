@@ -185,7 +185,7 @@ class ProcessController extends Controller {
       if(\Auth::check()){
         $user = \Auth::user();
         $array['auth'] = true;
-        $array['city_id'] = 1;
+        $array['city_id'] = config('sales.default_city');
         if('solunes.customer'&&$user->customer){
           $array['address'] = $user->customer->address;
           $array['address_extra'] = $user->customer->address_extra;
@@ -200,7 +200,7 @@ class ProcessController extends Controller {
       } else {
         session()->set('url.intended', url()->current());
         $array['auth'] = false;
-        $array['city_id'] = 1;
+        $array['city_id'] = config('sales.default_city');
         $array['address'] = NULL;
         $array['address_extra'] = NULL;
         $array['nit_number'] = NULL;

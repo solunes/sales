@@ -8,6 +8,7 @@ return [
 	'delivery' => false,
 	'delivery_country' => false,
 	'delivery_city' => false,
+	'default_city' => 1,
 	'ask_address' => false,
 	'ask_coordinates' => false,
 	'seed_shipping' => false,

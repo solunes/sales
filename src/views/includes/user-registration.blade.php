@@ -11,6 +11,8 @@
       {!! Form::text('city_other', NULL) !!}
     </div>
   </div>
+@else
+  {!! Form::hidden('city_id', config('sales.default_city'), ['id'=>'city_id', 'class'=>'query_shipping']) !!}
 @endif
 @if(!$auth)
   <div class="col-md-6">
