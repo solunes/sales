@@ -51,4 +51,24 @@
     });
   @endif
 
+  @if(config('sales.delivery')&&count($shipping_descriptions)>1)
+    @foreach($shipping_descriptions as $key => $shipping)
+      $('#accordion-shipping #collapse-shipping-{{ $key }}').on('show.bs.collapse', function () {
+        $('.shipping-active-icon').css({opacity:0});
+        $('#heading{{ $key }} .shipping-active-icon').css({opacity:1});
+        var shipping_id = $('#shipping_id').val({{ $shipping->id }});
+      })
+    @endforeach
+  @endif
+
+  @if(count($payment_descriptions)>1)
+    @foreach($payment_descriptions as $key => $payment)
+      $('#accordion-payment #collapse-payment-{{ $key }}').on('show.bs.collapse', function () {
+        $('.payment-active-icon').css({opacity:0});
+        $('#collapse-payment-{{ $key }} .payment-active-icon').css({opacity:1});
+        var payment_id = $('#payment_id').val({{ $payment->id }});
+      })
+    @endforeach
+  @endif
+  
 </script>

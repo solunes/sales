@@ -48,7 +48,7 @@
               @foreach($shipping_descriptions as $key => $shipping)
                 <div class="panel panel-default">
                   <div class="panel-heading" role="tab" id="heading{{ $key }}"><h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#accordion-shipping" href="#collapse-shipping-{{ $key }}" aria-expanded="true" aria-controls="collapse{{ $key }}">{{ $shipping->name }}</a>
+                    <a role="button" data-toggle="collapse" data-parent="#accordion-shipping" href="#collapse-shipping-{{ $key }}" aria-expanded="true" aria-controls="collapse{{ $key }}"><span class="shipping-active-icon fa fa-star" @if($key>0) style="opacity: 0" @endif ></span> {{ $shipping->name }}</a>
                   </h4></div>
                   <div id="collapse-shipping-{{ $key }}" class="panel-collapse collapse @if($key==0) in @endif " role="tabpanel" aria-labelledby="heading{{ $key }}">
                     <div class="panel-body">{!! $shipping->content !!}</div>
@@ -68,7 +68,7 @@
               @foreach($payment_descriptions as $key => $payment)
                 <div class="panel panel-default">
                   <div class="panel-heading" role="tab" id="heading{{ $key }}"><h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#accordion-payment" href="#collapse-payment-{{ $key }}" aria-expanded="true" aria-controls="collapse{{ $key }}">{{ $payment->name }}</a>
+                    <a role="button" data-toggle="collapse" data-parent="#accordion-payment" href="#collapse-payment-{{ $key }}" aria-expanded="true" aria-controls="collapse{{ $key }}"><span class="payment-active-icon fa fa-star" @if($key>0) style="opacity: 0" @endif ></span> {{ $payment->name }}</a>
                   </h4></div>
                   <div id="collapse-payment-{{ $key }}" class="panel-collapse collapse @if($key==0) in @endif " role="tabpanel" aria-labelledby="heading{{ $key }}">
                     <div class="panel-body">{!! $payment->content !!}</div>
