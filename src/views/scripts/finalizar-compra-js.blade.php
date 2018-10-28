@@ -13,6 +13,8 @@
           $(".total_cost").html(total_cost);
         } else {
           var shipping_id = $('#shipping_id').val(data.new_shipping_id);
+          $('#accordion-shipping .panel-collapse.in').removeClass('in');
+          $('#accordion-shipping #collapse-shipping-'+$(this).val()).collapse('show');
           queryShipping();
           alert('No se puede realizar un envío a esa ciudad por ese método de envío. Por lo tanto, le cambiamos a Unibol Courier.');
         }

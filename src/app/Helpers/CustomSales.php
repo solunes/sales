@@ -46,7 +46,7 @@ class CustomSales {
     }
 
     public static function after_login($user, $last_session, $redirect) {
-        if($cart = \Solunes\Sales\App\Cart::where('session_id', $last_session)->checkCart()->first()){
+        if($cart = \Solunes\Sales\App\Cart::where('session_id', $last_session)->status('holding')->first()){
             $cart->session_id = session()->getId();
             $cart->user_id = $user->id;
             $cart->save();

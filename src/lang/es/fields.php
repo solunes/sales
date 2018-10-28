@@ -84,5 +84,6 @@ return [
     'postal_code' => 'Código Postal',
     'region' => 'Región',
     'region_other' => 'Otra Región',
+    'payment_method' => 'Método de Pago',
 
 ];

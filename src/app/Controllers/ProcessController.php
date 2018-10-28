@@ -134,7 +134,9 @@ class ProcessController extends Controller {
       $cart_item->product_bridge_id = $product->id;
       $cart_item->quantity = $request->input('quantity');
       $cart_item->price = $product->real_price;
-      $cart_item->weight = $product->weight;
+      if(config('sales.delivery')){
+        $cart_item->weight = $product->weight;
+      }
       $cart_item->save();
 
       return redirect('process/finalizar-compra/'.$cart->id)->with('message_success', 'Ahora puede confirmar los datos de su pedido.');
@@ -211,6 +213,8 @@ class ProcessController extends Controller {
       if(config('sales.delivery')){
         $array['shipping_options'] = \Solunes\Sales\App\Shipping::active()->order()->lists('name','id');
         $array['shipping_descriptions'] = \Solunes\Sales\App\Shipping::active()->order()->get();
+      } else {
+        $array['shipping_options'] = [];
       }
       $array['payment_options'] = \Solunes\Payments\App\PaymentMethod::active()->order()->lists('name','id');
       $array['payment_descriptions'] = \Solunes\Payments\App\PaymentMethod::active()->order()->get();
