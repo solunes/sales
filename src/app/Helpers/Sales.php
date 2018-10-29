@@ -153,12 +153,14 @@ class Sales {
           $customer->last_name = $name['last_name'];
           $customer->nit_number = $customer->ci_number;
           $customer->nit_name = $name['last_name'];
-          if($user->city_id){
-            $customer->city_id = $user->city_id;
-          } else {
-            if($first_city = \Solunes\Business\App\City::first()){
-              $customer->city_id = $first_city->id;
-              $user->city_id = $first_city->id;
+          if(config('sales.delivery_city')){
+            if($user->city_id){
+              $customer->city_id = $user->city_id;
+            } else {
+              if($first_city = \Solunes\Business\App\City::first()){
+                $customer->city_id = $first_city->id;
+                $user->city_id = $first_city->id;
+              }
             }
           }
           $user->save();
