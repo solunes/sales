@@ -31,3 +31,8 @@ Route::group(['prefix'=>'process'], function(){
     Route::get('/sale/{id}', 'ProcessController@getSale')->middleware('auth');
     Route::post('/sp-bank-deposit', 'ProcessController@postSpBankDeposit');
 });
+Route::group(['prefix'=>'account'], function(){
+    // Rutas para Mi Historial y Carro Pendiente
+    Route::get('/sales-history/{token}', 'ProcessController@getMySalesHistory')->middleware('auth');
+    Route::get('/my-pending-carts/{token}', 'ProcessController@getMyPendingCarts')->middleware('auth');
+});

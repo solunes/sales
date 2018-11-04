@@ -442,4 +442,18 @@ class ProcessController extends Controller {
     }
   }
 
+  public function getMySalesHistory($token) {
+    $user = auth()->user();
+    $array['page'] = \Solunes\Master\App\Page::find(1);
+    $array['user'] = $user;
+    return view('sales::process.sales-history', $array);
+  }
+
+  public function getMyPendingCarts($token) {
+    $user = auth()->user();
+    $array['page'] = \Solunes\Master\App\Page::find(1);
+    $array['user'] = $user;
+    return view('sales::process.pending-carts', $array);
+  }
+
 }

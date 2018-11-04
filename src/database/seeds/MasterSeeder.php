@@ -57,6 +57,23 @@ class MasterSeeder extends Seeder {
                 \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_unibol->id,'city_id'=>13,'shipping_days'=>3,'shipping_cost'=>35,'shipping_cost_extra'=>20]);
             }
 
+            if(config('sales.ocs')){
+                $shipping_ocs = \Solunes\Sales\App\Shipping::create(['name'=>'Overseas Courier Service','city_id'=>1,'content'=>'<p>OCS realiza envíos a todo el país entre 1 día y 4 días después de realizar el pedido, dependiendo a que ciudad o provincia vaya destinado. Se tienen costos distintos según peso y ciudad.</p>']);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>1,'shipping_days'=>1,'shipping_cost'=>5,'shipping_cost_extra'=>5]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>2,'shipping_days'=>1,'shipping_cost'=>10,'shipping_cost_extra'=>10]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>3,'shipping_days'=>1,'shipping_cost'=>18,'shipping_cost_extra'=>15]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>4,'shipping_days'=>1,'shipping_cost'=>18,'shipping_cost_extra'=>15]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>5,'shipping_days'=>1,'shipping_cost'=>15,'shipping_cost_extra'=>15]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>6,'shipping_days'=>1,'shipping_cost'=>15,'shipping_cost_extra'=>15]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>7,'shipping_days'=>2,'shipping_cost'=>15,'shipping_cost_extra'=>15]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>8,'shipping_days'=>1,'shipping_cost'=>15,'shipping_cost_extra'=>15]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>9,'shipping_days'=>3,'shipping_cost'=>15,'shipping_cost_extra'=>15]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>10,'shipping_days'=>2,'shipping_cost'=>15,'shipping_cost_extra'=>15]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>11,'shipping_days'=>3,'shipping_cost'=>25,'shipping_cost_extra'=>20]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>12,'shipping_days'=>3,'shipping_cost'=>30,'shipping_cost_extra'=>25]);
+                \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_ocs->id,'city_id'=>13,'shipping_days'=>4,'shipping_cost'=>40,'shipping_cost_extra'=>25]);
+            }
+
             if(config('sales.dhl')){
                 $shipping_dhl = \Solunes\Sales\App\Shipping::create(['name'=>'DHL','city_id'=>1,'content'=>'<p>Puede realizar envíos a cualquier país del mundo por DHL.</p>']);
                 \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_dhl->id,'city_id'=>1,'shipping_days'=>20,'shipping_cost'=>50,'shipping_cost_extra'=>30]);

@@ -27,6 +27,7 @@ return [
 	// ACTIVE SHIPPING METHODS
 	'own-office' => false,
 	'unibol' => false,
+	'ocs' => false,
 	'dhl' => false,
 	
 	// CUSTOM SALES
