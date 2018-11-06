@@ -29,6 +29,7 @@ Route::group(['prefix'=>'process'], function(){
     Route::post('/finish-sale', 'ProcessController@postFinishSale');
     // Rutas para Revisar Compra Finalizada
     Route::get('/sale/{id}', 'ProcessController@getSale')->middleware('auth');
+    Route::post('/sale-update-nit', 'ProcessController@postSaleUpdateNit')->middleware('auth');
     Route::post('/sp-bank-deposit', 'ProcessController@postSpBankDeposit');
 });
 Route::group(['prefix'=>'account'], function(){

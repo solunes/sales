@@ -418,6 +418,27 @@ class ProcessController extends Controller {
     }
   }
 
+  /* Ruta POST para editar una venta pendiente */
+  public function postSaleUpdateNit(Request $request) {
+    $sale_id = $request->input('sale_id');
+    $save_for_all = $request->input('save_for_all');
+    if($request->has('nit_social')&&$request->has('nit_number')&&$sale = \Solunes\Sales\App\Sale::findId($sale_id)->checkOwner()->first()){
+      $sale->nit_social = $request->input('nit_social');
+      $sale->nit_number = $request->input('nit_number');
+      $sale->save();
+      $user = auth()->user();
+      $customer = $user->customer;
+      if($customer&&$save_for_all){
+        $customer->nit_social = $request->input('nit_social');
+        $customer->nit_number = $request->input('nit_number');
+        $customer->save();
+      }
+      return redirect($this->prev)->with('message_success', 'Sus datos fueron actualizados correctamente.');
+    } else {
+      return redirect($this->prev)->with('message_error', 'Debe llenar sus datos de facturación.');
+    }
+  }
+
   /* Ruta POST para deposito bancario */
   public function postSpBankDeposit(Request $request) {
     $sale_id = $request->input('sale_id');
