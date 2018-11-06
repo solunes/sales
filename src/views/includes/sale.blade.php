@@ -12,32 +12,34 @@
   <div class="col-lg-6 col-md-6">
     @if(config('sales.ask_invoice'))
       <h3>DATOS PARA FACTURA</h3>
-      <form action="{{ url('process/sale-update-nit') }}" method="post">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="checkout-form-list">
-              <label>Razón Social</label>                   
-              {!! Form::text('nit_social', $sale->invoice_name) !!}
+      <div class="store-form">           
+        <form action="{{ url('process/sale-update-nit') }}" method="post">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="checkout-form-list">
+                <label>Razón Social</label>                   
+                {!! Form::text('nit_social', $sale->invoice_name) !!}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="checkout-form-list">
+                <label>Número de NIT</label>                    
+                {!! Form::text('nit_number', $sale->invoice_nit) !!}
+              </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="checkout-form-list">
-              <label>Número de NIT</label>                    
-              {!! Form::text('nit_number', $sale->invoice_nit) !!}
+          <div class="row">
+            <div class="col-md-6 right" style="margin-top: 7px;">
+              <label>¿Guardar para futuras compras?</label>                    
+            </div>
+            <div class="col-md-6">
+              {!! Form::select('save_for_all', ['1'=>'Si','0'=>'No'], '1') !!}
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="checkout-form-list">
-              <label>¿Desea guardar estos datos para futuras compras?</label>                    
-              {!! Form::checkbox('save_for_all', 'true', true) !!}
-            </div>
-          </div>
-        </div>
-        {!! Form::hidden('sale_id', $sale->id) !!}
-        <input class="btn btn-site" type="submit" value="ACTUALIZAR DATOS">
-      </form>
+          {!! Form::hidden('sale_id', $sale->id) !!}
+          <input class="btn btn-site" type="submit" value="ACTUALIZAR DATOS">
+        </form>
+      </div>
     @endif
     @if(config('sales.delivery'))
       <h3>MÉTODO DE ENVÍO</h3>

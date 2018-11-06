@@ -428,7 +428,7 @@ class ProcessController extends Controller {
       $sale->save();
       $user = auth()->user();
       $customer = $user->customer;
-      if($customer&&$save_for_all){
+      if($customer&&$save_for_all=='1'){
         $customer->nit_social = $request->input('nit_social');
         $customer->nit_number = $request->input('nit_number');
         $customer->save();
