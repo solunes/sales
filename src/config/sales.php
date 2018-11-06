@@ -16,6 +16,7 @@ return [
 	'sales_cellphone' => true,
 	'sales_username' => false,
 	'ask_invoice' => true,
+	'sale_edit_invoice' => true,
 	'credit' => false,
 	'refunds' => false,
 	'company_relation' => false,

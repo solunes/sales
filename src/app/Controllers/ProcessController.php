@@ -422,15 +422,15 @@ class ProcessController extends Controller {
   public function postSaleUpdateNit(Request $request) {
     $sale_id = $request->input('sale_id');
     $save_for_all = $request->input('save_for_all');
-    if($request->has('nit_social')&&$request->has('nit_number')&&$sale = \Solunes\Sales\App\Sale::findId($sale_id)->checkOwner()->first()){
-      $sale->nit_social = $request->input('nit_social');
-      $sale->nit_number = $request->input('nit_number');
+    if($request->has('invoice_name')&&$request->has('invoice_nit')&&$sale = \Solunes\Sales\App\Sale::findId($sale_id)->checkOwner()->first()){
+      $sale->invoice_name = $request->input('invoice_name');
+      $sale->invoice_nit = $request->input('invoice_nit');
       $sale->save();
       $user = auth()->user();
       $customer = $user->customer;
       if($customer&&$save_for_all=='1'){
-        $customer->nit_social = $request->input('nit_social');
-        $customer->nit_number = $request->input('nit_number');
+        $customer->nit_name = $request->input('invoice_name');
+        $customer->nit_number = $request->input('invoice_nit');
         $customer->save();
       }
       return redirect($this->prev)->with('message_success', 'Sus datos fueron actualizados correctamente.');

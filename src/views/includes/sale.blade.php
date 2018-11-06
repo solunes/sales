@@ -10,7 +10,7 @@
   </div>  
 
   <div class="col-lg-6 col-md-6">
-    @if(config('sales.ask_invoice'))
+    @if(config('sales.ask_invoice')&&config('sales.sale_edit_invoice'))
       <h3>DATOS PARA FACTURA</h3>
       <div class="store-form">           
         <form action="{{ url('process/sale-update-nit') }}" method="post">
@@ -18,13 +18,13 @@
             <div class="col-md-6">
               <div class="checkout-form-list">
                 <label>Razón Social</label>                   
-                {!! Form::text('nit_social', $sale->invoice_name) !!}
+                {!! Form::text('invoice_name', $sale->invoice_name) !!}
               </div>
             </div>
             <div class="col-md-6">
               <div class="checkout-form-list">
                 <label>Número de NIT</label>                    
-                {!! Form::text('nit_number', $sale->invoice_nit) !!}
+                {!! Form::text('invoice_nit', $sale->invoice_nit) !!}
               </div>
             </div>
           </div>
