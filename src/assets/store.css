@@ -2,7 +2,11 @@
   /* Store: Table */
   /* Store: Form */
   /* Store: Cart */
-  /* Store: Finish Sale */ }
+  /* Store: Finish Sale */
+  /*=====MY ACCOUNT PAGE=====*/
+  /*=====MY PAYMENT HISTORY=====*/
+  /*=====CARTS PENDING=====*/
+  /*=====LOGIN PAGE=====*/ }
   .solunes-store h1 {
     font-size: 30px; }
   .solunes-store h3 {
@@ -286,3 +290,246 @@
     font-size: 24px;
     color: #333;
     font-weight: 700; }
+  .solunes-store .account-profile .profile-actual {
+    text-align: left;
+    padding: 20px; }
+    .solunes-store .account-profile .profile-actual .profile-picture img {
+      border-radius: 20px; }
+    .solunes-store .account-profile .profile-actual .profile-description {
+      padding: 20px 0; }
+      .solunes-store .account-profile .profile-actual .profile-description h2 {
+        font-size: 1.5rem;
+        text-align: center;
+        margin: 0 0 20px;
+        color: #4c99bf; }
+      .solunes-store .account-profile .profile-actual .profile-description .p_title {
+        font-weight: 600; }
+      .solunes-store .account-profile .profile-actual .profile-description p {
+        font-weight: 100;
+        margin: 0 0 15px;
+        font-size: 1rem;
+        line-height: 1.3rem; }
+  .solunes-store .account-profile .edit-profile {
+    text-align: left;
+    padding: 20px;
+    padding-left: 40px; }
+    .solunes-store .account-profile .edit-profile h2 {
+      font-size: 1.5rem;
+      text-align: center;
+      margin: 0 0 20px;
+      color: #4c99bf; }
+    .solunes-store .account-profile .edit-profile p {
+      font-weight: 100;
+      margin: 0 0 10px;
+      font-size: 1rem; }
+    .solunes-store .account-profile .edit-profile h5 {
+      font-size: 1.2rem;
+      margin: 0 0 20px;
+      font-weight: 700; }
+    .solunes-store .account-profile .edit-profile .form-section {
+      padding-top: 10px; }
+      .solunes-store .account-profile .edit-profile .form-section label {
+        margin-bottom: 15px; }
+      .solunes-store .account-profile .edit-profile .form-section select {
+        vertical-align: middle;
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; }
+    .solunes-store .account-profile .edit-profile hr {
+      border-color: #d8d8d8; }
+    .solunes-store .account-profile .edit-profile .btn {
+      background: #4c99bf;
+      color: #fff;
+      transition: all 0.5s ease; }
+    .solunes-store .account-profile .edit-profile .btn:hover {
+      background: #131630; }
+  .solunes-store .payment-history .payment-table {
+    padding: 25px 0px; }
+    .solunes-store .payment-history .payment-table tr th {
+      padding: 20px 0px;
+      text-align: center;
+      color: #4c99bf; }
+    .solunes-store .payment-history .payment-table tr td.border-site {
+      border-left: 3px solid transparent; }
+    .solunes-store .payment-history .payment-table tr td {
+      padding: 20px 0px;
+      text-align: center;
+      color: #848484; }
+    .solunes-store .payment-history .payment-table tr td.icon-cell {
+      color: #4c99bf; }
+      .solunes-store .payment-history .payment-table tr td.icon-cell i {
+        color: #343a3c;
+        font-size: 1.3rem; }
+    .solunes-store .payment-history .payment-table tr.each {
+      transition: all .3s ease-in-out;
+      border-top: 1px solid #e2e2e2; }
+    .solunes-store .payment-history .payment-table tr.each:hover {
+      transform: scale(1.06);
+      background: #f9f9f9;
+      border-left: 3px solid #4c99bf;
+      opacity: 1;
+      box-shadow: 1px 1px 10px 0px #e0e0e0; }
+      .solunes-store .payment-history .payment-table tr.each:hover td.border-site {
+        border-color: #4c99bf !important; }
+      .solunes-store .payment-history .payment-table tr.each:hover td {
+        color: #333; }
+      .solunes-store .payment-history .payment-table tr.each:hover td.icon-cell {
+        color: #4c99bf; }
+        .solunes-store .payment-history .payment-table tr.each:hover td.icon-cell i {
+          color: #4c99bf; }
+  .solunes-store .cart-waiting {
+    padding: 30px 0px;
+    background: #f7f7f7; }
+    .solunes-store .cart-waiting .each_cart {
+      background: #fff;
+      padding: 30px 25px;
+      box-shadow: 0px 0px 7px 0px #b9b9b9; }
+      .solunes-store .cart-waiting .each_cart .title_cart p.status {
+        font-size: 0.8rem;
+        line-height: 1.4rem; }
+        .solunes-store .cart-waiting .each_cart .title_cart p.status span {
+          padding: 5px 7px;
+          color: #fff;
+          border-radius: 5px; }
+      .solunes-store .cart-waiting .each_cart .title_cart p.pending span {
+        background: #cc7c00; }
+      .solunes-store .cart-waiting .each_cart .title_cart p.delivered span {
+        background: #2ba904; }
+      .solunes-store .cart-waiting .each_cart .title_cart p.cancel span {
+        background: #c50202; }
+      .solunes-store .cart-waiting .each_cart .title_cart h5 {
+        font-size: 1.8rem;
+        text-align: right; }
+      .solunes-store .cart-waiting .each_cart .description_cart p {
+        font-size: 0.9rem;
+        margin-bottom: 14px; }
+        .solunes-store .cart-waiting .each_cart .description_cart p i {
+          color: #ffffff;
+          padding: 4px 6px;
+          background: #4c99bf;
+          font-size: 1.1rem;
+          border-radius: 50%;
+          margin-right: 8px; }
+      .solunes-store .cart-waiting .each_cart .products_cart img {
+        border: 1px solid rgba(193, 10, 40, 0.34118);
+        border-radius: 8px; }
+      .solunes-store .cart-waiting .each_cart .btn_contain {
+        margin-top: 1.8rem;
+        text-align: center; }
+        .solunes-store .cart-waiting .each_cart .btn_contain .view-btn {
+          background: #4c99bf;
+          color: #fff;
+          padding: 5px 20px;
+          font-size: 1rem;
+          border-radius: 4px;
+          transition: all 0.5s ease; }
+        .solunes-store .cart-waiting .each_cart .btn_contain .view-btn:hover {
+          padding: 5px 30px; }
+  .solunes-store .login_page .title p {
+    font-size: 1.5rem;
+    text-align: center;
+    margin: 0 0 20px;
+    color: #4c99bf;
+    font-weight: 700; }
+  .solunes-store .login_page .login-section {
+    padding: 3rem;
+    background: #fbfbfb;
+    box-shadow: 0 0 20px 7px #f1f1f1; }
+    .solunes-store .login_page .login-section .title {
+      padding-top: 0px;
+      margin-bottom: 20px; }
+    .solunes-store .login_page .login-section .letter-divider {
+      margin-top: 2rem;
+      margin-bottom: 1rem; }
+      .solunes-store .login_page .login-section .letter-divider p {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        text-align: center; }
+      .solunes-store .login_page .login-section .letter-divider p:after {
+        display: inline-block;
+        margin: 0 0 8px 20px;
+        height: 3px;
+        content: " ";
+        text-shadow: none;
+        background-color: #999;
+        width: 30px; }
+      .solunes-store .login_page .login-section .letter-divider p:before {
+        display: inline-block;
+        margin: 0 20px 8px 0;
+        height: 3px;
+        content: " ";
+        text-shadow: none;
+        background-color: #999;
+        width: 30px; }
+    .solunes-store .login_page .login-section .social_buttons {
+      text-align: center; }
+      .solunes-store .login_page .login-section .social_buttons p {
+        text-align: center;
+        margin-bottom: 1rem; }
+      .solunes-store .login_page .login-section .social_buttons .auth-btn .btn {
+        padding: 6px 18px; }
+      .solunes-store .login_page .login-section .social_buttons .auth-btn-google .btn {
+        background: #d34836 !important;
+        margin-right: 15px; }
+      .solunes-store .login_page .login-section .social_buttons .auth-btn-facebook .btn {
+        background: #3b5998 !important; }
+  .solunes-store .login_page .signup-section {
+    padding: 3rem; }
+    .solunes-store .login_page .signup-section .title {
+      padding-top: 0px; }
+  .solunes-store .login_page .checkout-form-list {
+    margin-bottom: 25px; }
+  .solunes-store .login_page input, .solunes-store .login_page select, .solunes-store .login_page textarea {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; }
+  .solunes-store .login_page label {
+    margin-bottom: 15px;
+    display: block; }
+  .solunes-store .login_page .btn {
+    display: inline-block;
+    background: #4c99bf;
+    color: #fff;
+    transition: all 0.5s ease;
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    width: auto; }
+  .solunes-store .login_page .btn:hover {
+    background: #131630; }
+  .solunes-store .login_page h5 {
+    font-size: 1.2rem;
+    margin: 0 0 20px;
+    font-weight: 700;
+    text-align: left;
+    color: #333; }
+  .solunes-store .login_page p.small-paragraph-spacing {
+    font-weight: 100;
+    margin: 0 0 10px;
+    font-size: 1rem;
+    text-align: left;
+    color: #333; }
