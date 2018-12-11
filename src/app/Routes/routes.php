@@ -22,7 +22,7 @@ Route::group(['prefix'=>'process'], function(){
     Route::get('/comprar-ahora/{slug}', 'ProcessController@getBuyNow');
     Route::post('/buy-now', 'ProcessController@postBuyNow');
     // Rutas para Confirmar Compra
-    Route::get('/confirmar-compra/{type}', 'ProcessController@getCheckCart');
+    Route::get('/confirmar-compra/{type}/{cart_id?}', 'ProcessController@getCheckCart');
     Route::post('/update-cart', 'ProcessController@postUpdateCart');
     // Rutas para Finalizar Compra
     Route::get('/finalizar-compra/{cart_id?}', 'ProcessController@getFinishSale');

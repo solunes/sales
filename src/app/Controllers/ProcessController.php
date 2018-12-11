@@ -146,8 +146,13 @@ class ProcessController extends Controller {
   }
 
   /* Ruta GET para revisar el carro de compras */
-  public function getCheckCart($type) {
-    if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->first()){
+  public function getCheckCart($type, $cart_id = NULL) {
+    if($cart_id){
+      $cart = \Solunes\Sales\App\Cart::where('id', $cart_id)->status('holding')->first();
+    } else {
+      $cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->first();
+    }
+    if($cart){
       $page = \Solunes\Master\App\Page::find(2);
       $view = 'process.confirmar-compra';
       if(!view()->exists($view)){
@@ -476,6 +481,7 @@ class ProcessController extends Controller {
     $array['page'] = \Solunes\Master\App\Page::find(1);
     $array['user'] = $user;
     $array['items'] = $user->pending_carts;
+    $array['sales'] = $user->holding_sales;
     return view('sales::process.pending-carts', $array);
   }
 
