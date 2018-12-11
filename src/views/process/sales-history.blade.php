@@ -32,8 +32,8 @@
                     <td>Bs. {{ $payment->amount }}</td>
                     <td class="icon-cell">
                       @foreach($payment->payment_invoices as $payment_invoice)
-                        <a href="{{ $payment_invoice->invoice_url }}">
-                          VER <i class="fa fa-plus-circle"></i>
+                        <a target="_blank" href="{{ $payment_invoice->invoice_url }}">
+                          ABRIR <i class="fa fa-plus-circle"></i>
                         </a>
                       @endforeach
                     </td>
