@@ -467,6 +467,7 @@ class ProcessController extends Controller {
     $user = auth()->user();
     $array['page'] = \Solunes\Master\App\Page::find(1);
     $array['user'] = $user;
+    $array['items'] = $user->successful_sales;
     return view('sales::process.sales-history', $array);
   }
 
@@ -474,6 +475,7 @@ class ProcessController extends Controller {
     $user = auth()->user();
     $array['page'] = \Solunes\Master\App\Page::find(1);
     $array['user'] = $user;
+    $array['items'] = $user->pending_carts;
     return view('sales::process.pending-carts', $array);
   }
 
