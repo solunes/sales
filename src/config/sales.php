@@ -21,6 +21,7 @@ return [
 	'refunds' => false,
 	'company_relation' => false,
 	'contact_relation' => false,
+	'redirect_to_payment' => false,
 	
 	// INTEGRATIONS
 	'solunes_project' => false,

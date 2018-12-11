@@ -396,10 +396,10 @@ class ProcessController extends Controller {
       $redirect = 'process/sale/'.$sale->id;
 
       // Revisar redirección a método de pago antes.
-      /*if(config('solunes.payments')){
-        $model = '\\'.$sale_payment->payment->model;
+      if(config('sales.redirect_to_payment')){
+        $model = '\\'.$sale_payment->payment_method->model;
         return \Payments::generateSalePayment($sale, $model, $redirect);
-      }*/
+      }
 
       return redirect($redirect)->with('message_success', 'Su compra fue confirmada correctamente, ahora debe proceder al pago para finalizarla.');
     } else {

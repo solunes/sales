@@ -137,7 +137,7 @@
           @include('sales::includes.user-registration', ['user_cart_registration'=>true,'cities'=>$cities,'city_id'=>$city_id,'auth'=>$auth,'address'=>$address,'address_extra'=>$address_extra,'shipping_options'=>$shipping_options,'payment_options'=>$payment_options])
           <div class="col-md-12">
             <input name="cart_id" type="hidden" value="{{ $cart->id }}">
-            <input class="btn btn-site" type="submit" value="FINALIZAR COMPRA">
+            <input class="btn btn-site" type="submit" value="FINALIZAR COMPRA @if(config('sales.redirect_to_payment')) Y REALIZAR PAGO @endif ">
           </div>
         </div>   
       </div>
