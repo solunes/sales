@@ -98,7 +98,7 @@ class NodesSales extends Migration
             $table->string('name')->nullable();
             $table->decimal('amount', 10, 2)->nullable();
             $table->decimal('paid_amount', 10, 2)->nullable();
-            $table->enum('status', ['holding','paid','accounted'])->nullable()->default('holding');
+            $table->enum('status', ['holding','paid','accounted','delivered'])->nullable()->default('holding');
             $table->boolean('invoice')->default(0);
             $table->string('invoice_name')->nullable();
             $table->string('invoice_nit')->nullable();
