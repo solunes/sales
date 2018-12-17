@@ -236,7 +236,7 @@ class Sales {
     }
 
     public static function sendConfirmationSaleEmail($sale, $customer) {
-      if(!config('sales.send_confirmation_purchase_email')){
+      if(config('sales.send_confirmation_purchase_email')){
         \Mail::send('sales::emails.successful-sale', ['sale'=>$sale, 'email'=>$customer['email']], function($m) use($customer) {
           if($customer['name']){
             $name = $customer['name'];

@@ -485,4 +485,16 @@ class ProcessController extends Controller {
     return view('sales::process.pending-carts', $array);
   }
 
+  /* Ruta GET probar el email de una venta */
+  public function getTestSuccessSale($sale_id) {
+    if(config('services.enable_test')){
+      $sale = \Solunes\Sales\App\Sale::find($sale_id);
+      $customer['email'] = 'edumejia30@gmail.com';
+      $customer['name'] = 'Eduardo Mejia';
+      \Func::sendConfirmationSaleEmail($sale, $customer);
+    } else {
+      return redirect('')->with('message_error', 'La prueba no pudo ser realizada.');
+    }
+  }
+
 }
