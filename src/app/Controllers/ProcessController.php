@@ -346,11 +346,6 @@ class ProcessController extends Controller {
       if(config('sales.delivery')){
         $shipping = \Solunes\Sales\App\Shipping::find($request->input('shipping_id'));
         if($shipping){
-          if($shipping_city = $shipping->shipping_cities()->where('city_id', $sale_delivery->city_id)->first()){
-            $delivery_time = $shipping_city->shipping_days;
-          } else {
-            $delivery_time = 1;
-          }
           $sale_delivery = new \Solunes\Sales\App\SaleDelivery;
           $sale_delivery->parent_id = $sale->id;
           $sale_delivery->shipping_id = $request->input('shipping_id');
@@ -375,6 +370,11 @@ class ProcessController extends Controller {
           $sale_delivery->phone = $user->cellphone;
           $sale_delivery->total_weight = $order_weight;
           $sale_delivery->shipping_cost = $shipping_cost;
+          if($shipping_city = $shipping->shipping_cities()->where('city_id', $sale_delivery->city_id)->first()){
+            $delivery_time = $shipping_city->shipping_days;
+          } else {
+            $delivery_time = 1;
+          }
           if($delivery_time==1){
             $sale_delivery->delivery_time = $delivery_time.' día';
           } else {
