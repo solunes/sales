@@ -491,7 +491,7 @@ class ProcessController extends Controller {
       $sale = \Solunes\Sales\App\Sale::find($sale_id);
       $customer['email'] = 'edumejia30@gmail.com';
       $customer['name'] = 'Eduardo Mejia';
-      \Func::sendConfirmationSaleEmail($sale, $customer);
+      \Sales::sendConfirmationSaleEmail($sale, $customer);
     } else {
       return redirect('')->with('message_error', 'La prueba no pudo ser realizada.');
     }
