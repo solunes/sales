@@ -22,6 +22,7 @@ return [
 	'company_relation' => false,
 	'contact_relation' => false,
 	'redirect_to_payment' => false,
+	'send_confirmation_purchase_email' => false,
 	
 	// INTEGRATIONS
 	'solunes_project' => false,

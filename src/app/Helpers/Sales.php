@@ -235,4 +235,17 @@ class Sales {
       return $customer;
     }
 
+    public static function sendConfirmationSaleEmail($sale, $customer) {
+      if(!config('sales.send_confirmation_purchase_email')){
+        \Mail::send('sales::emails.successful-sale', ['sale'=>$sale, 'email'=>$customer['email']], function($m) use($customer) {
+          if($customer['name']){
+            $name = $customer['name'];
+          } else {
+            $name = 'Cliente';
+          }
+          $m->to($customer['email'], $name)->subject(config('solunes.app_name').' | '.trans('sales::mail.successful_sale_title'));
+        });
+      }
+    }
+
 }
