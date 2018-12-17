@@ -11,7 +11,7 @@ Cart
 	<p style="font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">
 		{{ trans('sales::mail.successful_sale_content') }}
 	</p>
-	<p style="font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px; text-align: left; ">
+	<p style="font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">
 		Detalle de compra:
 		<?php $total = 0; ?>
 		@foreach($sale->sale_items as $sale_item)
