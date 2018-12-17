@@ -344,31 +344,44 @@ class ProcessController extends Controller {
 
       // Sale Delivery
       if(config('sales.delivery')){
-        $sale_delivery = new \Solunes\Sales\App\SaleDelivery;
-        $sale_delivery->parent_id = $sale->id;
-        $sale_delivery->shipping_id = $request->input('shipping_id');
-        $sale_delivery->currency_id = $sale->currency_id;
-        if(config('sales.delivery_city')){
-          $sale_delivery->region_id = $user->city->region_id;
-          $sale_delivery->city_id = $user->city->id;
-          if($request->has('city_other')){
-            $sale_delivery->city_other = $request->input('city_other');
+        $shipping = \Solunes\Sales\App\Shipping::find($request->input('shipping_id'));
+        if($shipping){
+          if($shipping_city = $shipping->shipping_cities()->where('city_id', $sale_delivery->city_id)->first()){
+            $delivery_time = $shipping_city->shipping_days;
+          } else {
+            $delivery_time = 1;
           }
-          if($request->has('region_other')){
-            $sale_delivery->region_other = $request->input('region_other');
+          $sale_delivery = new \Solunes\Sales\App\SaleDelivery;
+          $sale_delivery->parent_id = $sale->id;
+          $sale_delivery->shipping_id = $request->input('shipping_id');
+          $sale_delivery->currency_id = $sale->currency_id;
+          if(config('sales.delivery_city')){
+            $sale_delivery->region_id = $user->city->region_id;
+            $sale_delivery->city_id = $user->city->id;
+            if($request->has('city_other')){
+              $sale_delivery->city_other = $request->input('city_other');
+            }
+            if($request->has('region_other')){
+              $sale_delivery->region_other = $request->input('region_other');
+            }
+          } else {
+            $sale_delivery->region_id = 1;
+            $sale_delivery->city_id = 1;
           }
-        } else {
-          $sale_delivery->region_id = 1;
-          $sale_delivery->city_id = 1;
+          $sale_delivery->name = 'Pedido de venta en linea';
+          $sale_delivery->address = $request->input('address');
+          $sale_delivery->address_extra = $request->input('address_extra');
+          $sale_delivery->postal_code = 'LP01';
+          $sale_delivery->phone = $user->cellphone;
+          $sale_delivery->total_weight = $order_weight;
+          $sale_delivery->shipping_cost = $shipping_cost;
+          if($delivery_time==1){
+            $sale_delivery->delivery_time = $delivery_time.' día';
+          } else {
+            $sale_delivery->delivery_time = $delivery_time.' días';
+          }
+          $sale_delivery->save();
         }
-        $sale_delivery->name = 'Pedido de venta en linea';
-        $sale_delivery->address = $request->input('address');
-        $sale_delivery->address_extra = $request->input('address_extra');
-        $sale_delivery->postal_code = 'LP01';
-        $sale_delivery->phone = $user->cellphone;
-        $sale_delivery->total_weight = $order_weight;
-        $sale_delivery->shipping_cost = $shipping_cost;
-        $sale_delivery->save();
       }
 
       // Sale Items

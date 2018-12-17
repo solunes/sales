@@ -39,7 +39,7 @@ Cart
 		@endforeach
 	</p>
 	<p style="font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">
-		{{ trans('sales::mail.successful_sale_delivery') }}
+		{{ trans('sales::mail.successful_sale_delivery').' '.$sale_delivery->delivery_time }}
 	</p>
 	@endif
 @endsection

@@ -164,6 +164,7 @@ class NodesSales extends Migration
                 $table->string('latitude')->nullable();
                 $table->string('longitude')->nullable();
                 $table->string('phone')->nullable();
+                $table->string('delivery_time')->nullable();
                 $table->decimal('total_weight', 10, 2)->nullable();
                 $table->decimal('shipping_cost', 10, 2)->nullable();
                 $table->foreign('parent_id')->references('id')->on('sales')->onDelete('cascade');
