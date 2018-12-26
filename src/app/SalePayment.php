@@ -11,18 +11,18 @@ class SalePayment extends Model {
 
 	/* Creating rules */
 	public static $rules_create = array(
-		'product_id'=>'required',
 		'currency_id'=>'required',
-		'quantity'=>'required',
-		'price'=>'required',
+		'payment_method_id'=>'required',
+		'pending_amount'=>'required',
+		'status'=>'required',
 	);
 
 	/* Updating rules */
 	public static $rules_edit = array(
-		'product_id'=>'required',
 		'currency_id'=>'required',
-		'quantity'=>'required',
-		'price'=>'required',
+		'payment_method_id'=>'required',
+		'pending_amount'=>'required',
+		'status'=>'required',
 	);
 
     public function parent() {
