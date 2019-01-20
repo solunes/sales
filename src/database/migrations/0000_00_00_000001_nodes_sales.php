@@ -75,6 +75,9 @@ class NodesSales extends Migration
             if(config('sales.delivery')){
                 $table->decimal('weight', 10, 2)->nullable();
             }
+            if(config('payments.sfv_version')>1||config('payments.discounts')){
+                $table->decimal('discount_price', 10, 2);
+            }
             $table->timestamps();
             $table->foreign('parent_id')->references('id')->on('carts')->onDelete('cascade');
             $table->foreign('product_bridge_id')->references('id')->on('product_bridges')->onDelete('cascade');
@@ -97,8 +100,8 @@ class NodesSales extends Migration
             }
             $table->string('name')->nullable();
             $table->decimal('amount', 10, 2)->nullable();
-            $table->decimal('paid_amount', 10, 2)->nullable();
-            $table->enum('status', ['holding','paid','accounted','delivered'])->nullable()->default('holding');
+            $table->decimal('paid_amount', 10, 2)->default(0);
+            $table->enum('status', ['holding','paid','accounted','cancelled','delivered'])->nullable()->default('holding');
             $table->boolean('invoice')->default(0);
             $table->string('invoice_name')->nullable();
             $table->string('invoice_nit')->nullable();
@@ -127,6 +130,16 @@ class NodesSales extends Migration
             if(config('sales.delivery')){
                 $table->decimal('weight', 10, 2)->default(0);
             }
+            if(config('payments.sfv_version')>1){
+                $table->string('economic_sin_activity')->nullable();
+                $table->string('product_sin_code')->nullable();
+                $table->string('product_internal_code')->nullable();
+                $table->string('product_serial_number')->nullable(); // Para linea blanca y celulares
+            }
+            if(config('payments.sfv_version')>1||config('payments.discounts')){
+                $table->decimal('discount_price', 10, 2)->nullable();
+                $table->decimal('discount_amount', 10, 2)->nullable();
+            }
             $table->foreign('parent_id')->references('id')->on('sales')->onDelete('cascade');
             $table->foreign('product_bridge_id')->references('id')->on('product_bridges')->onDelete('cascade');
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
@@ -138,12 +151,36 @@ class NodesSales extends Migration
             $table->integer('payment_id')->nullable();
             $table->integer('payment_method_id')->nullable();
             $table->decimal('amount', 10, 2)->default(0);
+            if(config('payments.sfv_version')>1||config('payments.discounts')){
+                $table->decimal('discount_amount', 10, 2)->nullable();
+            }
             $table->decimal('pending_amount', 10, 2)->default(0);
             $table->enum('status', ['holding','to-pay','paid','accounted','frozen','cancelled'])->nullable()->default('holding');
             $table->text('detail')->nullable();
+            $table->boolean('pay_delivery')->default(0);
             $table->decimal('exchange', 10, 2)->default(1);
+            if(config('payments.sfv_version')>1){
+                $table->string('commerce_user_code')->nullable();
+                $table->string('customer_code')->nullable();
+                $table->string('customer_ci_number')->nullable();
+                $table->string('customer_ci_extension')->nullable();
+                $table->string('customer_ci_expedition')->nullable();
+                $table->string('invoice_type')->nullable();
+                $table->string('payment_type_code')->nullable();
+            }
             $table->foreign('parent_id')->references('id')->on('sales')->onDelete('cascade');
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
+        });
+        Schema::create('sale_payment_items', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('parent_id')->unsigned();
+            $table->integer('currency_id')->unsigned();
+            $table->integer('sale_item_id')->unsigned();
+            $table->decimal('pending_amount', 10, 2)->default(0);
+            $table->decimal('amount', 10, 2)->default(0);
+            $table->foreign('parent_id')->references('id')->on('sale_payments')->onDelete('cascade');
+            $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
+            $table->foreign('sale_item_id')->references('id')->on('sale_items')->onDelete('cascade');
         });
         if(config('sales.delivery')){
             Schema::create('sale_deliveries', function (Blueprint $table) {
@@ -230,6 +267,7 @@ class NodesSales extends Migration
         Schema::dropIfExists('refunds');
         Schema::dropIfExists('sale_credits');
         Schema::dropIfExists('sale_deliveries');
+        Schema::dropIfExists('sale_payment_items');
         Schema::dropIfExists('sale_payments');
         Schema::dropIfExists('sale_items');
         Schema::dropIfExists('sales');

@@ -41,4 +41,8 @@ class SalePayment extends Model {
         return $this->belongsTo('Solunes\Payments\App\PaymentMethod');
     }
 
+    public function sale_payment_items() {
+        return $this->hasMany('Solunes\Sales\App\SalePaymentItem', 'parent_id');
+    }
+
 }

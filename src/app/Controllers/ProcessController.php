@@ -134,6 +134,9 @@ class ProcessController extends Controller {
       $cart_item->product_bridge_id = $product->id;
       $cart_item->quantity = $request->input('quantity');
       $cart_item->price = $product->real_price;
+      if(config('payments.sfv_version')>1||config('payments.discounts')){
+        $cart_item->discount_price = $product->discount_price;
+      }
       if(config('sales.delivery')){
         $cart_item->weight = $product->weight;
       }
@@ -280,9 +283,13 @@ class ProcessController extends Controller {
 
       $order_cost = 0;
       $order_weight = 0;
+      $discount_amount = 0;
       foreach($cart->cart_items as $item){
         $order_cost += $item->total_price;
         $order_weight += $item->total_weight;
+        if(config('payments.sfv_version')>1||config('payments.discounts')){
+          $discount_amount += $item->discount_price;
+        }
       }
       if(config('sales.delivery')){
         $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $request->input('city_id'), $order_weight);
@@ -319,6 +326,7 @@ class ProcessController extends Controller {
       $sale->currency_id = $currency->id;
       //$sale->order_amount = $order_cost;
       $sale->amount = $total_cost;
+      $sale->discount_amount = $discount_amount;
       if(config('sales.ask_invoice')){
         $sale->invoice = true;
         $sale->invoice_nit = $request->input('nit_number');
@@ -386,6 +394,7 @@ class ProcessController extends Controller {
 
       // Sale Items
       foreach($cart->cart_items as $cart_item){
+        $product_bridge = $cart_item->product_bridge;
         $sale_item = new \Solunes\Sales\App\SaleItem;
         $sale_item->parent_id = $sale->id;
         $sale_item->product_bridge_id = $cart_item->product_bridge_id;
@@ -394,6 +403,16 @@ class ProcessController extends Controller {
         $sale_item->detail = $cart_item->detail;
         $sale_item->price = $cart_item->price;
         $sale_item->quantity = $cart_item->quantity;
+        if(config('payments.sfv_version')>1){
+          $sale_item->economic_sin_activity = $product_bridge->economic_sin_activity;
+          $sale_item->product_sin_code = $product_bridge->product_sin_code;
+          $sale_item->product_internal_code = $product_bridge->product_internal_code;
+          $sale_item->product_serial_number = $product_bridge->product_serial_number;
+        }
+        if(config('payments.sfv_version')>1||config('payments.discounts')){
+          $sale_item->discount_price = $product_bridge->discount_price;
+          $sale_item->discount_amount = round($product_bridge->discount_price * $cart_item->quantity);
+        }
         //$sale_item->weight = $cart_item->weight;
         $sale_item->save();
       }

@@ -24,6 +24,7 @@ class MasterSeeder extends Seeder {
         $node_sale = \Solunes\Master\App\Node::create(['name'=>'sale', 'location'=>'sales', 'folder'=>'sales']);
         $node_sale_item = \Solunes\Master\App\Node::create(['name'=>'sale-item', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_sale->id]);
         $node_sale_payment = \Solunes\Master\App\Node::create(['name'=>'sale-payment', 'type'=>'child', 'location'=>'sales', 'parent_id'=>$node_sale->id]);
+        $node_sale_payment_item = \Solunes\Master\App\Node::create(['name'=>'sale-payment-item', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_sale_payment->id]);
         if(config('sales.delivery')){
             $node_sale_delivery = \Solunes\Master\App\Node::create(['name'=>'sale-delivery', 'table_name'=>'sale_deliveries', 'type'=>'child', 'location'=>'sales', 'parent_id'=>$node_sale->id]);
         }
