@@ -167,6 +167,7 @@ class NodesSales extends Migration
                 $table->string('customer_ci_expedition')->nullable();
                 $table->string('invoice_type')->nullable();
                 $table->string('payment_type_code')->nullable();
+                $table->string('card_number')->nullable();
             }
             $table->foreign('parent_id')->references('id')->on('sales')->onDelete('cascade');
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
