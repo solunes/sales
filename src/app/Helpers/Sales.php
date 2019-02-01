@@ -43,6 +43,59 @@ class Sales {
         return $cart_item;
     }
 
+    public static function generateSingleSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $detail, $amount, $product_bridge_id) {
+
+        $sale = new \Solunes\Sales\App\Sale;
+        $sale->user_id = $user_id;
+        $sale->customer_id = $customer_id;
+        $sale->agency_id = 1;
+        $sale->currency_id = $currency_id;
+        $sale->name = $detail;
+        $sale->amount = $amount;
+        $sale->invoice = $invoice;
+        $sale->invoice_name = $invoice_name;
+        $sale->invoice_nit = $invoice_number;
+        $sale->save();
+        
+        $sale_item = new \Solunes\Sales\App\SaleItem;
+        $sale_item->parent_id = $sale->id;
+        $sale_item->product_bridge_id = $product_bridge_id;
+        $sale_item->currency_id = 1;
+        $sale_item->detail = $detail;
+        $sale_item->price = $amount;
+        $sale_item->quantity = 1;
+        //$sale_item->weight = $cart_item->weight;
+        $sale_item->save();
+
+        // Sale Payment
+        $sale_payment = new \Solunes\Sales\App\SalePayment;
+        $sale_payment->parent_id = $sale->id;
+        $sale_payment->payment_method_id = $payment_method_id;
+        $sale_payment->currency_id = $currency_id;
+        $sale_payment->exchange = 1;
+        $sale_payment->amount = $amount;
+        $sale_payment->pending_amount = $amount;
+        $sale_payment->detail = 'Pago por compra: '.$detail;
+        $sale_payment->save();
+
+        // Sale Delivery
+        /*$sale_delivery = new \Solunes\Sales\App\SaleDelivery;
+        $sale_delivery->parent_id = $sale->id;
+        $sale_delivery->shipping_id = $event->shipping_id;
+        $sale_delivery->currency_id = 1;
+        $sale_delivery->country_code = 'BO';
+        $sale_delivery->region_id = 1;
+        $sale_delivery->city_id = 1;
+        $sale_delivery->name = 1;
+        $sale_delivery->status = 'holding';
+        $sale_delivery->shipping_cost = 0;
+        $sale_delivery->save();*/
+
+        $payment = \Payments::generatePayment($sale);
+
+        return $sale;
+    }
+
     public static function register_sale_payment($sale, $payment_method_id, $currency_id, $status, $amount, $detail, $exchange = 1) {
         $sale_payment = new \Solunes\Sales\App\SalePayment;
         $sale_payment->parent_id = $sale->id;
