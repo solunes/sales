@@ -104,8 +104,10 @@ class Sales {
       }
       if(count($sale_details)>1){
         $name = 'Pago general';
-      } else {
+      } else if(count($sale_details)==1) {
         $name = $sale_details[0]['detail'];
+      } else {
+        $name = 'Sin detalle';
       }
 
       $sale = new \Solunes\Sales\App\Sale;
@@ -138,9 +140,9 @@ class Sales {
       $sale_payment->payment_method_id = $payment_method_id;
       $sale_payment->currency_id = $currency_id;
       $sale_payment->exchange = 1;
-      $sale_payment->amount = $amount;
-      $sale_payment->pending_amount = $amount;
-      $sale_payment->detail = 'Pago por compra: '.$detail;
+      $sale_payment->amount = $total;
+      $sale_payment->pending_amount = $total;
+      $sale_payment->detail = 'Pago por compra: '.$name;
       $sale_payment->save();
 
       // Sale Delivery
