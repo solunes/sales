@@ -20,6 +20,7 @@ return [
     'sale-delivery' => 'Entrega de Venta|Entregas de Venta',
     'sale-item' => 'Item de Venta|Items de Venta',
     'sale-payment' => 'Pago de Venta|Pagos de Venta',
+    'sale-payment-item' => 'Item de Pago de Venta|Items de Pago de Venta',
     'shipping' => 'Método de Envío|Métodos de Envío',
     'shipping-city' => 'Ciudad de Envío|Ciudades de Envío',
     'sp-bank-deposit' => 'Depósito Bancario|Depósitos Bancarios',

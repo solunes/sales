@@ -38,7 +38,7 @@ class SaleItem extends Model {
     }
 
     public function getTotalPriceAttribute() {
-        return round($this->price*$this->quantity);
+        return round($this->price*$this->quantity, 2);
     }
 
 }
