@@ -75,6 +75,9 @@ class Sales {
         $sale_payment->exchange = 1;
         $sale_payment->amount = $amount;
         $sale_payment->pending_amount = $amount;
+        if(config('sales.delivery')){
+          $sale_payment->pay_delivery = 1;
+        }
         $sale_payment->detail = 'Pago por compra: '.$detail;
         $sale_payment->save();
 
@@ -142,6 +145,9 @@ class Sales {
       $sale_payment->exchange = 1;
       $sale_payment->amount = $total;
       $sale_payment->pending_amount = $total;
+      if(config('sales.delivery')){
+        $sale_payment->pay_delivery = 1;
+      }
       $sale_payment->detail = 'Pago por compra: '.$name;
       $sale_payment->save();
 
@@ -172,6 +178,9 @@ class Sales {
         $sale_payment->amount = $amount;
         $sale_payment->detail = $detail;
         $sale_payment->exchange = $exchange;
+        if(config('sales.delivery')){
+          $sale_payment->pay_delivery = 1;
+        }
         $sale_payment->save();
         return $sale_payment;
     }
