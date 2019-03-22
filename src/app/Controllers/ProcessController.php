@@ -345,7 +345,9 @@ class ProcessController extends Controller {
       $sale_payment->currency_id = $currency->id;
       $sale_payment->exchange = $currency->main_exchange;
       $sale_payment->amount = $total_cost;
-      $sale_payment->discount_amount = $discount_amount;
+      if(config('payments.sfv_version')>1||config('payments.discounts')){
+        $sale_payment->discount_amount = $discount_amount;
+      }
       $sale_payment->pending_amount = $total_cost;
       $sale_payment->detail = 'Pago por compra online: #'.$sale_payment->id;
       $sale_payment->save();
