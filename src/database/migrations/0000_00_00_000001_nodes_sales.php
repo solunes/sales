@@ -101,7 +101,7 @@ class NodesSales extends Migration
             $table->string('name')->nullable();
             $table->decimal('amount', 10, 2)->nullable();
             $table->decimal('paid_amount', 10, 2)->default(0);
-            $table->enum('status', ['holding','paid','accounted','cancelled','delivered'])->nullable()->default('holding');
+            $table->enum('status', ['holding','paid','accounted','cancelled','pending-delivery','delivered'])->nullable()->default('holding');
             $table->boolean('invoice')->default(0);
             $table->string('invoice_name')->nullable();
             $table->string('invoice_nit')->nullable();
@@ -122,6 +122,9 @@ class NodesSales extends Migration
             $table->increments('id');
             $table->integer('parent_id')->unsigned();
             $table->integer('product_bridge_id')->unsigned();
+            if(config('business.product_variations')){
+                $table->integer('product_bridge_variation_id')->nullable();
+            }
             $table->integer('currency_id')->unsigned();
             $table->decimal('price', 10, 2)->default(0);
             $table->integer('quantity')->nullable();
