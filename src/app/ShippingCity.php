@@ -18,7 +18,6 @@ class ShippingCity extends Model {
 
 	/* Updating rules */
 	public static $rules_edit = array(
-		'id'=>'required',
 		'city_id'=>'required',
 		'shipping_days'=>'required',
 		'shipping_cost'=>'required',

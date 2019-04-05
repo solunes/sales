@@ -20,6 +20,7 @@ return [
     'sale-delivery' => 'Sale Delivery|Sale Deliveries',
     'sale-item' => 'Sale Item|Sale Items',
     'sale-payment' => 'Sale Payment|Sale Payments',
+    'sale-payment-item' => 'Item de Pago de Venta|Items de Pago de Venta',
     'shipping' => 'Shipping Method|Shipping Method',
     'shipping-city' => 'Shipping City|Shipping Cities',
     'sp-bank-deposit' => 'Bank Deposit|Bank Deposits',
