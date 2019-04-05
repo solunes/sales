@@ -84,5 +84,9 @@ return [
     'postal_code' => 'Postal Code',
     'region' => 'Region',
     'region_other' => 'Other Region',
+    'payment_method' => 'Método de Pago',
+    'pay_delivery' => 'Pago de Envío',
+    'payment_method' => 'Método de Pago',
+    'sale_payment_items' => 'Items de Pago',
 
 ];

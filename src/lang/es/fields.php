@@ -88,5 +88,8 @@ return [
     'region' => 'Región',
     'region_other' => 'Otra Región',
     'payment_method' => 'Método de Pago',
+    'pay_delivery' => 'Pago de Envío',
+    'payment_method' => 'Método de Pago',
+    'sale_payment_items' => 'Items de Pago',
 
 ];

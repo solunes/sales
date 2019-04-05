@@ -11,13 +11,17 @@ class ShippingCity extends Model {
 
 	/* Creating rules */
 	public static $rules_create = array(
-		'name'=>'required',
+		'city_id'=>'required',
+		'shipping_days'=>'required',
+		'shipping_cost'=>'required',
 	);
 
 	/* Updating rules */
 	public static $rules_edit = array(
 		'id'=>'required',
-		'name'=>'required',
+		'city_id'=>'required',
+		'shipping_days'=>'required',
+		'shipping_cost'=>'required',
 	);
 
     public function parent() {

@@ -23,5 +23,6 @@ return array(
 	'paid' => 'Paid',
 	'sale' => 'Sale',
 	'to-pay' => 'To Pay',	
+	'confirmed-delivered' => 'Entregado',	
 
 );
