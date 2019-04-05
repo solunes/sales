@@ -14,7 +14,7 @@ return array(
 	'cart' => 'Cart',
 	'company' => 'Company',
 	'confirmed' => 'Confirmed',
-	'delivered' => 'Delivered',
+	'delivered' => 'Entregado',
 	'denied' => 'Denied',
 	'frozen' => 'Frozen',
 	'holding' => 'Holding',
@@ -23,6 +23,6 @@ return array(
 	'paid' => 'Paid',
 	'sale' => 'Sale',
 	'to-pay' => 'To Pay',	
-	'confirmed-delivered' => 'Entregado',	
+	'pending-delivery' => 'Enviado',	
 
 );

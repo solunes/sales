@@ -37,6 +37,10 @@ class SaleItem extends Model {
         return $this->belongsTo('Solunes\Business\App\ProductBridge');
     }
 
+    public function product_bridge_variation() {
+        return $this->belongsTo('Solunes\Business\App\ProductBridgeVariation');
+    }
+
     public function getTotalPriceAttribute() {
         return round($this->price*$this->quantity, 2);
     }

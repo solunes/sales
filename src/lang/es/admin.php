@@ -14,7 +14,7 @@ return array(
 	'cart' => 'Carro de Compras',
 	'company' => 'Compañia',
 	'confirmed' => 'Confirmado',
-	'delivered' => 'Enviado',
+	'delivered' => 'Entregado',
 	'denied' => 'Negado',
 	'frozen' => 'Congelado',
 	'holding' => 'Pendiente',
@@ -23,6 +23,6 @@ return array(
 	'paid' => 'Pagado',
 	'sale' => 'Venta',
 	'to-pay' => 'Por Pagar',
-	'confirmed-delivered' => 'Entregado',	
+	'pending-delivery' => 'Enviado',	
 
 );
