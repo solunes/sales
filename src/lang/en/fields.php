@@ -88,5 +88,20 @@ return [
     'pay_delivery' => 'Pago de Envío',
     'payment_method' => 'Método de Pago',
     'sale_payment_items' => 'Items de Pago',
-
+    'card_number' => 'Número de Tarjeta',
+    'commerce_user_code' => 'Código de Operario',
+    'customer_ci_expedition' => 'Expedición de CI',
+    'customer_ci_extension' => 'Extensión de CI',
+    'customer_ci_number' => 'Número de CI',
+    'customer_code' => 'Código de Cliente',
+    'discount_amount' => 'Monto de Descuento',
+    'discount_price' => 'Precio de Descuento',
+    'economic_sin_activity' => 'Actividad Económica SIN',
+    'invoice_type' => 'Tipo de Factura',
+    'payment_type_code' => 'Código de Pago',
+    'product_bridge_variation' => 'Variación de Puente de Producto',
+    'product_internal_code' => 'Código Interno de Producto',
+    'product_serial_number' => 'Número de Serie de Producto',
+    'product_sin_code' => 'Código del SIN de Producto',
+    
 ];
