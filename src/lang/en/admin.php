@@ -4,6 +4,7 @@ return array(
 
 	// MENU
 	'sales' => 'Sales',
+	'parameters' => 'Parameters',
 
 	// CUSTOM TRANS
 	'0' => 'No',
