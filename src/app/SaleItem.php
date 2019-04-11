@@ -29,6 +29,10 @@ class SaleItem extends Model {
         return $this->belongsTo('Solunes\Sales\App\Sale');
     }
 
+    public function sale() {
+        return $this->belongsTo('Solunes\Sales\App\Sale', 'parent_id');
+    }
+
     public function currency() {
         return $this->belongsTo('Solunes\Business\App\Currency');
     }
@@ -38,7 +42,11 @@ class SaleItem extends Model {
     }
 
     public function product_bridge_variation() {
-        return $this->belongsTo('Solunes\Business\App\ProductBridgeVariation');
+        if(config('solunes.product')){
+            return $this->belongsToMany('\Solunes\Product\App\Variation', 'product_bridge_variation');
+        } else {
+            return $this->belongsToMany('\App\Variation', 'product_bridge_variation');
+        }
     }
 
     public function getTotalPriceAttribute() {
