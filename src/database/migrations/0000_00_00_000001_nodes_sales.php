@@ -123,7 +123,7 @@ class NodesSales extends Migration
             $table->integer('parent_id')->unsigned();
             $table->integer('product_bridge_id')->unsigned();
             if(config('business.product_variations')){
-                $table->integer('product_bridge_variation_id')->nullable();
+                $table->integer('product_bridge_variation_option_id')->nullable();
             }
             $table->integer('currency_id')->unsigned();
             $table->decimal('price', 10, 2)->default(0);

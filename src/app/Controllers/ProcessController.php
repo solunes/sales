@@ -52,18 +52,18 @@ class ProcessController extends Controller {
         $detail = NULL;
         $count = 0;
         $custom_price = $product->real_price;
-        foreach($product->product_bridge_variation as $product_bridge_variation){
-          if($request->has('variation_'.$product_bridge_variation->id)&&$request->input('variation_'.$product_bridge_variation->id)!=0){
+        foreach($product->product_bridge_variations as $product_bridge_variation){
+          if($request->has('variation_'.$product_bridge_variation->variation_id)&&$request->input('variation_'.$product_bridge_variation->variation_id)!='0'&&$request->input('variation_'.$product_bridge_variation->variation_id)!=0){
             $count++;
             if($count>1){
               $detail .= ' | ';
             }
-            $detail .= $product_bridge_variation->name.': ';
-            $subarray = $request->input('variation_'.$product_bridge_variation->id);
+            $detail .= $product_bridge_variation->variation->name.': ';
+            $subarray = $request->input('variation_'.$product_bridge_variation_option->variation_id);
             if(!is_array($subarray)){
               $subarray = [$subarray];
             }
-            foreach($product_bridge_variation->variation_options()->whereIn('id', $subarray)->get() as $key => $option){
+            foreach($product->product_bridge_variation_options()->whereIn('variation_option_id', $subarray)->get() as $key => $option){
               if($key>0){
                 $detail .= ', ';
               }

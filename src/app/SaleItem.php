@@ -41,6 +41,10 @@ class SaleItem extends Model {
         return $this->belongsTo('Solunes\Business\App\ProductBridge');
     }
 
+    public function product_bridge_variation_option() {
+        return $this->belongsTo('Solunes\Business\App\ProductBridgeVariationOption');
+    }
+
     public function product_bridge_variation() {
         if(config('solunes.product')){
             return $this->belongsToMany('\Solunes\Product\App\Variation', 'product_bridge_variation');
