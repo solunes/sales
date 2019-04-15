@@ -59,16 +59,17 @@ class ProcessController extends Controller {
               $detail .= ' | ';
             }
             $detail .= $product_bridge_variation->variation->name.': ';
-            $subarray = $request->input('variation_'.$product_bridge_variation_option->variation_id);
+            $subarray = $request->input('variation_'.$product_bridge_variation->variation_id);
             if(!is_array($subarray)){
               $subarray = [$subarray];
             }
+            \Log::info(json_encode($subarray));
             foreach($product->product_bridge_variation_options()->whereIn('variation_option_id', $subarray)->get() as $key => $option){
               if($key>0){
                 $detail .= ', ';
               }
-              $detail .= $option->name.' ';
-              $custom_price += $option->extra_price;
+              $detail .= $option->variation_option->name.' ';
+              $custom_price += $option->variation_option->extra_price;
             }
           } else if($product_bridge_variation->optional==0){
             return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
