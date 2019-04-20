@@ -51,6 +51,7 @@ return [
     'pending_amount' => 'Monto Pendiente',
     'price' => 'Precio',
     'product_bridge' => 'Unificación de Producto',
+    'product_bridge_variation_option' => 'Opción de la Variación',
     'quantity' => 'Cantidad',
     'reference' => 'Referencia',
     'refund_amount' => 'Monto de Reembolso',
