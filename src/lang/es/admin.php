@@ -24,6 +24,6 @@ return array(
 	'paid' => 'Pagado',
 	'sale' => 'Venta',
 	'to-pay' => 'Por Pagar',
-	'pending-delivery' => 'Enviado',	
+	'pending-delivery' => 'Por Enviar',	
 
 );
