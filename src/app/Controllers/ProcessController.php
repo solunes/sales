@@ -126,7 +126,9 @@ class ProcessController extends Controller {
         $quantity = $request->input('quantity');
         if(config('solunes.inventory')){
           $stock = \Business::getProductBridgeStock($product, config('business.online_store_agency_id'));
-          if($stock<$quantity){
+          if($stock==0){
+            return redirect($this->prev)->with('message_error', 'Lo sentimos, no contamos con stock para este producto.');
+          } else if($stock<$quantity){
             $quantity = $stock;
             $stock_changed = true;
           }
