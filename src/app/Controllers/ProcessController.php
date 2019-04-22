@@ -94,7 +94,6 @@ class ProcessController extends Controller {
               $count++;
             }
           }
-          $product = \Business::getProductBridgeVariable($product, $variation_id, $variation_value, $variation_2_id, $variation_2_value, $variation_3_id, $variation_3_value);
           foreach($product->product_bridge_variation as $product_bridge_variation){
             if(!$product_bridge_variation->stockable){
               if($request->has('variation_'.$product_bridge_variation->id)&&$request->input('variation_'.$product_bridge_variation->id)!='0'&&$request->input('variation_'.$product_bridge_variation->id)!=0){
@@ -120,6 +119,7 @@ class ProcessController extends Controller {
               }
             }
           }
+          $product = \Business::getProductBridgeVariable($product, $variation_id, $variation_value, $variation_2_id, $variation_2_value, $variation_3_id, $variation_3_value);
         }
 
         $stock_changed = false;
