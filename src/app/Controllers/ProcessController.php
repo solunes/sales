@@ -74,54 +74,64 @@ class ProcessController extends Controller {
         $variation_2_value = NULL;
         $variation_3_id = NULL;
         $variation_3_value = NULL;
-        $count = 0;
-        foreach($product->product_bridge_variation as $product_bridge_variation){
-          if($product_bridge_variation->stockable){
-            if(!$request->has('variation_'.$product_bridge_variation->id)||$request->input('variation_'.$product_bridge_variation->id)=='0'||$request->input('variation_'.$product_bridge_variation->id)==0){
-              return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
-            }
-            if($count==0){
-              $variation_id = $product_bridge_variation->id;
-              $variation_value = $request->input('variation_'.$product_bridge_variation->id);
-            } else if($count==1){
-              $variation_2_id = $product_bridge_variation->id;
-              $variation_2_value = $request->input('variation_'.$product_bridge_variation->id);
-            } else if($count==2){
-              $variation_3_id = $product_bridge_variation->id;
-              $variation_3_value = $request->input('variation_'.$product_bridge_variation->id);
-            }
-            $count++;
-          }
-        }
-        \Log::info('product 1: '.$product->id);
-        $product = \Business::getProductBridgeVariable($product, $variation_id, $variation_value, $variation_2_id, $variation_2_value, $variation_3_id, $variation_3_value);
-        \Log::info('product 2: '.$product->id);
-
-        foreach($product->product_bridge_variation as $product_bridge_variation){
-          if(!$product_bridge_variation->stockable){
-            if($request->has('variation_'.$product_bridge_variation->id)&&$request->input('variation_'.$product_bridge_variation->id)!='0'&&$request->input('variation_'.$product_bridge_variation->id)!=0){
+        if(config('business.product_variations')){
+          $count = 0;
+          foreach($product->product_bridge_variation as $product_bridge_variation){
+            if($product_bridge_variation->stockable){
+              if(!$request->has('variation_'.$product_bridge_variation->id)||$request->input('variation_'.$product_bridge_variation->id)=='0'||$request->input('variation_'.$product_bridge_variation->id)==0){
+                return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
+              }
+              if($count==0){
+                $variation_id = $product_bridge_variation->id;
+                $variation_value = $request->input('variation_'.$product_bridge_variation->id);
+              } else if($count==1){
+                $variation_2_id = $product_bridge_variation->id;
+                $variation_2_value = $request->input('variation_'.$product_bridge_variation->id);
+              } else if($count==2){
+                $variation_3_id = $product_bridge_variation->id;
+                $variation_3_value = $request->input('variation_'.$product_bridge_variation->id);
+              }
               $count++;
-              if($count>1){
-                $detail .= ' | ';
-              }
-              $detail .= $product_bridge_variation->name.': ';
-              $subarray = $request->input('variation_'.$product_bridge_variation->id);
-              if(!is_array($subarray)){
-                $subarray = [$subarray];
-              }
-              \Log::info(json_encode($subarray));
-              foreach($product->product_bridge_variation_options()->whereIn('variation_option_id', $subarray)->get() as $key => $option){
-                if($key>0){
-                  $detail .= ', ';
+            }
+          }
+          $product = \Business::getProductBridgeVariable($product, $variation_id, $variation_value, $variation_2_id, $variation_2_value, $variation_3_id, $variation_3_value);
+          foreach($product->product_bridge_variation as $product_bridge_variation){
+            if(!$product_bridge_variation->stockable){
+              if($request->has('variation_'.$product_bridge_variation->id)&&$request->input('variation_'.$product_bridge_variation->id)!='0'&&$request->input('variation_'.$product_bridge_variation->id)!=0){
+                $count++;
+                if($count>1){
+                  $detail .= ' | ';
                 }
-                $detail .= $option->variation_option->name.' ';
-                $custom_price += $option->variation_option->extra_price;
+                $detail .= $product_bridge_variation->name.': ';
+                $subarray = $request->input('variation_'.$product_bridge_variation->id);
+                if(!is_array($subarray)){
+                  $subarray = [$subarray];
+                }
+                //\Log::info(json_encode($subarray));
+                foreach($product->product_bridge_variation_options()->whereIn('variation_option_id', $subarray)->get() as $key => $option){
+                  if($key>0){
+                    $detail .= ', ';
+                  }
+                  $detail .= $option->variation_option->name.' ';
+                  $custom_price += $option->variation_option->extra_price;
+                }
+              } else if($product_bridge_variation->optional==0){
+                return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
               }
-            } else if($product_bridge_variation->optional==0){
-              return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
             }
           }
         }
+
+        $stock_changed = false;
+        $quantity = $request->input('quantity');
+        if(config('solunes.inventory')){
+          $stock = \Business::getProductBridgeStock($product, config('business.online_store_agency_id'));
+          if($stock<$quantity){
+            $quantity = $stock;
+            $stock_changed = true;
+          }
+        }
+
         if(config('sales.custom_add_cart_detail')){
           $custom_detail = \CustomFunc::checkCustomAddCartDetail($product, $request);
           if($custom_detail){
@@ -130,8 +140,12 @@ class ProcessController extends Controller {
         } else if($request->has('detail')){
           $detail .= ' | Detalle: '.$request->input('detail');
         }
-        \Sales::add_cart_item($cart, $product, $request->input('quantity'), $detail, $custom_price);
-        return redirect($this->prev)->with('message_success', 'Se añadió su producto al carro de compras.');
+        \Sales::add_cart_item($cart, $product, $quantity, $detail, $custom_price);
+        $message = 'Se añadió su producto al carro de compras. ';
+        if($stock_changed){
+          $message .= 'Se cambió la cantidad que usted solicitó debido a que no contamos con más stock.';
+        }
+        return redirect($this->prev)->with('message_success', $message);
       } else {
         return redirect($this->prev)->with('message_error', 'Debe seleccionar una cantidad positiva.');
       }
@@ -338,6 +352,13 @@ class ProcessController extends Controller {
         if(config('payments.sfv_version')>1||config('payments.discounts')){
           $discount_amount += $item->discount_price;
         }
+        if(config('solunes.inventory')){
+          $stock = \Business::getProductBridgeStock($item->product_bridge, config('business.online_store_agency_id'));
+          if($stock<$item->quantity){
+            $item->quantity = $stock;
+            $item->save();
+          }
+        }
       }
       if(config('sales.delivery')){
         $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $request->input('city_id'), $order_weight);
@@ -446,6 +467,7 @@ class ProcessController extends Controller {
       }
 
       // Sale Items
+      $store_agency = \Solunes\Business\App\Agency::find(config('business.online_store_agency_id'));
       foreach($cart->cart_items as $cart_item){
         $product_bridge = $cart_item->product_bridge;
         $sale_item = new \Solunes\Sales\App\SaleItem;
@@ -468,6 +490,7 @@ class ProcessController extends Controller {
         }
         //$sale_item->weight = $cart_item->weight;
         $sale_item->save();
+        \Inventory::reduce_inventory($store_agency, $sale_item->product_bridge, $sale_item->quantity);
       }
 
       $cart->status = 'sale';
