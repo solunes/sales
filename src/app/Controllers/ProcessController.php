@@ -22,6 +22,22 @@ class ProcessController extends Controller {
     $this->prev = $url->previous();
   }
 
+  /* Ruta para ver todos los productos */
+  public function getProducts() {
+    $items = \Solunes\Business\App\ProductBridge::whereNull('variation_id')->get();
+    $page = \Solunes\Master\App\Page::find(3);
+    return view('sales::content.products', ['page'=>$page,'items'=>$items]);
+  }
+
+  /* Ruta para producto */
+  public function findProduct($slug) {
+    $item = \Solunes\Business\App\ProductBridge::whereTranslation('slug', $slug)->first();
+    if(!$item){ return redirect('inicio#alert')->with(['message_error'=>'No se encontró la página.']); }
+    $products = \Solunes\Business\App\ProductBridge::whereNull('variation_id')->where('active',1)->where('id','!=',$item->id)->limit(4)->orderBy('id','DESC')->get();
+    $page = \Solunes\Master\App\Page::find(3);
+    return view('sales::content.product', ['page'=>$page,'item'=>$item, 'products'=>$products]);
+  }
+
   /* Ruta para calcular precio de envio en AJAX segun envio, ciudad y peso */
   public function getCalculateShipping($shipping_id, $city_id, $weight) {
     $shipping_array = \Sales::calculate_shipping_cost($shipping_id, $city_id, $weight);
@@ -52,27 +68,58 @@ class ProcessController extends Controller {
         $detail = NULL;
         $count = 0;
         $custom_price = $product->real_price;
-        foreach($product->product_bridge_variations as $product_bridge_variation){
-          if($request->has('variation_'.$product_bridge_variation->variation_id)&&$request->input('variation_'.$product_bridge_variation->variation_id)!='0'&&$request->input('variation_'.$product_bridge_variation->variation_id)!=0){
+        $variation_id = NULL;
+        $variation_value = NULL;
+        $variation_2_id = NULL;
+        $variation_2_value = NULL;
+        $variation_3_id = NULL;
+        $variation_3_value = NULL;
+        $count = 0;
+        foreach($product->product_bridge_variation as $product_bridge_variation){
+          if($product_bridge_variation->stockable){
+            if(!$request->has('variation_'.$product_bridge_variation->id)||$request->input('variation_'.$product_bridge_variation->id)=='0'||$request->input('variation_'.$product_bridge_variation->id)==0){
+              return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
+            }
+            if($count==0){
+              $variation_id = $product_bridge_variation->id;
+              $variation_value = $request->input('variation_'.$product_bridge_variation->id);
+            } else if($count==1){
+              $variation_2_id = $product_bridge_variation->id;
+              $variation_2_value = $request->input('variation_'.$product_bridge_variation->id);
+            } else if($count==2){
+              $variation_3_id = $product_bridge_variation->id;
+              $variation_3_value = $request->input('variation_'.$product_bridge_variation->id);
+            }
             $count++;
-            if($count>1){
-              $detail .= ' | ';
-            }
-            $detail .= $product_bridge_variation->variation->name.': ';
-            $subarray = $request->input('variation_'.$product_bridge_variation->variation_id);
-            if(!is_array($subarray)){
-              $subarray = [$subarray];
-            }
-            \Log::info(json_encode($subarray));
-            foreach($product->product_bridge_variation_options()->whereIn('variation_option_id', $subarray)->get() as $key => $option){
-              if($key>0){
-                $detail .= ', ';
+          }
+        }
+        \Log::info('product 1: '.$product->id);
+        $product = \Business::getProductBridgeVariable($product, $variation_id, $variation_value, $variation_2_id, $variation_2_value, $variation_3_id, $variation_3_value);
+        \Log::info('product 2: '.$product->id);
+
+        foreach($product->product_bridge_variation as $product_bridge_variation){
+          if(!$product_bridge_variation->stockable){
+            if($request->has('variation_'.$product_bridge_variation->id)&&$request->input('variation_'.$product_bridge_variation->id)!='0'&&$request->input('variation_'.$product_bridge_variation->id)!=0){
+              $count++;
+              if($count>1){
+                $detail .= ' | ';
               }
-              $detail .= $option->variation_option->name.' ';
-              $custom_price += $option->variation_option->extra_price;
+              $detail .= $product_bridge_variation->name.': ';
+              $subarray = $request->input('variation_'.$product_bridge_variation->id);
+              if(!is_array($subarray)){
+                $subarray = [$subarray];
+              }
+              \Log::info(json_encode($subarray));
+              foreach($product->product_bridge_variation_options()->whereIn('variation_option_id', $subarray)->get() as $key => $option){
+                if($key>0){
+                  $detail .= ', ';
+                }
+                $detail .= $option->variation_option->name.' ';
+                $custom_price += $option->variation_option->extra_price;
+              }
+            } else if($product_bridge_variation->optional==0){
+              return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
             }
-          } else if($product_bridge_variation->optional==0){
-            return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
           }
         }
         if(config('sales.custom_add_cart_detail')){

@@ -10,8 +10,11 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::get('productos', 'ProcessController@getProducts');
+Route::get('producto/{slug}', 'ProcessController@findProduct');
 
 Route::group(['prefix'=>'process'], function(){
+
     // Rutas para AJAX
     Route::get('/calculate-shipping/{shipping_id}/{city_id}/{weight}', 'ProcessController@getCalculateShipping');
     // Rutas para añadir y borrar del carro de compras
