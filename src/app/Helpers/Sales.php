@@ -43,7 +43,7 @@ class Sales {
     return $cart_item;
   }
 
-  public static function generateSingleSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $detail, $amount, $product_bridge_id) {
+  public static function generateSingleSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $detail, $amount, $product_bridge_id, $quantity = 1) {
     $sale = new \Solunes\Sales\App\Sale;
     $sale->user_id = $user_id;
     $sale->customer_id = $customer_id;
@@ -62,7 +62,7 @@ class Sales {
     $sale_item->currency_id = 1;
     $sale_item->detail = $detail;
     $sale_item->price = $amount;
-    $sale_item->quantity = 1;
+    $sale_item->quantity = $quantity;
     //$sale_item->weight = $cart_item->weight;
     $sale_item->save();
 
@@ -101,7 +101,12 @@ class Sales {
   public static function generateSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $sale_details) {
     $total = 0;
     foreach($sale_details as $sale_detail){
-      $total += $sale_detail['amount'];
+      if(isset($sale_detail['quantity'])&&$sale_detail['quantity']>0){
+        $quantity = $sale_detail['quantity'];
+      } else {
+        $quantity = 1;
+      }
+      $total += $sale_detail['amount'] * $quantity;
     }
     if(count($sale_details)>1){
       $name = 'Pago general';
@@ -130,7 +135,11 @@ class Sales {
       $sale_item->currency_id = $currency_id;
       $sale_item->detail = $sale_detail['detail'];
       $sale_item->price = $sale_detail['amount'];
-      $sale_item->quantity = 1;
+      if(isset($sale_detail['quantity'])&&$sale_detail['quantity']>0){
+        $sale_item->quantity = $sale_detail['quantity'];
+      } else {
+        $sale_item->quantity = 1;
+      }
       //$sale_item->weight = $cart_item->weight;
       $sale_item->save();
     }
