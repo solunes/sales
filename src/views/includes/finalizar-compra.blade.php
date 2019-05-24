@@ -18,7 +18,7 @@
                   <td class="product-name">
                     {{ $item->product_bridge->name }} - {{ $item->detail }} <strong class="product-quantity">(x{{ $item->quantity }})</strong>
                   </td>
-                  <td class="strong">{{ $item->currency->name }} {{ $item->total_price }}</td>
+                  <td class="strong">{{ $cart->currency->name }} {{ $item->total_price }}</td>
                 </tr>
               @endforeach
             @endif
@@ -26,15 +26,15 @@
           <tfoot>
             <tr class="cart-subtotal">
               <th>SUBTOTAL</th>
-              <th>{{ $item->currency->name }} <span class="amount">{{ $total }}</span></th>
+              <th>{{ $cart->currency->name }} <span class="amount">{{ $total }}</span></th>
             </tr>
             <tr>
               <td>Costo de Envío ({{ round($weight, 1) }} kg.)</td>
-              <td class="strong">{{ $item->currency->name }} <span class="shipping_cost">0</span></td>
+              <td class="strong">{{ $cart->currency->name }} <span class="shipping_cost">0</span></td>
             </tr>
             <tr class="order-total">
               <th>Precio Total</th>
-              <th>{{ $item->currency->name }} <span class="amount total_cost">{{ $total }}</span></th>
+              <th>{{ $cart->currency->name }} <span class="amount total_cost">{{ $total }}</span></th>
             </tr>               
           </tfoot>
         </table>

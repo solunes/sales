@@ -15,7 +15,7 @@ Cart
 		Detalle de compra:
 		<?php $total = 0; ?>
 		@foreach($sale->sale_items as $sale_item)
-		<br>- {{ $sale_item->detail }} ({{ $sale_item->quantity }}) - {{ $sale_item->currency->name }} {{ $sale_item->price }}
+		<br>- {{ $sale_item->detail }} ({{ $sale_item->quantity }}) - {{ $sale->currency->name }} {{ $sale_item->price }}
 		<?php $total += $sale_item->price * $sale_item->quantity; ?>
 		@endforeach
 		<br><strong>TOTAL: {{ $sale->currency->name }} {{ round($total, 2) }}</strong>
