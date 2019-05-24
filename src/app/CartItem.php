@@ -23,7 +23,11 @@ class CartItem extends Model {
     public function product_bridge() {
         return $this->belongsTo('Solunes\Business\App\ProductBridge');
     }
-
+    
+    public function currency() {
+        return $this->belongsTo('Solunes\Business\App\Currency');
+    }
+    
     public function getTotalWeightAttribute() {
         return round($this->weight*$this->quantity);
     }

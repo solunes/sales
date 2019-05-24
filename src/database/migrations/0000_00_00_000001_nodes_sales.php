@@ -69,6 +69,7 @@ class NodesSales extends Migration
             $table->increments('id');
             $table->integer('parent_id')->unsigned();
             $table->integer('product_bridge_id')->unsigned();
+            $table->integer('currency_id')->nullable()->default(1);
             $table->integer('quantity')->default(1);
             $table->text('detail')->nullable();
             $table->decimal('price', 10, 2);

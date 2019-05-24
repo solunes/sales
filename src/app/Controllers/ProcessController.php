@@ -196,6 +196,7 @@ class ProcessController extends Controller {
       $cart_item = new \Solunes\Sales\App\CartItem;
       $cart_item->parent_id = $cart->id;
       $cart_item->product_bridge_id = $product->id;
+      $cart_item->currency_id = $product->currency_id;
       $cart_item->quantity = $request->input('quantity');
       $cart_item->price = $product->real_price;
       if(config('payments.sfv_version')>1||config('payments.discounts')){

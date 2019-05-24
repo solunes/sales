@@ -27,7 +27,7 @@ class Cart extends Model {
     public function cart_items() {
         return $this->hasMany('Solunes\Sales\App\CartItem', 'parent_id');
     }
-    
+     
     public function user() {
         return $this->belongsTo('App\User');
     }

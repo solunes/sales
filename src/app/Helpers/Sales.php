@@ -28,6 +28,7 @@ class Sales {
       $cart_item = new \Solunes\Sales\App\CartItem;
       $cart_item->parent_id = $cart->id;
       $cart_item->product_bridge_id = $product->id;
+      $cart_item->currency_id = $product->currency_id;
       $cart_item->quantity = $quantity;
       if($custom_price){
         $cart_item->price = $custom_price;
