@@ -299,7 +299,8 @@ class ProcessController extends Controller {
       }
       if(config('sales.delivery_country')){
         $array['countries'] = \Solunes\Business\App\Country::get()->lists('name','id')->toArray();
-        $array['cities'] = \Solunes\Business\App\City::where('country_id', $array['country_id'])->get()->lists('name','id')->toArray();
+        $region_ids = \Solunes\Business\App\Region::where('country_id', $array['country_id'])->lists('id')->toArray();
+        $array['cities'] = \Solunes\Business\App\City::whereIn('region_id', $region_ids)->get()->lists('name','id')->toArray();
       } else {
         $array['cities'] = \Solunes\Business\App\City::get()->lists('name','id')->toArray();
       }
