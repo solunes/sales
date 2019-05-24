@@ -466,7 +466,7 @@ class ProcessController extends Controller {
           $sale_delivery->shipping_id = $request->input('shipping_id');
           $sale_delivery->currency_id = $sale->currency_id;
           if(config('sales.delivery_city')){
-            $sale_delivery->country_id = $user->city->region->country_id;
+            $sale_delivery->country_code = $user->city->region->country->name;
             $sale_delivery->region_id = $user->city->region_id;
             $sale_delivery->city_id = $user->city->id;
             if($request->has('city_other')){
