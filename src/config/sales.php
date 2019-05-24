@@ -36,5 +36,6 @@ return [
 	// CUSTOM SALES
     'custom_add_cart' => false, // Reglas de revisión al añadir producto personalizadas
     'custom_add_cart_detail' => false, // DEtalle extra para añadir al carro de compras
+    'custom_add_cart_extra_price' => false, // Precio extra para añadir al carro de compras
 
 ];

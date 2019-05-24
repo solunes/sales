@@ -112,7 +112,11 @@ class ProcessController extends Controller {
                     $detail .= ', ';
                   }
                   $detail .= $option->variation_option->name.' ';
-                  $custom_price += $option->variation_option->extra_price;
+                  if(config('sales.custom_add_cart_extra_price')){
+                    $custom_price += \CustomFunc::custom_add_cart_extra_price($product, $option, $request);
+                  } else {
+                    $custom_price += $option->variation_option->extra_price;
+                  }
                 }
               } else if($product_bridge_variation->optional==0){
                 return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
