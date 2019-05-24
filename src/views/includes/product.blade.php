@@ -35,12 +35,12 @@
           @if($item->promo_price>0)
             <p class="price">
               <!--<del><span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>900.00</span></del>-->
-              <ins><span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">Bs.</span> {{ $item->promo_price }}</span></ins>
+              <ins><span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">{{ $item->currency->name }}</span> {{ $item->promo_price }}</span></ins>
             </p>
           @else
             <p class="price">
                 <!--<del><span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>900.00</span></del>-->
-                <ins><span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">Bs.</span> {{ $item->price }}</span></ins>
+                <ins><span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">{{ $item->currency->name }}</span> {{ $item->price }}</span></ins>
             </p>
           @endif
         @else

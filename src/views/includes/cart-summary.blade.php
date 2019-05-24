@@ -13,7 +13,7 @@
 				{{ $item->product_bridge->name }} - {{ $item->detail }} <strong>(x{{ $item->quantity }})</strong>
 			</td>
 			<td class="strong">
-				<span class="amount">Bs. {{ $item->total_price }}</span>
+				<span class="amount">{{ $item->currency->name }} {{ $item->total_price }}</span>
 			</td>
 		  </tr>
 		@endforeach
@@ -22,17 +22,17 @@
 	<tfoot>
 		<tr class="cart-subtotal">
 			<th>Subtotal</th>
-			<th>Bs. {{ $order_amount }}</th>
+			<th>{{ $item->currency->name }} {{ $order_amount }}</th>
 		</tr>
 		@foreach($deliveries as $delivery)
 		<tr>
 			<td>Costo de Envío ({{ $delivery->total_weight }} kg.)</td>
-			<td class="strong">Bs. {{ $delivery->shipping_cost }}</td>
+			<td class="strong">{{ $item->currency->name }} {{ $delivery->shipping_cost }}</td>
 		</tr>
 		@endforeach
 		<tr class="order-total">
 			<th>Precio Total</th>
-			<th>Bs. {{ $total_amount }}</th>
+			<th>{{ $item->currency->name }} {{ $total_amount }}</th>
 		</tr>               
 	</tfoot>
 </table>

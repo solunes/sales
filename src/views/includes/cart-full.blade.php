@@ -19,7 +19,7 @@
             {!! Asset::get_image('product-bridge-image', 'subdetail', $item->product_bridge->image) !!}
           </a></td>
           <td class="product-name" style="max-width: 200px;"><a target="_blank" href="{{ url($item->product_bridge->internal_url) }}">{{ $item->product_bridge->name }} - {{ $item->detail }}</a></td>
-          <td class="product-price"><span class="amount">Bs. {{ $item->price }}</span></td>
+          <td class="product-price"><span class="amount">{{ $item->currency->name }} {{ $item->price }}</span></td>
           <td class="product-quantity">
             @if($editable)
               <input name="quantity[{{ $item->id }}]" type="number" value="{{ $item->quantity }}">
@@ -28,7 +28,7 @@
               <span class="amount">{{ $item->quantity }}</span>
             @endif
           </td>
-          <td class="product-subtotal">Bs. {{ $item->total_price }}</td>
+          <td class="product-subtotal">{{ $item->currency->name }} {{ $item->total_price }}</td>
           @if($delete)
             <td class="product-remove"><a href="#" class="delete"><i class="fa fa-times"></i></a></td>
           @endif

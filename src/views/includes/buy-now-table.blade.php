@@ -13,7 +13,7 @@
         {!! Asset::get_image('product-bridge-image', 'subdetail', $product->image) !!}
       </a></td>
       <td class="product-name"><a target="_blank" href="{{ url($product->internal_url) }}">{{ $product->name }}</a></td>
-      <td class="product-price"><span class="amount">Bs. {{ $product->real_price }}</span></td>
+      <td class="product-price"><span class="amount">{{ $product->currency->name }} {{ $product->real_price }}</span></td>
       <td class="product-quantity">
         <input name="quantity" type="number" value="1">
         <input name="product_id" type="hidden" value="{{ $product->id }}">

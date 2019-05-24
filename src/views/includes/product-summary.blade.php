@@ -12,7 +12,7 @@
       </div>
       <a href="{{url('producto/'.$product->slug)}}">
         <h2>{{ $product->name }}</h2>
-        <span class="solunes-price"><span class="solunes-price-amount amount"><span class="solunes-price-currency">Bs.</span>&nbsp;{{ $product->price }}</span></span>
+        <span class="solunes-price"><span class="solunes-price-amount amount"><span class="solunes-price-currency">{{ $sale->currency->name }}</span>&nbsp;{{ $product->price }}</span></span>
       </a>
       <div class="solunes-product-actions">
         <div class="solunes-group-product-actions">

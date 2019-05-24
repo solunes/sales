@@ -29,7 +29,7 @@
                     <td class="border-site">#{{ $item->id }}</td>
                     <td>{{ $payment->payment_date }}</td> 
                     <td>Pagos TT</td>
-                    <td>Bs. {{ $payment->amount }}</td>
+                    <td>{{ $payment->currency->name }} {{ $payment->amount }}</td>
                     <td class="icon-cell">
                       @foreach($payment->payment_invoices as $payment_invoice)
                         <a target="_blank" href="{{ $payment_invoice->invoice_url }}">

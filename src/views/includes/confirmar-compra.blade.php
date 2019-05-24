@@ -14,14 +14,10 @@
           <!--<h2>TOTAL</h2>-->
           <table>
             <tbody>
-              <!--<tr class="cart-subtotal">
-                <th>Subtotal</th>
-                <td><span class="amount">Bs. 1000</span></td>
-              </tr>-->
               <tr class="order-total">
                 <th>Total</th>
                 <td>
-                  <strong><span class="amount">Bs. {{ $total }}</span></strong>
+                  <strong><span class="amount">{{ $cart->currency->name }} {{ $total }}</span></strong>
                 </td>
               </tr>                     
             </tbody>
