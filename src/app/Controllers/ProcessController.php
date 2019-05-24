@@ -273,16 +273,24 @@ class ProcessController extends Controller {
         $user = \Auth::user();
         $array['auth'] = true;
         if('solunes.customer'&&$user->customer){
-          $array['country_id'] = $user->customer->country_id;
-          $array['city_id'] = $user->customer->city_id;
+          if($user->customer->country_id){
+            $array['country_id'] = $user->customer->country_id;
+          }
+          if($user->customer->city_id){
+            $array['city_id'] = $user->customer->city_id;
+          }
           $array['city_other'] = $user->customer->city_other;
           $array['address'] = $user->customer->address;
           $array['address_extra'] = $user->customer->address_extra;
           $array['nit_number'] = $user->customer->nit_number;
           $array['nit_social'] = $user->customer->nit_name;
         } else {
-          $array['country_id'] = $user->country_id;
-          $array['city_id'] = $user->city_id;
+          if($user->country_id){
+            $array['country_id'] = $user->country_id;
+          }
+          if($user->city_id){
+            $array['city_id'] = $user->city_id;
+          }
           $array['city_other'] = $user->city_other;
           $array['address'] = $user->address;
           $array['address_extra'] = $user->address_extra;
@@ -386,7 +394,7 @@ class ProcessController extends Controller {
         }
       }
       if(config('sales.delivery')){
-        $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $request->input('city_id'), $order_weight);
+        $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $request->input('country_id'), $request->input('city_id'), $order_weight);
         if($shipping_array['shipping']===false){
           return redirect($this->prev)->with('message_error', 'No se encontró el método de envío para esta ciudad, seleccione otro.')->withInput();
         }
@@ -458,6 +466,7 @@ class ProcessController extends Controller {
           $sale_delivery->shipping_id = $request->input('shipping_id');
           $sale_delivery->currency_id = $sale->currency_id;
           if(config('sales.delivery_city')){
+            $sale_delivery->country_id = $user->city->region->country_id;
             $sale_delivery->region_id = $user->city->region_id;
             $sale_delivery->city_id = $user->city->id;
             if($request->has('city_other')){

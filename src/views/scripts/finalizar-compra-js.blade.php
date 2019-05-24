@@ -3,11 +3,11 @@
     var order_cost = {{ $total }};
     var weight = {{ $weight }};
     var shipping_id = $('#shipping_id').val();
-    if(config('sales.delivery_country')){
+    @if(config('sales.delivery_country'))
       var country_id = $('#country_id').val();
-    } else {
+    @else
       var country_id = 1;
-    }
+    @endif
     var city_id = $('#city_id').val();
     $.ajax("{{ url('process/calculate-shipping') }}/" + shipping_id + "/" + country_id + "/" + city_id + "/" + weight, {
       success: function(data) {

@@ -197,7 +197,7 @@ class Sales {
     $shipping = \Solunes\Sales\App\Shipping::find($shipping_id);
     if(config('sales.delivery_country')){
       $country = \Solunes\Business\App\Country::find($country_id);
-      $shipping_cities = $shipping->shipping_cities()->where('country_id', $country_id)->where('city_id', $city_id)->with('city')->get();
+      $shipping_cities = $shipping->shipping_cities()->where('country_id', $country_id)->with('city')->get();
       $shipping_city = $shipping->shipping_cities()->where('country_id', $country_id)->where('city_id', $city_id)->first();
       if(!$shipping_city){
         $shipping_city = $shipping->shipping_cities()->where('country_id', $country_id)->first();
@@ -209,7 +209,7 @@ class Sales {
     }
     $shipping_cities_array = [];
     foreach($shipping_cities as $shipping_city_item){
-      $shipping_cities_array[$shipping_city_item->city_id] = $shipping_city_item->city->name;
+      $shipping_cities_array[$shipping_city_item->city->name] = $shipping_city_item->city_id;
     }
     $other_city = false;
     if($shipping_city){
