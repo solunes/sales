@@ -113,7 +113,7 @@ class ProcessController extends Controller {
                   }
                   $detail .= $option->variation_option->name.' ';
                   if(config('sales.custom_add_cart_extra_price')){
-                    $custom_price += \CustomFunc::custom_add_cart_extra_price($product, $option, $request);
+                    $custom_price += \CustomFunc::checkCustomAddCartExtraPrice($product, $option, $option->variation_option->extra_price, $request);
                   } else {
                     $custom_price += $option->variation_option->extra_price;
                   }
