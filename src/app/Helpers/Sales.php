@@ -193,19 +193,34 @@ class Sales {
     return $sale_payment;
   }
 
-  public static function calculate_shipping_cost($shipping_id, $city_id, $weight) {
+  public static function calculate_shipping_cost($shipping_id, $country_id, $city_id, $weight) {
     $shipping = \Solunes\Sales\App\Shipping::find($shipping_id);
-    $shipping_city = $shipping->shipping_cities()->where('city_id', $city_id)->first();
+    if(config('sales.delivery_country')){
+      $country = \Solunes\Business\App\Country::find($country_id);
+      $shipping_cities = $shipping->shipping_cities()->where('country_id', $country_id)->where('city_id', $city_id)->with('city')->get();
+      $shipping_city = $shipping->shipping_cities()->where('country_id', $country_id)->where('city_id', $city_id)->first();
+      if(!$shipping_city){
+        $shipping_city = $shipping->shipping_cities()->where('country_id', $country_id)->first();
+        $city_id = $shipping_city->city_id;
+      }
+    } else {
+      $shipping_cities = $shipping->shipping_cities()->where('city_id', $city_id)->with('city')->get();
+      $shipping_city = $shipping->shipping_cities()->where('city_id', $city_id)->first();
+    }
+    $shipping_cities_array = [];
+    foreach($shipping_cities as $shipping_city_item){
+      $shipping_cities_array[$shipping_city_item->city_id] = $shipping_city_item->city->name;
+    }
     if($shipping_city){
       $shipping_cost = $shipping_city->shipping_cost;
       $weight = $weight-1;
       if($weight>0){
           $shipping_cost += ceil($weight)*$shipping_city->shipping_cost_extra;
       }
-      return ['shipping'=>true, 'shipping_cost'=>$shipping_cost];
+      return ['shipping'=>true, 'shipping_cities'=>$shipping_cities_array, 'shipping_city'=>$shipping_city->id, 'shipping_cost'=>$shipping_cost];
     } else {
       $new_shipping_id = 2;
-      return ['shipping'=>false, 'shipping_cost'=>0, 'new_shipping_id'=>$new_shipping_id];
+      return ['shipping'=>false,  'shipping_cities'=>$shipping_cities_array, 'shipping_city'=>$shipping_city->id, 'shipping_cost'=>0, 'new_shipping_id'=>$new_shipping_id];
     }
   }
 

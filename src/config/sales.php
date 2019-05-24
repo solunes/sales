@@ -7,6 +7,7 @@ return [
 	'desk_sale' => false,
 	'delivery' => false,
 	'delivery_country' => false,
+	'default_country' => 1,
 	'delivery_city' => false,
 	'default_city' => 1,
 	'ask_address' => false,

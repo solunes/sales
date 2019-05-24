@@ -49,6 +49,9 @@ class NodesSales extends Migration
             Schema::create('shipping_cities', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('parent_id')->unsigned();
+                if('sales.delivery_country'){
+                    $table->integer('country_id')->nullable();
+                }
                 $table->integer('city_id')->unsigned();
                 $table->integer('shipping_days')->nullable();
                 $table->decimal('shipping_cost', 10, 2)->nullable();

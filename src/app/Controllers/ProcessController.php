@@ -39,8 +39,8 @@ class ProcessController extends Controller {
   }
 
   /* Ruta para calcular precio de envio en AJAX segun envio, ciudad y peso */
-  public function getCalculateShipping($shipping_id, $city_id, $weight) {
-    $shipping_array = \Sales::calculate_shipping_cost($shipping_id, $city_id, $weight);
+  public function getCalculateShipping($shipping_id, $country_id, $city_id, $weight) {
+    $shipping_array = \Sales::calculate_shipping_cost($shipping_id, $country_id, $city_id, $weight);
     return $shipping_array;
   }
 
@@ -266,16 +266,24 @@ class ProcessController extends Controller {
   /* Ruta GET para finalizar la compra */
   public function getFinishSale($cart_id = NULL) {
     if(($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkBuyNow()->checkOwner()->status('holding')->first())||($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->first())){
+      $array['country_id'] = config('sales.default_country');
+      $array['city_id'] = config('sales.default_city');
+      $array['city_other'] = NULL;
       if(\Auth::check()){
         $user = \Auth::user();
         $array['auth'] = true;
-        $array['city_id'] = config('sales.default_city');
         if('solunes.customer'&&$user->customer){
+          $array['country_id'] = $user->customer->country_id;
+          $array['city_id'] = $user->customer->city_id;
+          $array['city_other'] = $user->customer->city_other;
           $array['address'] = $user->customer->address;
           $array['address_extra'] = $user->customer->address_extra;
           $array['nit_number'] = $user->customer->nit_number;
           $array['nit_social'] = $user->customer->nit_name;
         } else {
+          $array['country_id'] = $user->country_id;
+          $array['city_id'] = $user->city_id;
+          $array['city_other'] = $user->city_other;
           $array['address'] = $user->address;
           $array['address_extra'] = $user->address_extra;
           $array['nit_number'] = $user->nit_number;
@@ -284,14 +292,18 @@ class ProcessController extends Controller {
       } else {
         session()->set('url.intended', url()->current());
         $array['auth'] = false;
-        $array['city_id'] = config('sales.default_city');
         $array['address'] = NULL;
         $array['address_extra'] = NULL;
         $array['nit_number'] = NULL;
         $array['nit_social'] = NULL;
       }
+      if(config('sales.delivery_country')){
+        $array['countries'] = \Solunes\Business\App\Country::get()->lists('name','id')->toArray();
+        $array['cities'] = \Solunes\Business\App\City::where('country_id', $array['country_id'])->get()->lists('name','id')->toArray();
+      } else {
+        $array['cities'] = \Solunes\Business\App\City::get()->lists('name','id')->toArray();
+      }
       $array['cart'] = $cart;
-      $array['cities'] = \Solunes\Business\App\City::get()->lists('name','id')->toArray();
       if(config('sales.delivery')){
         $array['shipping_options'] = \Solunes\Sales\App\Shipping::active()->order()->lists('name','id');
         $array['shipping_descriptions'] = \Solunes\Sales\App\Shipping::active()->order()->get();

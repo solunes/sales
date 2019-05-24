@@ -1,4 +1,12 @@
 @if(config('sales.delivery')&&config('sales.delivery_city'))
+  @if(config('sales.delivery_country'))
+    <div class="col-md-12">
+      <div class="checkout-form-list">
+        <label>País <span class="required">*</span></label>
+        {!! Form::select('country_id', $countries, $country_id, ['id'=>'country_id', 'class'=>'query_shipping']) !!}                   
+      </div>
+    </div>
+  @endif
   <div class="col-md-12">
     <div class="checkout-form-list">
       <label>Ciudad <span class="required">*</span></label>

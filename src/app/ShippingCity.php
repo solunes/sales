@@ -27,6 +27,10 @@ class ShippingCity extends Model {
         return $this->belongsTo('Solunes\Sales\App\Shipping', 'parent_id');
     }
 
+    public function country() {
+        return $this->belongsTo('Solunes\Business\App\Country');
+    }
+
     public function city() {
         return $this->belongsTo('Solunes\Business\App\City');
     }

@@ -3,9 +3,21 @@
     var order_cost = {{ $total }};
     var weight = {{ $weight }};
     var shipping_id = $('#shipping_id').val();
+    if(config('sales.delivery_country')){
+      var country_id = $('#country_id').val();
+    } else {
+      var country_id = 1;
+    }
     var city_id = $('#city_id').val();
-    $.ajax("{{ url('process/calculate-shipping') }}/" + shipping_id + "/" + city_id + "/" + weight, {
+    $.ajax("{{ url('process/calculate-shipping') }}/" + shipping_id + "/" + country_id + "/" + city_id + "/" + weight, {
       success: function(data) {
+        if(city_id!=data.shipping_city){
+          var $el = $("#city_id");
+          $el.empty(); // remove old options
+          $.each(data.shipping_cities, function(key,value) {
+            $el.append($("<option></option>").attr("value", value).text(key));
+          });
+        }
         if(data.shipping){
           var shipping_cost = parseFloat(data.shipping_cost);
           var total_cost = order_cost + shipping_cost;
