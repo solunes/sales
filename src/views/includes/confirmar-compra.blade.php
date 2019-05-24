@@ -17,7 +17,7 @@
               <tr class="order-total">
                 <th>Total</th>
                 <td>
-                  <strong><span class="amount">{{ $cart->currency->name }} {{ $total }}</span></strong>
+                  <strong><span class="amount">{{ $cart->cart_item->currency->name }} {{ $total }}</span></strong>
                 </td>
               </tr>                     
             </tbody>

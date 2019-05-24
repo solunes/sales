@@ -24,6 +24,10 @@ class Cart extends Model {
         'id'=>'required',
     );
     
+    public function cart_item() {
+        return $this->hasOne('Solunes\Sales\App\CartItem', 'parent_id');
+    }
+
     public function cart_items() {
         return $this->hasMany('Solunes\Sales\App\CartItem', 'parent_id');
     }
