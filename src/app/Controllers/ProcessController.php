@@ -397,13 +397,14 @@ class ProcessController extends Controller {
       // Sale
       $total_cost = $order_cost + $shipping_cost;
       $agency = \Solunes\Business\App\Agency::find(1); // Parametrizar tienda en config
+      $currency = $item->currency;
       $sale = new \Solunes\Sales\App\Sale;
       $sale->user_id = $user->id;
       if($customer){
         $sale->customer_id = $customer->id;
       }
       $sale->agency_id = $agency->id;
-      $sale->currency_id = $item->currency->id;
+      $sale->currency_id = $currency->id;
       //$sale->order_amount = $order_cost;
       $sale->amount = $total_cost;
       if(config('sales.ask_invoice')){
