@@ -18,6 +18,7 @@
             $el.append($("<option></option>").attr("value", value).text(key));
           });
         }
+        updateOtherCity(data.other_city);
         if(data.shipping){
           var shipping_cost = parseFloat(data.shipping_cost);
           var total_cost = order_cost + shipping_cost;
@@ -34,10 +35,8 @@
     });
   }
 
-  function updateOtherCity(){
-    var city_id = $('#city_id').val();
-    console.log('City ID: ' + city_id)
-    if(city_id==13){
+  function updateOtherCity(active){
+    if(active){
       $('.city_other').fadeIn();
     } else {
       $('.city_other').fadeOut();
@@ -56,12 +55,6 @@
   @if(config('sales.delivery'))
     $(document).on('change', 'select.query_shipping', function() {
       queryShipping();
-    });
-  @endif
-
-  @if(config('sales.delivery')&&config('sales.delivery_city'))
-    $(document).on('change', 'select#city_id', function() {
-      updateOtherCity();
     });
   @endif
 
