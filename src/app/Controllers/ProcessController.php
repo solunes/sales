@@ -140,10 +140,6 @@ class ProcessController extends Controller {
           }
         }
 
-        if(config('sales.custom_add_cart_fix')){
-          $cart = \CustomFunc::checkCustomAddCartFix($cart, $product, $request);
-        }
-
         if(config('sales.custom_add_cart_detail')){
           $custom_detail = \CustomFunc::checkCustomAddCartDetail($product, $request);
           if($custom_detail){
@@ -153,6 +149,9 @@ class ProcessController extends Controller {
           $detail .= ' | Detalle: '.$request->input('detail');
         }
         \Sales::add_cart_item($cart, $product, $quantity, $detail, $custom_price);
+        if(config('sales.custom_add_cart_fix')){
+          $cart = \CustomFunc::checkCustomAddCartFix($cart, $product, $request);
+        }
         $message = 'Se añadió su producto al carro de compras. ';
         if($stock_changed){
           $message .= 'Se cambió la cantidad que usted solicitó debido a que no contamos con más stock.';
