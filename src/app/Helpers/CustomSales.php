@@ -7,7 +7,10 @@ use Form;
 class CustomSales {
    
     public static function after_seed_actions() {
-        // Arreglar Action Fields y Action Nodes
+        $sale_menu = \Solunes\Master\App\Menu::where('level',1)->where('permission','sales')->first();
+        \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Crear Venta Manual','link'=>'admin/create-manual-sale']);
+
+        /*// Arreglar Action Fields y Action Nodes
         $node_array['sale'] = ['action_field'=>['view'], 'action_node'=>['back','excel']];
         $node_array['sale-payment'] = ['action_field'=>['view','edit']];
         $node_array['sale-delivery'] = ['action_field'=>['view','edit']];
@@ -28,7 +31,7 @@ class CustomSales {
         $menu_array[] = ['parent_id'=>$pm->id,'level'=>2,'icon'=>'bar-chart','name'=>'Resumen de Ventas','link'=>'admin/sales-report'];
         $menu_array[] = ['parent_id'=>$pm->id,'level'=>2,'icon'=>'bar-chart','name'=>'Detalle de Ventas','link'=>'admin/sales-detail-report'];
         //$menu_array[] = ['parent_id'=>$pm->id,'level'=>2,'icon'=>'bar-chart','name'=>'Estadísticas de Ventas','link'=>'admin/statistics-sales'];
-        \Business::createBulkAdminMenu($menu_array);
+        \Business::createBulkAdminMenu($menu_array);*/
         return 'After seed realizado correctamente.';
     }
        
