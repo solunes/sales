@@ -79,13 +79,12 @@ class MasterSeeder extends Seeder {
                 $shipping_dhl = \Solunes\Sales\App\Shipping::create(['name'=>'DHL','city_id'=>1,'content'=>'<p>Puede realizar envíos a cualquier país del mundo por DHL.</p>']);
                 \Solunes\Sales\App\ShippingCity::create(['parent_id'=>$shipping_dhl->id,'city_id'=>1,'shipping_days'=>20,'shipping_cost'=>50,'shipping_cost_extra'=>30]);
             }
-
         }
 
         // Usuarios
         $admin = \Solunes\Master\App\Role::where('name', 'admin')->first();
         $member = \Solunes\Master\App\Role::where('name', 'member')->first();
-        $sales_perm = \Solunes\Master\App\Permission::create(['name'=>'sales', 'display_name'=>'Negocio']);
+        $sales_perm = \Solunes\Master\App\Permission::create(['name'=>'sales', 'display_name'=>'Ventas']);
         $admin->permission_role()->attach([$sales_perm->id]);
 
     }

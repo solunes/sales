@@ -65,6 +65,7 @@ class Sales {
     $sale_item->price = $amount;
     $sale_item->quantity = $quantity;
     //$sale_item->weight = $cart_item->weight;
+    $sale_item->total = $sale_item->price * $sale_item->quantity;
     $sale_item->save();
 
     // Sale Payment
@@ -141,6 +142,7 @@ class Sales {
       } else {
         $sale_item->quantity = 1;
       }
+      $sale_item->total = $sale_item->price * $sale_item->quantity;
       //$sale_item->weight = $cart_item->weight;
       $sale_item->save();
     }

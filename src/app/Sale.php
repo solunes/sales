@@ -43,10 +43,11 @@ class Sale extends Model {
 
 	/* Creating rules */
 	public static $rules_create = array(
+        'user_id'=>'required',
+        'customer_id'=>'required',
         'agency_id'=>'required',
         'currency_id'=>'required',
         'name'=>'required',
-        'amount'=>'required',
         'status'=>'required',
         'invoice'=>'required',
 	);
@@ -57,7 +58,6 @@ class Sale extends Model {
         'agency_id'=>'required',
         'currency_id'=>'required',
         'name'=>'required',
-        'amount'=>'required',
         'status'=>'required',
         'invoice'=>'required',
 	);

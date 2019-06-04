@@ -88,23 +88,23 @@ class NodesSales extends Migration
         });
         Schema::create('sales', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->integer('user_id')->nullable();
             $table->integer('customer_id')->nullable();
-            $table->integer('agency_id')->unsigned();
+            $table->integer('agency_id')->nullable();
             if(config('sales.company_relation')){
                 $table->integer('company_id')->nullable();
             }
             if(config('sales.contact_relation')){
                 $table->integer('contact_id')->nullable();
             }
-            $table->integer('currency_id')->unsigned();
+            $table->integer('currency_id')->nullable();
             if(config('sales.desk_sale')){
                 $table->decimal('order_amount', 10, 2)->nullable();
                 $table->decimal('change', 10, 2)->nullable()->default(0);
             }
             $table->string('name')->nullable();
             $table->decimal('amount', 10, 2)->nullable();
-            $table->decimal('paid_amount', 10, 2)->default(0);
+            $table->decimal('paid_amount', 10, 2)->nullable()->default(0);
             $table->enum('status', ['holding','paid','accounted','cancelled','pending-delivery','delivered'])->nullable()->default('holding');
             $table->boolean('invoice')->default(0);
             $table->string('invoice_name')->nullable();
@@ -115,12 +115,9 @@ class NodesSales extends Migration
             $table->string('transaction_code')->nullable();
             $table->string('proposal_file')->nullable();
             if(config('sales.solunes_project')){
-                $table->boolean('solunes_project')->default(1);
+                $table->boolean('solunes_project')->nullable()->default(1);
             }
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('agency_id')->references('id')->on('agencies')->onDelete('cascade');
-            $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
         });
         Schema::create('sale_items', function (Blueprint $table) {
             $table->increments('id');
@@ -130,12 +127,12 @@ class NodesSales extends Migration
                 $table->integer('product_bridge_variation_option_id')->nullable();
             }*/
             $table->integer('currency_id')->unsigned();
-            $table->decimal('price', 10, 2)->default(0);
+            $table->decimal('price', 10, 2)->nullable()->default(0);
             $table->integer('quantity')->nullable();
             $table->text('detail')->nullable();
-            $table->decimal('total', 10, 2)->default(0);
+            $table->decimal('total', 10, 2)->nullable()->default(0);
             if(config('sales.delivery')){
-                $table->decimal('weight', 10, 2)->default(0);
+                $table->decimal('weight', 10, 2)->nullable()->default(0);
             }
             if(config('payments.sfv_version')>1){
                 $table->string('economic_sin_activity')->nullable();
@@ -157,15 +154,15 @@ class NodesSales extends Migration
             $table->integer('currency_id')->unsigned();
             $table->integer('payment_id')->nullable();
             $table->integer('payment_method_id')->nullable();
-            $table->decimal('amount', 10, 2)->default(0);
+            $table->decimal('amount', 10, 2)->nullable()->default(0);
             if(config('payments.sfv_version')>1||config('payments.discounts')){
                 $table->decimal('discount_amount', 10, 2)->nullable();
             }
-            $table->decimal('pending_amount', 10, 2)->default(0);
+            $table->decimal('pending_amount', 10, 2)->nullable()->default(0);
             $table->enum('status', ['holding','to-pay','paid','accounted','frozen','cancelled'])->nullable()->default('holding');
             $table->text('detail')->nullable();
             $table->boolean('pay_delivery')->default(0);
-            $table->decimal('exchange', 10, 2)->default(1);
+            $table->decimal('exchange', 10, 2)->nullable()->default(1);
             if(config('payments.sfv_version')>1){
                 $table->string('commerce_user_code')->nullable();
                 $table->string('customer_code')->nullable();
@@ -184,8 +181,8 @@ class NodesSales extends Migration
             $table->integer('parent_id')->unsigned();
             $table->integer('currency_id')->unsigned();
             $table->integer('sale_item_id')->unsigned();
-            $table->decimal('pending_amount', 10, 2)->default(0);
-            $table->decimal('amount', 10, 2)->default(0);
+            $table->decimal('pending_amount', 10, 2)->nullable()->default(0);
+            $table->decimal('amount', 10, 2)->nullable()->default(0);
             $table->foreign('parent_id')->references('id')->on('sale_payments')->onDelete('cascade');
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
             $table->foreign('sale_item_id')->references('id')->on('sale_items')->onDelete('cascade');
@@ -197,9 +194,9 @@ class NodesSales extends Migration
                 $table->integer('shipping_id')->unsigned();
                 $table->integer('currency_id')->unsigned();
                 $table->string('country_code')->nullable()->default('BO');
-                $table->integer('region_id')->unsigned();
+                $table->integer('region_id')->nullable();
                 $table->string('region_other')->nullable();
-                $table->integer('city_id')->unsigned();
+                $table->integer('city_id')->nullable();
                 $table->string('city_other')->nullable();
                 $table->string('name')->nullable();
                 $table->enum('status', ['holding','confirmed','paid','delivered'])->default('holding');
@@ -215,8 +212,6 @@ class NodesSales extends Migration
                 $table->foreign('parent_id')->references('id')->on('sales')->onDelete('cascade');
                 $table->foreign('shipping_id')->references('id')->on('shippings')->onDelete('cascade');
                 $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
-                $table->foreign('region_id')->references('id')->on('regions')->onDelete('cascade');
-                $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             });
         }
         if(config('sales.credit')){
@@ -226,7 +221,7 @@ class NodesSales extends Migration
                 $table->date('due_date')->nullable();
                 $table->string('detail')->nullable();
                 $table->integer('currency_id')->unsigned();
-                $table->decimal('amount', 10, 2)->default(0);
+                $table->decimal('amount', 10, 2)->nullable()->default(0);
                 $table->foreign('parent_id')->references('id')->on('sales')->onDelete('cascade');
                 $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
             });

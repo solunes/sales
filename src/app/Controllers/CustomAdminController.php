@@ -16,135 +16,71 @@ class CustomAdminController extends Controller {
 
 	public function __construct(UrlGenerator $url) {
 	  $this->middleware('auth');
-	  $this->middleware('permission:sales');
+      $this->middleware('permission:dashboard');
 	  $this->prev = $url->previous();
 	  $this->module = 'admin';
 	}
 
-	public function getCalculateTotal($amount, $currency_id) {
-		$main_currency = \Solunes\Business\App\Currency::find($currency_id);
-		$item_currency = \Solunes\Business\App\Currency::find(1);
-		return \Business::calculate_currency($amount, $main_currency, $item_currency);
-	}
-
-	public function getCreateSale() {
-		$array['places'] = \Solunes\Business\App\Agency::where('type', 'store')->lists('name', 'id');
-		$array['currencies'] = \Solunes\Business\App\Currency::where('in_accounts',1)->get()->lists('name', 'id');
+	public function getCreateManualSale() {
+		$array['agencies'] = \Solunes\Business\App\Agency::lists('name', 'id');
+		$array['payment_methods'] = \Solunes\Payments\App\PaymentMethod::get()->lists('name', 'id');
+		$array['currencies'] = \Solunes\Business\App\Currency::get()->lists('name', 'id');
+		$array['customers'] = [0=>'Seleccionar Contacto']+\Solunes\Customer\App\Customer::get()->sortBy('name')->lists('name', 'id')->toArray();
 		$array['invoices'] = [0=>'Sin Factura', 1=>'Con Factura'];
-		$array['types'] = ['normal'=>'En Tienda', 'web'=>'Web', 'online'=>'Online'];
 		$array['i'] = NULL;
 		$array['dt'] = 'create';
 		$array['action'] = 'create';
 		$array['model'] = 'sale';
 		$array['currency'] = \Solunes\Business\App\Currency::where('type', 'main')->first();
 		$array['node'] = \Solunes\Master\App\Node::where('name', 'product')->first();
-        $categories = \Solunes\Business\App\Category::has('products')->with('products')->orderBy('name', 'ASC')->get();
+        $categories = \Solunes\Product\App\Category::has('product_bridges')->with('product_bridges')->get()->sortBy('name');
         $product_options = [''=>'-'];
         foreach($categories as $category){
-            foreach($category->products as $product){
+            foreach($category->product_bridges as $product){
             	if($product->total_stock>0){
-                	$product_options[$category->name][$product->id] = $product->name.' ('.$product->barcode.')';
+            		$name = $product->name;
+            		if(config('business.product_barcode')){
+            			$name .= ' ('.$product->barcode.')';
+            		}
+                	$product_options[$category->name][$product->id] = $name;
             	}
             }
         }
 		$array['products'] = $product_options;
-		$array['currency_dollar'] = \Solunes\Business\App\Currency::find(2);
-      	return view('store::item.create-sale', $array);
+      	return view('sales::item.create-sale', $array);
 	}
 
-    public function postCreateSale(Request $request) {
+    public function postCreateManualSale(Request $request) {
       $validator = \Validator::make($request->all(), \Solunes\Sales\App\Sale::$rules_create_sale);
-      if($request->input('paid_amount')<$request->input('amount')&&!$request->input('credit')){
+      /*if($request->input('paid_amount')<$request->input('amount')&&!$request->input('credit')){
 		return redirect($this->prev)->with('message_error', 'Debe introducir un monto pagado mayor al total, o incluir la opción de crédito.')->withErrors($validator);
-      }
-	  if($validator->passes()&&$request->input('product_id')[0]) {
-
-		$item = new \Solunes\Sales\App\Sale;
-		$item->user_id = auth()->user()->id;
-		$item->place_id = $request->input('place_id');
-		$item->currency_id = 1;
-		$item->order_amount = $request->input('amount');
-		$item->amount = $request->input('amount');
-		$item->change = $request->input('change');
-		$item->paid_amount = $request->input('paid_amount');
-		$item->invoice = $request->input('invoice');
-		$item->invoice_name = $request->input('invoice_name');
-		$item->invoice_nit = $request->input('invoice_nit');
-		$item->type = $request->input('type');
-		$item->status = 'paid';
-		$item->save();
-
-		// Crear pagos de venta
-		if($request->input('cash_bob')){
-			$detail = 'Cobro en efectivo (BOB) realizado en tienda';
-			\Sales::register_sale_payment($item, 1, 1, 'paid', $request->input('cash_bob'), $detail);
-		}
-		if($request->input('cash_usd')){
-			$detail = 'Cobro en efectivo (USD) realizado en tienda';
-			\Sales::register_sale_payment($item, 1, 2, 'paid', $request->input('cash_usd'), $detail, $request->input('exchange'));
-		}
-		if($request->input('pos_bob')){
-			$detail = 'Cobro en POS (BOB) realizado en tienda';
-			\Sales::register_sale_payment($item, 2, 1, 'paid', $request->input('pos_bob'), $detail);
-		}
-
-		// Crear Envío en Pedido
-		/*if($request->input('shipping_cost')>0){
-			$sale_delivery = new \Solunes\Sales\App\SaleDelivery;
-			$sale_delivery->parent_id = $item->id;
-			$sale_delivery->shipping_id = $request->input('shipping_id');
-			$sale_delivery->detail = $request->input('credit_details');
-			$sale_delivery->currency_id = 1;
-			$sale_delivery->amount = $request->input('credit_amount');
-			$sale_delivery->save();
-		}*/
-
-		// Crear Venta a Crédito
-		if($request->input('credit')){
-			$credit = new \Solunes\Sales\App\SaleCredit;
-			$credit->parent_id = $item->id;
-			$credit->due_date = $request->input('credit_due');
-			$credit->detail = $request->input('credit_details');
-			$credit->currency_id = 1;
-			$credit->amount = $request->input('credit_amount');
-			$credit->save();
-			$credit_percentage = $request->input('amount') / $request->input('credit_amount');
-		}
-
-		$total_count = count($request->input('product_id'));
-		$count = 0;
-		$pending_sum = 0;
-		foreach($request->input('product_id') as $product_key => $product_id){
-			if($product = \Solunes\Business\App\ProductBridge::find($product_id)){
-				$subitem = new \Solunes\Sales\App\SaleItem;
-				$subitem->parent_id = $item->id;
-				$subitem->product_id = $product->id;
-				$subitem->currency_id = $product->currency_id;
-				$subitem->price = $request->input('price')[$product_key];
-				$subitem->quantity = $request->input('quantity')[$product_key];
-				$subitem->total = $subitem->price * $subitem->quantity;
-				if($item->credit&&$item->credit_amount>0){
-					$pending = round($credit_percentage * $total, 2);
-					$pending_sum += $pending;
-					$subitem->pending = $pending;
-					$count ++;
-					if($total_count==$count){
-						$diff = $item->credit_amount - $pending_sum;
-						if($diff!=0){
-							$subitem->pending = $subitem->pending + $diff;
-						}
-					}
-				}
-				$subitem->save();
-			}
-		}
-		return redirect('admin/model/sale/view/'.$item->id)->with('message_success', 'La venta se realizó correctamente');
+      }*/
+	  if($validator->passes()&&$request->input('customer_id')&&$request->input('product_id')[0]) {
+	  	$user = auth()->user();
+	  	$customer = \Solunes\Customer\App\Customer::find($request->input('customer_id'));
+	  	$currency = \Solunes\Business\App\Currency::find(1);
+	  	$payment_method_id = $request->input('payment_method_id');
+	  	$invoice = 1;
+	  	$invoice_name = $request->input('invoice_name');
+	  	$invoice_number = $request->input('invoice_number');
+	  	$sale_details = [];
+	  	foreach($request->input('product_id') as $product_key => $product_id){
+	  		$product_bridge = \Solunes\Business\App\ProductBridge::find($product_id);
+	  		$sale_details[] = ['product_bridge_id'=>$product_bridge->id,'amount'=>$request->input('price')[$product_key],'quantity'=>$request->input('quantity')[$product_key],'detail'=>$request->input('product_name')[$product_key]];
+	  	}
+	  	$sale = \Sales::generateSale($user->id, $customer->id, $currency->id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $sale_details);
+	  	if($request->input('status')=='paid'){
+	  		$sale->status = 'paid';
+	  		$sale->paid_amount = $sale->amount;
+	  		$sale->save();
+	  	}
+		return redirect('admin/model/sale/view/'.$sale->id)->with('message_success', 'La venta se realizó correctamente');
 	  } else {
 		return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos y al menos un producto para enviarlo.')->withErrors($validator);
 	  }
     }
 
-	public function getCreateRefund($sale_id = NULL) {
+	public function getCreateSaleRefund($sale_id = NULL) {
 		$array['i'] = NULL;
 		$array['dt'] = 'create';
 		$array['action'] = 'create';
@@ -180,7 +116,7 @@ class CustomAdminController extends Controller {
       	return view('store::item.create-refund', $array);
 	}
 
-    public function postCreateRefund(Request $request) {
+    public function postCreateSaleRefund(Request $request) {
       $validator = \Validator::make($request->all(), \Solunes\Sales\App\Refund::$rules_create_refund);
 	  if($validator->passes()) {
 
