@@ -174,7 +174,7 @@
       console.log('Producto no existe en la tabla');
       var rowcount = $('#products>tbody>tr').length;
       var rowval = $('#products>tbody>tr:last input.product_id').val();
-      $.ajax("{{ url('admin/check-product') }}/" + product_id, {
+      $.ajax("{{ url('admin/check-product') }}/" + product_id+"/{{ $currency->id }}", {
         success: function(data) {
           array.push(product_id);
           console.log('array:' + array);
