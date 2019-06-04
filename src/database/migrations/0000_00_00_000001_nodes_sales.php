@@ -91,10 +91,10 @@ class NodesSales extends Migration
             $table->integer('user_id')->nullable();
             $table->integer('customer_id')->nullable();
             $table->integer('agency_id')->nullable();
-            if(config('sales.company_relation')){
+            if(config('business.companies')&&config('sales.company_relation')){
                 $table->integer('company_id')->nullable();
             }
-            if(config('sales.contact_relation')){
+            if(config('business.contacts')&&config('sales.contact_relation')){
                 $table->integer('contact_id')->nullable();
             }
             $table->integer('currency_id')->nullable();

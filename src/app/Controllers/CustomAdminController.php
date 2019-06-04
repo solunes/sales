@@ -59,7 +59,7 @@ class CustomAdminController extends Controller {
 	  	$user = auth()->user();
 	  	$customer = \Solunes\Customer\App\Customer::find($request->input('customer_id'));
 	  	$currency = \Solunes\Business\App\Currency::find(1);
-	  	$payment_method_id = $request->input('payment_method_id');
+	  	$payment_method = \Solunes\Payments\App\PaymentMethod::find($request->input('payment_method_id'));
 	  	$invoice = 1;
 	  	$invoice_name = $request->input('invoice_name');
 	  	$invoice_number = $request->input('invoice_number');
@@ -68,12 +68,17 @@ class CustomAdminController extends Controller {
 	  		$product_bridge = \Solunes\Business\App\ProductBridge::find($product_id);
 	  		$sale_details[] = ['product_bridge_id'=>$product_bridge->id,'amount'=>$request->input('price')[$product_key],'quantity'=>$request->input('quantity')[$product_key],'detail'=>$request->input('product_name')[$product_key]];
 	  	}
-	  	$sale = \Sales::generateSale($user->id, $customer->id, $currency->id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $sale_details);
+	  	$sale = \Sales::generateSale($user->id, $customer->id, $currency->id, $payment_method->id, $invoice, $invoice_name, $invoice_number, $sale_details);
 	  	if($request->input('status')=='paid'){
-	  		$sale->status = 'paid';
-	  		$sale->paid_amount = $sale->amount;
-	  		$sale->save();
+	  		$sale_payment = $sale->sale_payment;
+	  		$payment = $sale_payment->payment;
+      		app('\Solunes\Payments\App\Controllers\PagosttController')->getMakeManualCashierPayment($customer->id, $payment->id);
+      		$payment = \Solunes\Payments\App\Payment::find($payment->id);
+      		if($payment->invoice_url){
+      			return redirect($payment->invoice_url);
+      		}
 	  	}
+
 		return redirect('admin/model/sale/view/'.$sale->id)->with('message_success', 'La venta se realizó correctamente');
 	  } else {
 		return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos y al menos un producto para enviarlo.')->withErrors($validator);
