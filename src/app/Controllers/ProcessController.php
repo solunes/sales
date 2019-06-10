@@ -24,7 +24,7 @@ class ProcessController extends Controller {
 
   /* Ruta para ver todos los productos */
   public function getProducts() {
-    $items = \Solunes\Business\App\ProductBridge::whereNull('variation_id')->get();
+    $items = \Solunes\Business\App\ProductBridge::whereNull('variation_id')->where('active',1)->get();
     $page = \Solunes\Master\App\Page::find(3);
     return view('sales::content.products', ['page'=>$page,'items'=>$items]);
   }
@@ -627,13 +627,13 @@ class ProcessController extends Controller {
     return view('sales::process.pending-carts', $array);
   }
 
-  /* Ruta GET probar el email de una venta */
+  /* Ruta GET probar el envio de emails de una venta */
   public function getTestSuccessSale($sale_id) {
     if(config('services.enable_test')){
       $sale = \Solunes\Sales\App\Sale::find($sale_id);
       $customer['email'] = 'edumejia30@gmail.com';
       $customer['name'] = 'Eduardo Mejia';
-      \Sales::sendConfirmationSaleEmail($sale, $customer);
+      \Sales::customerSuccessfulPayment($sale, $customer);
     } else {
       return redirect('')->with('message_error', 'La prueba no pudo ser realizada.');
     }

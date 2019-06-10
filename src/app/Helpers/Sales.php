@@ -406,17 +406,97 @@ class Sales {
     }
   }
 
-  public static function sendConfirmationSaleEmail($sale, $customer) {
-    if(config('sales.send_confirmation_purchase_email')){
-      \Mail::send('sales::emails.successful-sale', ['sale'=>$sale, 'email'=>$customer['email']], function($m) use($customer) {
-        if($customer['name']){
-          $name = $customer['name'];
-        } else {
-          $name = 'Cliente';
+  public static function customerSuccessfulPayment($sale, $customer) {
+    $send_custom_emails = false;
+    if(config('sales.sales_email')&&filter_var($customer['email'], FILTER_VALIDATE_EMAIL)){
+      $send_reservation = false;
+      $send_ticket = false;
+      foreach($sale->sale_items as $sale_item){
+        $product_bridge = $sale_item->product_bridge;
+        if($product_bridge->delivery_type!='normal'){
+          if($product_bridge->delivery_type=='digital'){
+            \Sales::sendEmailDigitalGood($sale, $customer);
+          } else if($product_bridge->delivery_type=='credit'){
+            \Sales::sendEmailWalletCredit($sale, $customer);
+            if(config('customer.credit_wallet')){
+              \Customer::increaseCreditWallet($customer['id'], $sale_item->id, $sale_item->total);
+            } else {
+              // TODO: Notificación de Error, activar credit_wallet
+            }
+          } else if($product_bridge->delivery_type=='reservation'){
+            $send_reservation = true;
+          } else if($product_bridge->delivery_type=='ticket'){
+            $send_ticket = true;
+          }
+          $send_custom_emails = true;
         }
-        $m->to($customer['email'], $name)->subject(config('solunes.app_name').' | '.trans('sales::mail.successful_sale_title'));
-      });
+      }
+      if($send_reservation){
+        \Sales::sendEmailReservation($sale, $customer);
+      }
+      if($send_ticket){
+        \Sales::sendEmailTicket($sale, $customer);
+      }
+      if(config('sales.send_confirmation_purchase_email')&&!$send_custom_emails){
+        \Sales::sendConfirmationSaleEmail($sale, $customer);
+      }
     }
+    return $send_custom_emails;
+  }
+
+  public static function sendEmailDigitalGood($sale, $customer) {
+    \Mail::send('sales::emails.successful-digital-good', ['sale'=>$sale, 'email'=>$customer['email']], function($m) use($customer) {
+      if($customer['name']){
+        $name = $customer['name'];
+      } else {
+        $name = 'Cliente';
+      }
+      $m->to($customer['email'], $name)->subject(config('solunes.app_name').' | '.trans('sales::mail.successful_digital_good_title'));
+    });
+  }
+
+  public static function sendEmailWalletCredit($sale, $customer) {
+    \Mail::send('sales::emails.successful-wallet-credit', ['sale'=>$sale, 'email'=>$customer['email']], function($m) use($customer) {
+      if($customer['name']){
+        $name = $customer['name'];
+      } else {
+        $name = 'Cliente';
+      }
+      $m->to($customer['email'], $name)->subject(config('solunes.app_name').' | '.trans('sales::mail.successful_wallet_credit_title'));
+    });
+  }
+
+  public static function sendEmailReservation($sale, $customer) {
+    \Mail::send('sales::emails.successful-reservation', ['sale'=>$sale, 'email'=>$customer['email']], function($m) use($customer) {
+      if($customer['name']){
+        $name = $customer['name'];
+      } else {
+        $name = 'Cliente';
+      }
+      $m->to($customer['email'], $name)->subject(config('solunes.app_name').' | '.trans('sales::mail.successful_reservation_title'));
+    });
+  }
+
+  public static function sendEmailTicket($sale, $customer) {
+    \Mail::send('sales::emails.successful-ticket', ['sale'=>$sale, 'email'=>$customer['email']], function($m) use($customer) {
+      if($customer['name']){
+        $name = $customer['name'];
+      } else {
+        $name = 'Cliente';
+      }
+      $m->to($customer['email'], $name)->subject(config('solunes.app_name').' | '.trans('sales::mail.successful_ticket_title'));
+    });
+  }
+
+  public static function sendConfirmationSaleEmail($sale, $customer) {
+    \Mail::send('sales::emails.successful-sale', ['sale'=>$sale, 'email'=>$customer['email']], function($m) use($customer) {
+      if($customer['name']){
+        $name = $customer['name'];
+      } else {
+        $name = 'Cliente';
+      }
+      $m->to($customer['email'], $name)->subject(config('solunes.app_name').' | '.trans('sales::mail.successful_sale_title'));
+    });
   }
 
 }
