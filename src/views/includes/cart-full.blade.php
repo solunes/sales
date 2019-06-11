@@ -18,7 +18,7 @@
           <td class="product-thumbnail"><a target="_blank" href="{{ url($item->product_bridge->internal_url) }}">
             {!! Asset::get_image('product-bridge-image', 'subdetail', $item->product_bridge->image) !!}
           </a></td>
-          <td class="product-name" style="max-width: 200px;"><a target="_blank" href="{{ url($item->product_bridge->internal_url) }}">{{ $item->product_bridge->name }} - {{ $item->detail }}</a></td>
+          <td class="product-name" style="max-width: 200px;"><a target="_blank" href="{{ url($item->product_bridge->internal_url) }}">{{ $item->detail }}</a></td>
           <td class="product-price"><span class="amount">{{ $item->currency->name }} {{ $item->price }}</span></td>
           <td class="product-quantity">
             @if($editable)
