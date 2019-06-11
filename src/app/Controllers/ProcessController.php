@@ -84,12 +84,15 @@ class ProcessController extends Controller {
               if($count==0){
                 $variation_id = $product_bridge_variation->id;
                 $variation_value = $request->input('variation_'.$product_bridge_variation->id);
+                $detail .= ' - '.$product_bridge_variation->name.': '.$product_bridge_variation->variation_options()->where('id', $variation_value)->first()->name;
               } else if($count==1){
                 $variation_2_id = $product_bridge_variation->id;
                 $variation_2_value = $request->input('variation_'.$product_bridge_variation->id);
+                $detail .= ' - '.$product_bridge_variation->name.': '.$product_bridge_variation->variation_options()->where('id', $variation_value)->first()->name;
               } else if($count==2){
                 $variation_3_id = $product_bridge_variation->id;
                 $variation_3_value = $request->input('variation_'.$product_bridge_variation->id);
+                $detail .= ' - '.$product_bridge_variation->name.': '.$product_bridge_variation->variation_options()->where('id', $variation_value)->first()->name;
               }
               $count++;
             }
