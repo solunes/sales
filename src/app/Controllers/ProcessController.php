@@ -348,23 +348,23 @@ class ProcessController extends Controller {
     } else {
       $rules = \Solunes\Sales\App\Sale::$rules_send;
     }
-    if(config('sales.delivery')){
-      if(!config('sales.delivery_city')){
-        unset($rules['city_id']);
-      }
-      if(!config('sales.ask_address')){
-        unset($rules['address']);
-      }
-      if(!config('sales.sales_email')){
-        unset($rules['email']);
-      }
-      if(!config('sales.sales_cellphone')){
-        unset($rules['cellphone']);
-      }
-      if(!config('sales.sales_username')){
-        unset($rules['username']);
-      }
+    if(!config('sales.delivery')){
       unset($rules['shipping_id']);
+    }
+    if(!config('sales.delivery_city')){
+      unset($rules['city_id']);
+    }
+    if(!config('sales.ask_address')){
+      unset($rules['address']);
+    }
+    if(!config('sales.sales_email')){
+      unset($rules['email']);
+    }
+    if(!config('sales.sales_cellphone')){
+      unset($rules['cellphone']);
+    }
+    if(!config('sales.sales_username')){
+      unset($rules['username']);
     }
     if(!config('sales.ask_invoice')){
       unset($rules['nit_number']);
@@ -524,7 +524,9 @@ class ProcessController extends Controller {
         }
         //$sale_item->weight = $cart_item->weight;
         $sale_item->save();
-        \Inventory::reduce_inventory($store_agency, $sale_item->product_bridge, $sale_item->quantity);
+        if(config('solunes.inventory')){
+          \Inventory::reduce_inventory($store_agency, $sale_item->product_bridge, $sale_item->quantity);
+        }
       }
 
       $cart->status = 'sale';
