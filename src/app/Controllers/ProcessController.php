@@ -65,7 +65,7 @@ class ProcessController extends Controller {
       }
       if($request->input('quantity')>0){
         $cart = \Sales::get_cart();
-        $detail = NULL;
+        $detail = $product->name;
         $count = 0;
         $custom_price = $product->real_price;
         $variation_id = NULL;
@@ -84,12 +84,15 @@ class ProcessController extends Controller {
               if($count==0){
                 $variation_id = $product_bridge_variation->id;
                 $variation_value = $request->input('variation_'.$product_bridge_variation->id);
+                $detail .= ' - '.$product_bridge_variation->name.': '.$product_bridge_variation->variation_options()->where('id', $variation_value)->first()->name;
               } else if($count==1){
                 $variation_2_id = $product_bridge_variation->id;
                 $variation_2_value = $request->input('variation_'.$product_bridge_variation->id);
+                $detail .= ' - '.$product_bridge_variation->name.': '.$product_bridge_variation->variation_options()->where('id', $variation_value)->first()->name;
               } else if($count==2){
                 $variation_3_id = $product_bridge_variation->id;
                 $variation_3_value = $request->input('variation_'.$product_bridge_variation->id);
+                $detail .= ' - '.$product_bridge_variation->name.': '.$product_bridge_variation->variation_options()->where('id', $variation_value)->first()->name;
               }
               $count++;
             }
@@ -98,9 +101,7 @@ class ProcessController extends Controller {
             if(!$product_bridge_variation->stockable){
               if($request->has('variation_'.$product_bridge_variation->id)&&$request->input('variation_'.$product_bridge_variation->id)!='0'&&$request->input('variation_'.$product_bridge_variation->id)!=0){
                 $count++;
-                if($count>1){
-                  $detail .= ' | ';
-                }
+                $detail .= ' | ';
                 $detail .= $product_bridge_variation->name.': ';
                 $subarray = $request->input('variation_'.$product_bridge_variation->id);
                 if(!is_array($subarray)){
@@ -388,8 +389,8 @@ class ProcessController extends Controller {
         if(config('solunes.inventory')){
           $stock = \Business::getProductBridgeStock($item->product_bridge, config('business.online_store_agency_id'));
           if($stock<$item->quantity){
-            $item->quantity = $stock;
-            $item->save();
+            $stock->quantity = $stock;
+            $stock->save();
           }
         }
       }
@@ -466,7 +467,11 @@ class ProcessController extends Controller {
           $sale_delivery->shipping_id = $request->input('shipping_id');
           $sale_delivery->currency_id = $sale->currency_id;
           if(config('sales.delivery_city')){
-            $sale_delivery->country_code = $user->city->region->country->name;
+            if(config('sales.delivery_country')){
+              $sale_delivery->country_code = $user->city->region->country->name;
+            } else {
+              $sale_delivery->country_code = 'BO';
+            }
             $sale_delivery->region_id = $user->city->region_id;
             $sale_delivery->city_id = $user->city->id;
             if($request->has('city_other')){

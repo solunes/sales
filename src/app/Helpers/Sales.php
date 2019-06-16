@@ -206,7 +206,7 @@ class Sales {
         $city_id = $shipping_city->city_id;
       }
     } else {
-      $shipping_cities = $shipping->shipping_cities()->where('city_id', $city_id)->with('city')->get();
+      $shipping_cities = $shipping->shipping_cities()->with('city')->get();
       $shipping_city = $shipping->shipping_cities()->where('city_id', $city_id)->first();
     }
     $shipping_cities_array = [];
