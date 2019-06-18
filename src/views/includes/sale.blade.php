@@ -41,7 +41,7 @@
         </form>
       </div>
     @endif
-    @if(config('sales.delivery'))
+    @if(config('sales.delivery')&&count($sale->sale_deliveries)>0)
       <h3>MÉTODO DE ENVÍO</h3>
       @foreach($sale->sale_deliveries as $delivery)
         <div class="store-form">           
