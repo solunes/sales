@@ -36,7 +36,7 @@ class SalesServiceProvider extends ServiceProvider {
 
         /* Comandos de Consola */
         $this->commands([
-            //\Solunes\Sales\App\Console\AccountCheck::class,
+            \Solunes\Sales\App\Console\FixSalesStatus::class,
         ]);
 
         $this->mergeConfigFrom(
