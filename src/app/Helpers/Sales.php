@@ -366,7 +366,9 @@ class Sales {
     if(config('sales.delivery')){
       if(config('sales.delivery_city')){
         $city = \Solunes\Business\App\City::find($request->input('city_id'));
-        $customer->city_id = $city->id;
+        if($city){
+          $customer->city_id = $city->id;
+        }
         $customer->city_other = $request->input('city_other');
       }
       if(config('sales.ask_address')){
