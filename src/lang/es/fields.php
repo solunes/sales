@@ -107,5 +107,9 @@ return [
     'product_internal_code' => 'Código Interno de Producto',
     'product_serial_number' => 'Número de Serie de Producto',
     'product_sin_code' => 'Código del SIN de Producto',
-
+    'country' => 'País',
+    'lead_status' => 'Estado de Lead',
+    'contract_file' => 'Archivo de Contrato',
+    'quotation_file' => 'Archivo de Cotización',
+    
 ];

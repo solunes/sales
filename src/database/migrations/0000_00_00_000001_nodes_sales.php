@@ -106,6 +106,16 @@ class NodesSales extends Migration
             $table->decimal('amount', 10, 2)->nullable();
             $table->decimal('paid_amount', 10, 2)->nullable()->default(0);
             $table->enum('status', ['holding','paid','accounted','cancelled','pending-delivery','delivered'])->nullable()->default('holding');
+            $leads_array[] = 'prospect';
+            if(config('sales.quotation')){
+                $leads_array[] = 'quotation-request';
+                $leads_array[] = 'quotation-done';
+            }
+            if(config('sales.sign_contract')){
+                $leads_array[] = 'signed-contract';
+            }
+            $leads_array[] = 'sale';
+            $table->enum('lead_status', $leads_array)->nullable()->default('prospect');
             $table->boolean('invoice')->default(0);
             $table->string('invoice_name')->nullable();
             $table->string('invoice_nit')->nullable();
@@ -113,6 +123,12 @@ class NodesSales extends Migration
                 $table->enum('type', ['normal','online'])->nullable()->default('normal');
             }
             $table->string('transaction_code')->nullable();
+            if(config('sales.quotation')){
+                $table->string('quotation_file')->nullable();
+            }
+            if(config('sales.sign_contract')){
+                $table->string('contract_file')->nullable();
+            }
             $table->string('proposal_file')->nullable();
             if(config('sales.solunes_project')){
                 $table->boolean('solunes_project')->nullable()->default(1);

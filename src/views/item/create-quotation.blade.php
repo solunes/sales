@@ -2,7 +2,7 @@
 
 @section('content')
   <h1>Agregar Productos</h1>
-  {!! Form::open(['url'=>'admin/create-manual-sale', 'method'=>'post', 'id'=>'create-sale']) !!}
+  {!! Form::open(['url'=>'admin/create-manual-quotation', 'method'=>'post', 'id'=>'create-sale']) !!}
     <p id="notification-bar"></p>
     <div class="row">
       @if(config('business.barcode'))
@@ -56,23 +56,13 @@
     <div class="row">
       <div class="col-sm-1 hidden-xs icon"><i class="fa fa-building"></i></div>
       {!! Field::form_input($i, $dt, ['name'=>'agency_id', 'required'=>true, 'type'=>'select', 'options'=>$agencies], ['label'=>'Seleccione la Agencia', 'cols'=>3]) !!}
-      <div class="col-sm-1 hidden-xs icon"><i class="fa fa-tags"></i></div>
-      {!! Field::form_input($i, $dt, ['name'=>'payment_method_id', 'required'=>true, 'type'=>'select', 'options'=>$payment_methods], ['label'=>'Método de Pago', 'cols'=>3]) !!}
-      <div class="col-sm-1 hidden-xs icon"><i class="fa fa-calendar"></i></div>
-      {!! Field::form_input($i, $dt, ['name'=>'status', 'required'=>true, 'type'=>'select', 'options'=>['holding'=>'Pendiente de Pago','paid'=>'Pagado']], ['label'=>'Seleccionar Estado de Pago', 'cols'=>3]) !!}
-    </div>
-    <div class="row">
       <div class="col-sm-1 hidden-xs icon"><i class="fa fa-user"></i></div>
       {!! Field::form_input($i, $dt, ['name'=>'customer_id', 'required'=>true, 'type'=>'select', 'options'=>$customers], ['value'=>0, 'label'=>'Seleccionar Cliente', 'cols'=>3]) !!}
-      <div class="col-sm-1 hidden-xs icon"><i class="fa fa-terminal"></i></div>
-      {!! Field::form_input($i, $dt, ['name'=>'invoice_number', 'required'=>true, 'type'=>'string'], ['label'=>'NIT de Cliente', 'cols'=>3]) !!}
-      <div class="col-sm-1 hidden-xs icon"><i class="fa fa-paper"></i></div>
-      {!! Field::form_input($i, $dt, ['name'=>'invoice_name', 'required'=>true, 'type'=>'string'], ['label'=>'Nombre de Cliente', 'cols'=>3]) !!}
     </div>
     {!! Form::hidden('action_form', $action) !!}
     {!! Form::hidden('model_node', $model) !!}
     {!! Form::hidden('lang_code', \App::getLocale()) !!}
-    {!! Form::submit('Generar Venta', array('class'=>'btn btn-site')) !!}
+    {!! Form::submit('Generar Cotización', array('class'=>'btn btn-site')) !!}
 
   {!! Form::close() !!}
 @endsection

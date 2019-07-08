@@ -25,5 +25,9 @@ return array(
 	'sale' => 'Venta',
 	'to-pay' => 'Por Pagar',
 	'pending-delivery' => 'Por Enviar',	
+	'prospect' => 'Prospecto',
+	'quotation-done' => 'Cotización Realizada',
+	'quotation-request' => 'Solicitud de Cotización',
+	'signed-contract' => 'Contrato Firmado',
 
 );

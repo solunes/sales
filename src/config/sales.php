@@ -25,6 +25,9 @@ return [
 	'redirect_to_payment' => false,
 	'send_confirmation_purchase_email' => false,
 	'check_cart_stock' => false,
+	'quotation' => true,
+	'sign_contract' => false,
+	'editable_price' => false,
 
 	// INTEGRATIONS
 	'solunes_project' => false,
