@@ -33,7 +33,7 @@ class CustomAdminController extends Controller {
 		$array['model'] = 'sale';
 		$array['currency'] = \Solunes\Business\App\Currency::where('type', 'main')->first();
 		$array['node'] = \Solunes\Master\App\Node::where('name', 'product')->first();
-        $categories = \Solunes\Product\App\Category::has('product_bridges')->with('product_bridges')->get()->sortBy('name');
+        $categories = \Solunes\Business\App\Category::has('product_bridges')->with('product_bridges')->get()->sortBy('name');
         $product_options = [''=>'-'];
         foreach($categories as $category){
             foreach($category->product_bridges as $product){
@@ -63,12 +63,78 @@ class CustomAdminController extends Controller {
 	  	$invoice = 1;
 	  	$invoice_name = $request->input('invoice_name');
 	  	$invoice_number = $request->input('invoice_number');
+	  	$agency_id = $request->input('agency_id');
 	  	$sale_details = [];
 	  	foreach($request->input('product_id') as $product_key => $product_id){
 	  		$product_bridge = \Solunes\Business\App\ProductBridge::find($product_id);
 	  		$sale_details[] = ['product_bridge_id'=>$product_bridge->id,'amount'=>$request->input('price')[$product_key],'quantity'=>$request->input('quantity')[$product_key],'detail'=>$request->input('product_name')[$product_key]];
 	  	}
-	  	$sale = \Sales::generateSale($user->id, $customer->id, $currency->id, $payment_method->id, $invoice, $invoice_name, $invoice_number, $sale_details);
+	  	$sale = \Sales::generateSale($user->id, $customer->id, $currency->id, $payment_method->id, $invoice, $invoice_name, $invoice_number, $sale_details, $agency_id);
+	  	if($request->input('status')=='paid'){
+	  		$sale_payment = $sale->sale_payment;
+	  		$payment = $sale_payment->payment;
+      		app('\Solunes\Payments\App\Controllers\PagosttController')->getMakeManualCashierPayment($customer->id, $payment->id);
+      		$payment = \Solunes\Payments\App\Payment::find($payment->id);
+      		if($payment->invoice_url){
+      			return redirect($payment->invoice_url);
+      		}
+	  	}
+
+		return redirect('admin/model/sale/view/'.$sale->id)->with('message_success', 'La venta se realizó correctamente');
+	  } else {
+		return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos y al menos un producto para enviarlo.')->withErrors($validator);
+	  }
+    }
+
+	public function getCreateManualQuotation() {
+		$array['agencies'] = \Solunes\Business\App\Agency::lists('name', 'id');
+		$array['payment_methods'] = \Solunes\Payments\App\PaymentMethod::get()->lists('name', 'id');
+		$array['currencies'] = \Solunes\Business\App\Currency::get()->lists('name', 'id');
+		$array['customers'] = [0=>'Seleccionar Contacto']+\Solunes\Customer\App\Customer::get()->sortBy('name')->lists('name', 'id')->toArray();
+		$array['invoices'] = [0=>'Sin Factura', 1=>'Con Factura'];
+		$array['i'] = NULL;
+		$array['dt'] = 'create';
+		$array['action'] = 'create';
+		$array['model'] = 'sale';
+		$array['currency'] = \Solunes\Business\App\Currency::where('type', 'main')->first();
+		$array['node'] = \Solunes\Master\App\Node::where('name', 'product')->first();
+        $categories = \Solunes\Business\App\Category::has('product_bridges')->with('product_bridges')->get()->sortBy('name');
+        $product_options = [''=>'-'];
+        foreach($categories as $category){
+            foreach($category->product_bridges as $product){
+            	if($product->total_stock>0){
+            		$name = $product->name;
+            		if(config('business.product_barcode')){
+            			$name .= ' ('.$product->barcode.')';
+            		}
+                	$product_options[$category->name][$product->id] = $name;
+            	}
+            }
+        }
+		$array['products'] = $product_options;
+      	return view('sales::item.create-quotation', $array);
+	}
+
+    public function postCreateManualQuotation(Request $request) {
+      $validator = \Validator::make($request->all(), \Solunes\Sales\App\Sale::$rules_create_sale);
+      /*if($request->input('paid_amount')<$request->input('amount')&&!$request->input('credit')){
+		return redirect($this->prev)->with('message_error', 'Debe introducir un monto pagado mayor al total, o incluir la opción de crédito.')->withErrors($validator);
+      }*/
+	  if($validator->passes()&&$request->input('customer_id')&&$request->input('product_id')[0]) {
+	  	$user = auth()->user();
+	  	$customer = \Solunes\Customer\App\Customer::find($request->input('customer_id'));
+	  	$currency = \Solunes\Business\App\Currency::find(1);
+	  	$payment_method = \Solunes\Payments\App\PaymentMethod::find($request->input('payment_method_id'));
+	  	$invoice = 1;
+	  	$agency_id = $request->input('agency_id');
+	  	$invoice_name = $request->input('invoice_name');
+	  	$invoice_number = $request->input('invoice_number');
+	  	$sale_details = [];
+	  	foreach($request->input('product_id') as $product_key => $product_id){
+	  		$product_bridge = \Solunes\Business\App\ProductBridge::find($product_id);
+	  		$sale_details[] = ['product_bridge_id'=>$product_bridge->id,'amount'=>$request->input('price')[$product_key],'quantity'=>$request->input('quantity')[$product_key],'detail'=>$request->input('product_name')[$product_key]];
+	  	}
+	  	$sale = \Sales::generateQuotation($user->id, $customer->id, $currency->id, $invoice, $sale_details, $agency_id);
 	  	if($request->input('status')=='paid'){
 	  		$sale_payment = $sale->sale_payment;
 	  		$payment = $sale_payment->payment;

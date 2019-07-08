@@ -22,6 +22,9 @@ class Sales {
   }
 
   public static function add_cart_item($cart, $product, $quantity, $detail = NULL, $custom_price = NULL) {
+    if(!$custom_price){
+      $custom_price = \Business::getProductPrice($product, $quantity);
+    }
     if($cart_item = $cart->cart_items()->where('product_bridge_id', $product->id)->where('detail', $detail)->where('price', $custom_price)->first()){
       $cart_item->quantity = $cart_item->quantity + $quantity;
     } else {
@@ -30,11 +33,7 @@ class Sales {
       $cart_item->product_bridge_id = $product->id;
       $cart_item->currency_id = $product->currency_id;
       $cart_item->quantity = $quantity;
-      if($custom_price){
-        $cart_item->price = $custom_price;
-      } else {
-        $cart_item->price = $product->real_price;
-      }
+      $cart_item->price = $custom_price;
       $cart_item->detail = $detail;
     }
     if(config('sales.delivery')){
@@ -44,17 +43,26 @@ class Sales {
     return $cart_item;
   }
 
-  public static function generateSingleSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $detail, $amount, $product_bridge_id, $quantity = 1) {
+  public static function generateSingleSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $detail, $amount, $product_bridge_id, $quantity = 1, $agency_id = NULL) {
+    if(!$agency_id){
+      $agency_id = config('business.online_store_agency_id');
+    }
+
+    $product_bridge = \Solunes\Business\App\ProductBridge::find($product_bridge_id);
+    $custom_price = \Business::getProductPrice($product_bridge, $quantity);
+    $amount = $custom_price * $quantity;
+
     $sale = new \Solunes\Sales\App\Sale;
     $sale->user_id = $user_id;
     $sale->customer_id = $customer_id;
-    $sale->agency_id = 1;
+    $sale->agency_id = $agency_id;
     $sale->currency_id = $currency_id;
     $sale->name = $detail;
     $sale->amount = $amount;
     $sale->invoice = $invoice;
     $sale->invoice_name = $invoice_name;
     $sale->invoice_nit = $invoice_number;
+    $sale->lead_status = 'sale';
     $sale->save();
     
     $sale_item = new \Solunes\Sales\App\SaleItem;
@@ -100,52 +108,17 @@ class Sales {
     return $sale;
   }
 
-  public static function generateSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $sale_details) {
-    $total = 0;
-    foreach($sale_details as $sale_detail){
-      if(isset($sale_detail['quantity'])&&$sale_detail['quantity']>0){
-        $quantity = $sale_detail['quantity'];
-      } else {
-        $quantity = 1;
-      }
-      $total += $sale_detail['amount'] * $quantity;
-    }
-    if(count($sale_details)>1){
-      $name = 'Pago general';
-    } else if(count($sale_details)==1) {
-      $name = $sale_details[0]['detail'];
-    } else {
-      $name = 'Sin detalle';
-    }
-
+  public static function generateSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $sale_details, $agency_id = NULL) {
     $sale = new \Solunes\Sales\App\Sale;
     $sale->user_id = $user_id;
     $sale->customer_id = $customer_id;
-    $sale->agency_id = 1;
+    $sale->agency_id = $agency_id;
     $sale->currency_id = $currency_id;
-    $sale->name = $name;
-    $sale->amount = $total;
     $sale->invoice = $invoice;
     $sale->invoice_name = $invoice_name;
     $sale->invoice_nit = $invoice_number;
-    $sale->save();
-    
-    foreach($sale_details as $sale_detail){
-      $sale_item = new \Solunes\Sales\App\SaleItem;
-      $sale_item->parent_id = $sale->id;
-      $sale_item->product_bridge_id = $sale_detail['product_bridge_id'];
-      $sale_item->currency_id = $currency_id;
-      $sale_item->detail = $sale_detail['detail'];
-      $sale_item->price = $sale_detail['amount'];
-      if(isset($sale_detail['quantity'])&&$sale_detail['quantity']>0){
-        $sale_item->quantity = $sale_detail['quantity'];
-      } else {
-        $sale_item->quantity = 1;
-      }
-      $sale_item->total = $sale_item->price * $sale_item->quantity;
-      //$sale_item->weight = $cart_item->weight;
-      $sale_item->save();
-    }
+    $sale->lead_status = 'sale';
+    $sale = \Sales::preProcessSale($sale, $sale_details, $agency_id);
 
     // Sale Payment
     $sale_payment = new \Solunes\Sales\App\SalePayment;
@@ -175,6 +148,80 @@ class Sales {
     $sale_delivery->save();*/
 
     $payment = \Payments::generatePayment($sale);
+
+    return $sale;
+  }
+
+  public static function generateQuotation($user_id, $customer_id, $currency_id, $invoice, $sale_details, $agency_id = NULL) {
+    $sale = new \Solunes\Sales\App\Sale;
+    $sale->user_id = $user_id;
+    $sale->customer_id = $customer_id;
+    $sale->currency_id = $currency_id;
+    $sale->invoice = $invoice;
+    $sale->lead_status = 'quotation-done';
+    $sale = \Sales::preProcessSale($sale, $sale_details, $agency_id);
+
+    // Sale Delivery
+    /*$sale_delivery = new \Solunes\Sales\App\SaleDelivery;
+    $sale_delivery->parent_id = $sale->id;
+    $sale_delivery->shipping_id = $event->shipping_id;
+    $sale_delivery->currency_id = 1;
+    $sale_delivery->country_code = 'BO';
+    $sale_delivery->region_id = 1;
+    $sale_delivery->city_id = 1;
+    $sale_delivery->name = 1;
+    $sale_delivery->status = 'holding';
+    $sale_delivery->shipping_cost = 0;
+    $sale_delivery->save();*/
+
+    return $sale;
+  }
+
+  public static function preProcessSale($sale, $sale_details, $agency_id) {
+    $total = 0;
+    foreach($sale_details as $sale_detail){
+      if(isset($sale_detail['quantity'])&&$sale_detail['quantity']>0){
+        $quantity = $sale_detail['quantity'];
+      } else {
+        $quantity = 1;
+      }
+      $total += $sale_detail['amount'] * $quantity;
+    }
+    if(count($sale_details)>1){
+      $name = 'Pago general';
+    } else if(count($sale_details)==1) {
+      $name = $sale_details[0]['detail'];
+    } else {
+      $name = 'Sin detalle';
+    }
+    if(!$agency_id){
+      $agency_id = config('business.online_store_agency_id');
+    }
+
+    $sale->agency_id = $agency_id;
+    $sale->name = $name;
+    $sale->amount = $total;
+    $sale->save();
+
+    foreach($sale_details as $sale_detail){
+      $product_bridge = \Solunes\Business\App\ProductBridge::find($sale_detail['product_bridge_id']);
+      if(isset($sale_detail['quantity'])&&$sale_detail['quantity']>0){
+        $quantity = $sale_detail['quantity'];
+      } else {
+        $quantity = 1;
+      }
+      $custom_price = \Business::getProductPrice($product_bridge, $quantity);
+      $sale_item = new \Solunes\Sales\App\SaleItem;
+      $sale_item->parent_id = $sale->id;
+      $sale_item->product_bridge_id = ;
+      $sale_item->currency_id = $currency_id;
+      $sale_item->detail = $sale_detail['detail'];
+      $sale_item->price = $custom_price;
+      $sale_item->quantity = $quantity;
+      $sale_item->total = $sale_item->price * $sale_item->quantity;
+      //$sale_item->weight = $cart_item->weight;
+      $sale_item->save();
+    }
 
     return $sale;
   }
@@ -406,6 +453,22 @@ class Sales {
         \Inventory::increase_inventory($store_agency, $sale_item->product_bridge, $sale_item->quantity);
       }
     }
+  }
+
+  public static function generateQuotationPdf($sale) {
+    $array['item'] = $sale;
+    $pdf = \PDF::loadView('sales::pdf.quotation-file', $array);
+    $pdf = \Asset::apply_pdf_template($pdf, 'COTIZACIÓN');
+    $sale->quotation_file = \Asset::upload_pdf_template($pdf, 'quotation', 'quotation_file');
+    return $sale;
+  }
+  
+  public static function generateContractPdf($sale) {
+    $array['item'] = $sale;
+    $pdf = \PDF::loadView('sales::pdf.contract-file', $array);
+    $pdf = \Asset::apply_pdf_template($pdf, 'CONTRATO');
+    $sale->contract_file = \Asset::upload_pdf_template($pdf, 'contract', 'contract_file');
+    return $sale;
   }
 
   public static function customerSuccessfulPayment($sale, $customer) {

@@ -67,7 +67,7 @@ class ProcessController extends Controller {
         $cart = \Sales::get_cart();
         $detail = $product->name;
         $count = 0;
-        $custom_price = $product->real_price;
+        $custom_price = \Business::getProductPrice($product, $request->input('quantity'));
         $variation_id = NULL;
         $variation_value = NULL;
         $variation_2_id = NULL;
