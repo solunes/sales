@@ -213,7 +213,7 @@ class Sales {
       $custom_price = \Business::getProductPrice($product_bridge, $quantity);
       $sale_item = new \Solunes\Sales\App\SaleItem;
       $sale_item->parent_id = $sale->id;
-      $sale_item->product_bridge_id = ;
+      $sale_item->product_bridge_id = $product_bridge->id;
       $sale_item->currency_id = $currency_id;
       $sale_item->detail = $sale_detail['detail'];
       $sale_item->price = $custom_price;
