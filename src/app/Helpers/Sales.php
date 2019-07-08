@@ -427,6 +427,15 @@ class Sales {
             }
           } else if($product_bridge->delivery_type=='reservation'){
             $send_reservation = true;
+            $reservation = \Solunes\Reservation\App\Reservation::find($product_bridge->product_id);
+            $reservation = \Reservation::generateReservationPdf($reservation);
+            $reservation = \Reservation::generateVoucherPdf($reservation);
+            $reservation->status = 'paid';
+            $reservation->save();
+            foreach($reservation->reservation_users as $reservation_user){
+              $reservation_user->status = 'paid';
+              $reservation_user->save();
+            }
           } else if($product_bridge->delivery_type=='ticket'){
             $send_ticket = true;
           }
