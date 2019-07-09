@@ -126,12 +126,12 @@ class Sales {
     $sale_payment->payment_method_id = $payment_method_id;
     $sale_payment->currency_id = $currency_id;
     $sale_payment->exchange = 1;
-    $sale_payment->amount = $total;
-    $sale_payment->pending_amount = $total;
+    $sale_payment->amount = $sale->amount;
+    $sale_payment->pending_amount = $sale->amount;
     if(config('sales.delivery')){
       $sale_payment->pay_delivery = 1;
     }
-    $sale_payment->detail = 'Pago por compra: '.$name;
+    $sale_payment->detail = 'Pago por compra: '.$sale->name;
     $sale_payment->save();
 
     // Sale Delivery
