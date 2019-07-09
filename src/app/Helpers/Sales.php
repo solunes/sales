@@ -118,7 +118,7 @@ class Sales {
     $sale->invoice_name = $invoice_name;
     $sale->invoice_nit = $invoice_number;
     $sale->lead_status = 'sale';
-    $sale = \Sales::preProcessSale($sale, $sale_details, $agency_id);
+    $sale = \Sales::preProcessSale($sale, $sale_details, $currency_id, $agency_id);
 
     // Sale Payment
     $sale_payment = new \Solunes\Sales\App\SalePayment;
@@ -159,7 +159,7 @@ class Sales {
     $sale->currency_id = $currency_id;
     $sale->invoice = $invoice;
     $sale->lead_status = 'quotation-done';
-    $sale = \Sales::preProcessSale($sale, $sale_details, $agency_id);
+    $sale = \Sales::preProcessSale($sale, $sale_details, $currency_id, $agency_id);
 
     // Sale Delivery
     /*$sale_delivery = new \Solunes\Sales\App\SaleDelivery;
@@ -177,7 +177,7 @@ class Sales {
     return $sale;
   }
 
-  public static function preProcessSale($sale, $sale_details, $agency_id) {
+  public static function preProcessSale($sale, $sale_details, $currency_id, $agency_id) {
     $total = 0;
     foreach($sale_details as $sale_detail){
       if(isset($sale_detail['quantity'])&&$sale_detail['quantity']>0){
@@ -459,7 +459,7 @@ class Sales {
     $array['item'] = $sale;
     $pdf = \PDF::loadView('sales::pdf.quotation-file', $array);
     $pdf = \Asset::apply_pdf_template($pdf, 'COTIZACIÓN');
-    $sale->quotation_file = \Asset::upload_pdf_template($pdf, 'quotation', 'quotation_file');
+    $sale->quotation_file = \Asset::upload_pdf_template($pdf, 'sale', 'quotation_file');
     return $sale;
   }
   
@@ -467,7 +467,7 @@ class Sales {
     $array['item'] = $sale;
     $pdf = \PDF::loadView('sales::pdf.contract-file', $array);
     $pdf = \Asset::apply_pdf_template($pdf, 'CONTRATO');
-    $sale->contract_file = \Asset::upload_pdf_template($pdf, 'contract', 'contract_file');
+    $sale->contract_file = \Asset::upload_pdf_template($pdf, 'sale', 'contract_file');
     return $sale;
   }
 
