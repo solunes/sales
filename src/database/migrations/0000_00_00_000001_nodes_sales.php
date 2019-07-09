@@ -115,7 +115,7 @@ class NodesSales extends Migration
                 $leads_array[] = 'signed-contract';
             }
             $leads_array[] = 'sale';
-            $table->enum('lead_status', $leads_array)->nullable()->default('prospect');
+            $table->enum('lead_status', $leads_array)->nullable()->default('sale');
             $table->boolean('invoice')->default(0);
             $table->string('invoice_name')->nullable();
             $table->string('invoice_nit')->nullable();
