@@ -25,6 +25,7 @@ class Sales {
     if(!$custom_price){
       $custom_price = \Business::getProductPrice($product, $quantity);
     }
+    //$custom_price = \Business::calculate_currency($custom_price, $main_currency, $product->currency);
     if($cart_item = $cart->cart_items()->where('product_bridge_id', $product->id)->where('detail', $detail)->where('price', $custom_price)->first()){
       $cart_item->quantity = $cart_item->quantity + $quantity;
     } else {
@@ -48,8 +49,10 @@ class Sales {
       $agency_id = config('business.online_store_agency_id');
     }
 
+    $currency = \Solunes\Business\App\Currency::find($currency_id);
     $product_bridge = \Solunes\Business\App\ProductBridge::find($product_bridge_id);
     $custom_price = \Business::getProductPrice($product_bridge, $quantity);
+    $custom_price = \Business::calculate_currency($custom_price, $currency, $product_bridge->currency);
     $amount = $custom_price * $quantity;
 
     $sale = new \Solunes\Sales\App\Sale;
@@ -68,7 +71,7 @@ class Sales {
     $sale_item = new \Solunes\Sales\App\SaleItem;
     $sale_item->parent_id = $sale->id;
     $sale_item->product_bridge_id = $product_bridge_id;
-    $sale_item->currency_id = 1;
+    $sale_item->currency_id = $currency_id;
     $sale_item->detail = $detail;
     $sale_item->price = $amount;
     $sale_item->quantity = $quantity;
@@ -104,6 +107,7 @@ class Sales {
     $sale_delivery->save();*/
 
     $payment = \Payments::generatePayment($sale);
+    $sale->touch();
 
     return $sale;
   }
@@ -213,6 +217,7 @@ class Sales {
         $quantity = 1;
       }
       $custom_price = \Business::getProductPrice($product_bridge, $quantity);
+      $custom_price = \Business::calculate_currency($custom_price, $sale->currency, $product_bridge->currency);
       $sale_item = new \Solunes\Sales\App\SaleItem;
       $sale_item->parent_id = $sale->id;
       $sale_item->product_bridge_id = $product_bridge->id;

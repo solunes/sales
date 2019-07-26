@@ -17,7 +17,7 @@
 </head>
 <body style="margin:0; padding:0;">
   <h1>DETALLES DE LA COTIZACIÓN</h1>
-  <p><strong>Titular: </strong> {{ $item->customer->name }}</p>
+  <p><strong>Nombre del Cliente: </strong> {{ $item->customer->name }}</p>
   <p><strong>Número de Cotización: </strong> #{{ $item->id }}</p>
   <p><strong>Monto Total: </strong> {{ $item->currency->name }} {{ $item->amount }}</p>
   <p><strong>Detalle:</strong> </p>

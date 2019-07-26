@@ -387,9 +387,13 @@ class ProcessController extends Controller {
           $discount_amount += $item->discount_price;
         }
         if(config('solunes.inventory')){
-          $stock = \Business::getProductBridgeStock($item->product_bridge, config('business.online_store_agency_id'));
-          if($stock<$item->quantity){
-            $stock->quantity = $stock;
+          $stock = \Business::getProductBridgeStockItem($item->product_bridge, config('business.online_store_agency_id'));
+          if($stock){
+            if($stock&&$stock->quantity<$item->quantity){
+              $stock->quantity = $stock->quantity - $item->quantity;
+            } else {
+              $stock->quantity = 0;
+            }
             $stock->save();
           }
         }
