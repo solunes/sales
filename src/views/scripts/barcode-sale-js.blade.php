@@ -202,7 +202,7 @@
           $('#products>tbody>tr:last input.currency').attr('rel', product_id);
           $('#products>tbody>tr:last input.quantity').val(quantity);
           $('#products>tbody>tr:last input.quantity').attr('rel', product_id);
-          @if($quotation)
+          @if(!$quotation)
           $('#products>tbody>tr:last input.quantity').data('max_quantity', max_quantity);
           @else
           $('#products>tbody>tr:last input.quantity').data('max_quantity', 100000);
