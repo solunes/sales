@@ -2,7 +2,7 @@
 
 namespace Solunes\Sales\App\Listeners;
 
-class SaleSaving {
+class SaleUpdating {
 
     public function handle($event) {
     	if($event->lead_status=='quotation-done'&&!$event->quotation_file){

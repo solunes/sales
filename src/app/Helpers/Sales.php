@@ -146,6 +146,7 @@ class Sales {
     $sale_delivery->status = 'holding';
     $sale_delivery->shipping_cost = 0;
     $sale_delivery->save();*/
+    $sale->touch();
 
     $payment = \Payments::generatePayment($sale);
 
@@ -173,6 +174,7 @@ class Sales {
     $sale_delivery->status = 'holding';
     $sale_delivery->shipping_cost = 0;
     $sale_delivery->save();*/
+    $sale->touch();
 
     return $sale;
   }
