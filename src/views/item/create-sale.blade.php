@@ -78,5 +78,5 @@
 @endsection
 @section('script')
   @include('master::scripts.select-js')
-  @include('sales::scripts.barcode-sale-js')
+  @include('sales::scripts.barcode-sale-js', ['quotation'=>false])
 @endsection

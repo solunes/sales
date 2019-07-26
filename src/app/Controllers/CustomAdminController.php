@@ -102,13 +102,13 @@ class CustomAdminController extends Controller {
         $product_options = [''=>'-'];
         foreach($categories as $category){
             foreach($category->product_bridges as $product){
-            	if($product->total_stock>0){
+            	//if($product->total_stock>0){
             		$name = $product->name;
             		if(config('business.product_barcode')){
             			$name .= ' ('.$product->barcode.')';
             		}
                 	$product_options[$category->name][$product->id] = $name;
-            	}
+            	//}
             }
         }
 		$array['products'] = $product_options;
