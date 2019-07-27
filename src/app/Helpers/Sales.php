@@ -107,7 +107,8 @@ class Sales {
     $sale_delivery->save();*/
 
     $payment = \Payments::generatePayment($sale);
-    $sale->touch();
+    $sale->updated_at = NULL;
+    $sale->save();
 
     return $sale;
   }
@@ -150,7 +151,8 @@ class Sales {
     $sale_delivery->status = 'holding';
     $sale_delivery->shipping_cost = 0;
     $sale_delivery->save();*/
-    $sale->touch();
+    $sale->updated_at = NULL;
+    $sale->save();
 
     $payment = \Payments::generatePayment($sale);
 
@@ -178,7 +180,8 @@ class Sales {
     $sale_delivery->status = 'holding';
     $sale_delivery->shipping_cost = 0;
     $sale_delivery->save();*/
-    $sale->touch();
+    $sale->updated_at = NULL;
+    $sale->save();
 
     return $sale;
   }
