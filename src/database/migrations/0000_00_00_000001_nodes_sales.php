@@ -112,6 +112,7 @@ class NodesSales extends Migration
                 $leads_array[] = 'quotation-done';
             }
             if(config('sales.sign_contract')){
+                $leads_array[] = 'signing-contract';
                 $leads_array[] = 'signed-contract';
             }
             $leads_array[] = 'sale';

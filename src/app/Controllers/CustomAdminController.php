@@ -22,7 +22,16 @@ class CustomAdminController extends Controller {
 	}
 
 	public function getCreateManualSale() {
-		$array['agencies'] = \Solunes\Business\App\Agency::lists('name', 'id');
+		$user = auth()->user();
+		if($user->hasRole('admin')){
+			$array['agencies'] = \Solunes\Business\App\Agency::lists('name', 'id');
+		} else {
+			if($user->agency_id){
+				$array['agencies'] = \Solunes\Business\App\Agency::where('id', $user->agency_id)->lists('name', 'id');
+			} else {
+				$array['agencies'] = \Solunes\Business\App\Agency::lists('name', 'id');
+			}
+		}
 		$array['payment_methods'] = \Solunes\Payments\App\PaymentMethod::get()->lists('name', 'id');
 		$array['currencies'] = \Solunes\Business\App\Currency::get()->lists('name', 'id');
 		$array['customers'] = [0=>'Seleccionar Contacto']+\Solunes\Customer\App\Customer::get()->sortBy('name')->lists('name', 'id')->toArray();
@@ -87,7 +96,16 @@ class CustomAdminController extends Controller {
     }
 
 	public function getCreateManualQuotation() {
-		$array['agencies'] = \Solunes\Business\App\Agency::lists('name', 'id');
+		$user = auth()->user();
+		if($user->hasRole('admin')){
+			$array['agencies'] = \Solunes\Business\App\Agency::lists('name', 'id');
+		} else {
+			if($user->agency_id){
+				$array['agencies'] = \Solunes\Business\App\Agency::where('id', $user->agency_id)->lists('name', 'id');
+			} else {
+				$array['agencies'] = \Solunes\Business\App\Agency::lists('name', 'id');
+			}
+		}
 		$array['payment_methods'] = \Solunes\Payments\App\PaymentMethod::get()->lists('name', 'id');
 		$array['currencies'] = \Solunes\Business\App\Currency::get()->lists('name', 'id');
 		$array['customers'] = [0=>'Seleccionar Contacto']+\Solunes\Customer\App\Customer::get()->sortBy('name')->lists('name', 'id')->toArray();

@@ -28,6 +28,7 @@ return array(
 	'prospect' => 'Prospecto',
 	'quotation-done' => 'Cotización Realizada',
 	'quotation-request' => 'Solicitud de Cotización',
+	'signing-contract' => 'Solicitud de Firma',
 	'signed-contract' => 'Contrato Firmado',
 
 );

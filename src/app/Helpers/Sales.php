@@ -165,7 +165,7 @@ class Sales {
     $sale->customer_id = $customer_id;
     $sale->currency_id = $currency_id;
     $sale->invoice = $invoice;
-    $sale->lead_status = 'quotation-done';
+    $sale->lead_status = 'quotation-request';
     $sale = \Sales::preProcessSale($sale, $sale_details, $currency_id, $agency_id);
 
     // Sale Delivery
