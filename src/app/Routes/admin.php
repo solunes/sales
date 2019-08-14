@@ -14,6 +14,9 @@
 Route::group(['prefix'=>'admin'], function(){
     
     // Módulo de Reportes
+    Route::get('pending-quotations', 'CustomAdminController@getPendingQuotations');
+    Route::get('sale-delivered/{sale_id}', 'CustomAdminController@getSalePendingDeliveries');
+    Route::get('sale-pending-deliveries', 'CustomAdminController@getSaleDelivered');
     Route::get('create-manual-sale', 'CustomAdminController@getCreateManualSale');
     Route::post('create-manual-sale', 'CustomAdminController@postCreateManualSale');
     Route::get('create-manual-quotation', 'CustomAdminController@getCreateManualQuotation');

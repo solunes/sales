@@ -21,6 +21,27 @@ class CustomAdminController extends Controller {
 	  $this->module = 'admin';
 	}
 
+	public function getPendingQuotations() {
+		$array['items'] = \Solunes\Sales\App\Sale::where('status','holding')->where('lead_status','quotation-done')->get();
+      	return view('sales::list.pending-quotations', $array);
+	}
+
+	public function getSalePendingDeliveries() {
+		$array['items'] = \Solunes\Sales\App\Sale::where('status','pending-delivery')->get();
+      	return view('sales::list.pending-deliveries', $array);
+	}
+
+	public function getSaleDelivered($sale_id) {
+		$item = \Solunes\Sales\App\Sale::where('id', $sale_id)->where('status','pending-delivery')->first();
+		if($item){
+			$item->status = 'delivered';
+			$item->save();
+			return redirect($this->prev)->with('message_success', 'El pedido fue marcado como enviado correctamente.');
+	  	} else {
+			return redirect($this->prev)->with('message_error', 'Hubo un error al marcar su pedido como enviado.');
+	  	}
+	}
+
 	public function getCreateManualSale() {
 		$user = auth()->user();
 		if($user->hasRole('admin')){
