@@ -182,7 +182,6 @@ class Sales {
     $sale_delivery->save();*/
     $sale->updated_at = NULL;
     $sale->save();
-
     return $sale;
   }
 
