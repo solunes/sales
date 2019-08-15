@@ -69,6 +69,12 @@
       <div class="col-sm-1 hidden-xs icon"><i class="fa fa-paper"></i></div>
       {!! Field::form_input($i, $dt, ['name'=>'invoice_name', 'required'=>true, 'type'=>'string'], ['label'=>'Nombre de Cliente', 'cols'=>3]) !!}
     </div>
+    @if(config('sales.sales_detail'))
+    <div class="row">
+      <div class="col-sm-1 hidden-xs icon"><i class="fa fa-pencil"></i></div>
+      {!! Field::form_input($i, $dt, ['name'=>'detail', 'required'=>true, 'type'=>'text'], ['label'=>'Detalle', 'cols'=>11, 'rows'=>4, 'placeholder'=>'Anote cualquier detalle referente a la venta']) !!}
+    </div>
+    @endif
     {!! Form::hidden('action_form', $action) !!}
     {!! Form::hidden('model_node', $model) !!}
     {!! Form::hidden('lang_code', \App::getLocale()) !!}

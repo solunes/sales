@@ -99,7 +99,7 @@ class CustomAdminController extends Controller {
 	  		$product_bridge = \Solunes\Business\App\ProductBridge::find($product_id);
 	  		$sale_details[] = ['product_bridge_id'=>$product_bridge->id,'amount'=>$request->input('price')[$product_key],'quantity'=>$request->input('quantity')[$product_key],'detail'=>$request->input('product_name')[$product_key]];
 	  	}
-	  	$sale = \Sales::generateSale($user->id, $customer->id, $currency->id, $payment_method->id, $invoice, $invoice_name, $invoice_number, $sale_details, $agency_id);
+	  	$sale = \Sales::generateSale($user->id, $customer->id, $currency->id, $payment_method->id, $invoice, $invoice_name, $invoice_number, $sale_details, $agency_id, $request->input('detail'));
 	  	if($request->input('status')=='paid'){
 	  		$sale_payment = $sale->sale_payment;
 	  		$payment = $sale_payment->payment;
@@ -173,7 +173,7 @@ class CustomAdminController extends Controller {
 	  		$product_bridge = \Solunes\Business\App\ProductBridge::find($product_id);
 	  		$sale_details[] = ['product_bridge_id'=>$product_bridge->id,'amount'=>$request->input('price')[$product_key],'quantity'=>$request->input('quantity')[$product_key],'detail'=>$request->input('product_name')[$product_key]];
 	  	}
-	  	$sale = \Sales::generateQuotation($user->id, $customer->id, $currency->id, $invoice, $sale_details, $agency_id);
+	  	$sale = \Sales::generateQuotation($user->id, $customer->id, $currency->id, $invoice, $sale_details, $agency_id, $request->input('detail'));
 	  	if($request->input('status')=='paid'){
 	  		$sale_payment = $sale->sale_payment;
 	  		$payment = $sale_payment->payment;
