@@ -4,7 +4,7 @@
 
       <div class="slider slider-for">
         <div class="each-slide-contain">
-          <img src="{{ Asset::get_image_path('product-bridge-image','normal', $item->image )}}">
+          <img class="img-responsive" src="{{ Asset::get_image_path('product-bridge-image','normal', $item->image )}}">
         </div>
         @if($item->model_type=='product'&&$item->product)
           @foreach($item->product->product_images as $subimage)
@@ -16,7 +16,7 @@
       </div>
       <div class="slider slider-nav">
         <div class="each-slide-contain">
-          <img src="{{ Asset::get_image_path('product-bridge-image','normal', $item->image )}}">
+          <img class="img-responsive" src="{{ Asset::get_image_path('product-bridge-image','normal', $item->image )}}">
         </div>
         @if($item->model_type=='product'&&$item->product)
           @foreach($item->product->product_images as $subimage)
@@ -50,6 +50,7 @@
           <p>{{ $item->content }}</p>
         </div>
         <form class="cart" method="post" action="{{ url('process/add-cart-item') }}">
+          @if(config('product.product_variations'))
           <div class="row">
             @foreach($item->product_bridge_variation as $variation)
               <div class="col-sm-6">
@@ -58,9 +59,6 @@
                   <label class="va-attribute-label">{{ $variation->label }}</label>
                   <div class="va-pickers">
                     <select id="variation_{{ $variation->id }}" name="variation_{{ $variation->id }}" class="c_select update-price">
-                      @if($variation->id!=2)
-                        <option value="0">Seleccione una opción</option>
-                      @endif
                       @foreach($variation->variation_options as $variation_option)
                         <option value="{{ $variation_option->id }}">{{ $variation_option->name }} @if($variation_option->extra_price>0) + Bs. {{ $variation_option->extra_price }} @endif</option>
                       @endforeach
@@ -90,13 +88,12 @@
               @endif
             @endforeach
           </div>
+          @endif
           <br>
           <div class="va-separator clear"></div>
           <div class="quantity-add-to-cart-wrapper">
             <div class="quantity buttons_added">
-              <input type="button" value="-" class="minus">
               <input type="number" class="input-text qty text" step="1" min="1" max="10" name="quantity" value="1" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric">
-              <input type="button" value="+" class="plus">
             </div>
           </div>
           <input type="hidden" name="product_id" value="{{ $item->id }}" />

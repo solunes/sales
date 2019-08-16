@@ -16,7 +16,7 @@
       </a>
       <div class="solunes-product-actions">
         <div class="solunes-group-product-actions">
-          @if(count($product->product_bridge_variation)==0)
+          @if(config('product.product_variations')&&count($product->product_bridge_variation)==0)
             <a href="{{ url('process/add-cart-item/'.$product->id) }}" class="btn btn-site">Añadir al carrito</a>
           @else
             <a href="{{ url('producto/'.$product->slug) }}" class="btn btn-site">Añadir al carrito</a>
