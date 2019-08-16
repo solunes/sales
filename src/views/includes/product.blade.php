@@ -47,7 +47,7 @@
           <ins><span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol"></span></span></ins>
         @endif
         <div class="woocommerce-product-details__short-description">
-          <p>{{ $item->content }}</p>
+          {!! $item->content !!}
         </div>
         <form class="cart" method="post" action="{{ url('process/add-cart-item') }}">
           @if(config('product.product_variations'))
