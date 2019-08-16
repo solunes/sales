@@ -59,6 +59,12 @@
       <div class="col-sm-1 hidden-xs icon"><i class="fa fa-user"></i></div>
       {!! Field::form_input($i, $dt, ['name'=>'customer_id', 'required'=>true, 'type'=>'select', 'options'=>$customers], ['value'=>0, 'label'=>'Seleccionar Cliente', 'cols'=>3]) !!}
     </div>
+    @if(config('sales.sales_detail'))
+    <div class="row">
+      <div class="col-sm-1 hidden-xs icon"><i class="fa fa-pencil"></i></div>
+      {!! Field::form_input($i, $dt, ['name'=>'detail', 'required'=>true, 'type'=>'text'], ['label'=>'Detalle', 'cols'=>11, 'rows'=>4, 'placeholder'=>'Anote cualquier detalle referente a la cotización']) !!}
+    </div>
+    @endif
     {!! Form::hidden('action_form', $action) !!}
     {!! Form::hidden('model_node', $model) !!}
     {!! Form::hidden('lang_code', \App::getLocale()) !!}

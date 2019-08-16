@@ -113,7 +113,7 @@ class Sales {
     return $sale;
   }
 
-  public static function generateSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $sale_details, $agency_id = NULL) {
+  public static function generateSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $sale_details, $agency_id = NULL, $detail = NULL) {
     $sale = new \Solunes\Sales\App\Sale;
     $sale->user_id = $user_id;
     $sale->customer_id = $customer_id;
@@ -123,6 +123,9 @@ class Sales {
     $sale->invoice_name = $invoice_name;
     $sale->invoice_nit = $invoice_number;
     $sale->lead_status = 'sale';
+    if(config('sales.sales_detail')){
+      $sale->detail = $detail;
+    }
     $sale = \Sales::preProcessSale($sale, $sale_details, $currency_id, $agency_id);
 
     // Sale Payment
@@ -159,13 +162,16 @@ class Sales {
     return $sale;
   }
 
-  public static function generateQuotation($user_id, $customer_id, $currency_id, $invoice, $sale_details, $agency_id = NULL) {
+  public static function generateQuotation($user_id, $customer_id, $currency_id, $invoice, $sale_details, $agency_id = NULL, $detail = NULL) {
     $sale = new \Solunes\Sales\App\Sale;
     $sale->user_id = $user_id;
     $sale->customer_id = $customer_id;
     $sale->currency_id = $currency_id;
     $sale->invoice = $invoice;
     $sale->lead_status = 'quotation-request';
+    if(config('sales.sales_detail')){
+      $sale->detail = $detail;
+    }
     $sale = \Sales::preProcessSale($sale, $sale_details, $currency_id, $agency_id);
 
     // Sale Delivery

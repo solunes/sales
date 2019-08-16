@@ -124,6 +124,9 @@ class NodesSales extends Migration
                 $table->enum('type', ['normal','online'])->nullable()->default('normal');
             }
             $table->string('transaction_code')->nullable();
+            if(config('sales.sales_detail')){
+                $table->text('detail')->nullable();
+            }
             if(config('sales.quotation')){
                 $table->string('quotation_file')->nullable();
             }

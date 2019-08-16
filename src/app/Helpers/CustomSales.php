@@ -8,7 +8,7 @@ class CustomSales {
    
     public static function after_seed_actions() {
         $sale_menu = \Solunes\Master\App\Menu::where('level',1)->where('permission','sales')->first();
-        if(config('solunes.delivery')){
+        if(config('sales.delivery')){
             \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Envíos Pendientes','link'=>'admin/sale-pending-deliveries']);
         }
         \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Cotizaciones Pendientes','link'=>'admin/pending-quotations']);
