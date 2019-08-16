@@ -25,6 +25,9 @@ class Sales {
     if(!$custom_price){
       $custom_price = \Business::getProductPrice($product, $quantity);
     }
+    if(!$detail){
+      $detail = $product->name;
+    }
     //$custom_price = \Business::calculate_currency($custom_price, $main_currency, $product->currency);
     if($cart_item = $cart->cart_items()->where('product_bridge_id', $product->id)->where('detail', $detail)->where('price', $custom_price)->first()){
       $cart_item->quantity = $cart_item->quantity + $quantity;
