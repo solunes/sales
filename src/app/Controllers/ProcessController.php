@@ -24,7 +24,11 @@ class ProcessController extends Controller {
 
   /* Ruta para ver todos los productos */
   public function getProducts() {
-    $items = \Solunes\Business\App\ProductBridge::whereNull('variation_id')->where('active',1)->get();
+    if(config('product.product_variations')){
+      $items = \Solunes\Business\App\ProductBridge::whereNull('variation_id')->where('active',1)->get();
+    } else {
+      $items = \Solunes\Business\App\ProductBridge::where('active',1)->get();
+    }
     $page = \Solunes\Master\App\Page::find(3);
     return view('sales::content.products', ['page'=>$page,'items'=>$items]);
   }
@@ -37,7 +41,11 @@ class ProcessController extends Controller {
       $real_item = \Solunes\Product\App\Product::find($item->product_id);
       if(!$real_item){ return redirect('inicio#alert')->with(['message_error'=>'No se encontró el producto específico.']); }
     }
-    $products = \Solunes\Business\App\ProductBridge::whereNull('variation_id')->where('active',1)->where('id','!=',$item->id)->limit(4)->orderBy('id','DESC')->get();
+    if(config('product.product_variations')){
+      $products = \Solunes\Business\App\ProductBridge::whereNull('variation_id')->where('active',1)->where('id','!=',$item->id)->limit(4)->orderBy('id','DESC')->get();
+    } else {
+      $products = \Solunes\Business\App\ProductBridge::where('active',1)->where('id','!=',$item->id)->limit(4)->orderBy('id','DESC')->get();
+    }
     $page = \Solunes\Master\App\Page::find(3);
     return view('sales::content.product', ['page'=>$page,'item'=>$item, 'products'=>$products]);
   }
