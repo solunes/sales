@@ -25,7 +25,7 @@ return [
 	'contact_relation' => false,
 	'redirect_to_payment' => false,
 	'send_confirmation_purchase_email' => false,
-	'check_cart_stock' => false,
+	'check_cart_stock' => true,
 	'quotation' => true,
 	'sign_contract' => false,
 	'editable_price' => false,
