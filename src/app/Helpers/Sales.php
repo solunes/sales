@@ -288,10 +288,10 @@ class Sales {
       if($weight>0){
           $shipping_cost += ceil($weight)*$shipping_city->shipping_cost_extra;
       }
-      return ['shipping'=>true, 'shipping_cities'=>$shipping_cities_array, 'shipping_city'=>$shipping_city->id, 'other_city'=>$other_city, 'shipping_cost'=>$shipping_cost];
+      return ['shipping'=>true, 'shipping_cities'=>$shipping_cities_array, 'shipping_city'=>$shipping_city->city_id, 'other_city'=>$other_city, 'shipping_cost'=>$shipping_cost];
     } else {
       $new_shipping_id = 2;
-      return ['shipping'=>false,  'shipping_cities'=>$shipping_cities_array, 'shipping_city'=>$shipping_city->id, 'other_city'=>$other_city, 'shipping_cost'=>0, 'new_shipping_id'=>$new_shipping_id];
+      return ['shipping'=>false,  'shipping_cities'=>$shipping_cities_array, 'shipping_city'=>1, 'other_city'=>$other_city, 'shipping_cost'=>0, 'new_shipping_id'=>$new_shipping_id];
     }
   }
 
