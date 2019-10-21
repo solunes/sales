@@ -116,7 +116,11 @@ class Sale extends Model {
     public function sale_items() {
         return $this->hasMany('Solunes\Sales\App\SaleItem', 'parent_id');
     }
-                
+           
+    public function sale_item() {
+        return $this->hasOne('Solunes\Sales\App\SaleItem', 'parent_id');
+    }
+
     public function sale_payment() {
         return $this->hasOne('Solunes\Sales\App\SalePayment', 'parent_id');
     }

@@ -25,6 +25,10 @@ class SalePayment extends Model {
 		'status'=>'required',
 	);
 
+    public function sale() {
+        return $this->belongsTo('Solunes\Sales\App\Sale', 'parent_id');
+    }
+
     public function parent() {
         return $this->belongsTo('Solunes\Sales\App\Sale');
     }

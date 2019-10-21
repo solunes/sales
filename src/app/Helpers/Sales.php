@@ -494,6 +494,7 @@ class Sales {
     if(config('sales.sales_email')&&filter_var($customer['email'], FILTER_VALIDATE_EMAIL)){
       $send_reservation = false;
       $send_ticket = false;
+      $send_subscription = false;
       foreach($sale->sale_items as $sale_item){
         $product_bridge = $sale_item->product_bridge;
         if($product_bridge->delivery_type!='normal'){
@@ -506,6 +507,15 @@ class Sales {
             } else {
               // TODO: Notificación de Error, activar credit_wallet
             }
+          } else if($product_bridge->delivery_type=='subscription'){
+            $customer_subscription_month = \Solunes\Customer\App\CustomerSubscriptionMonth::where('sale_id', $sale->id)->where('status','pending')->first();
+            if(!$customer_subscription_month){
+              // TODO: Notificar con error de suscripción
+            }
+            $customer_subscription_month->status = 'paid';
+            $customer_subscription_month->processing = 1;
+            $customer_subscription_month->invoice_url = $customer_subscription_month->sale->sale_payment->payment->invoice_url;
+            $customer_subscription_month->save();
           } else if($product_bridge->delivery_type=='reservation'){
             $send_reservation = true;
             $reservation = \Solunes\Reservation\App\Reservation::where('sale_id', $sale->id)->first();
@@ -522,6 +532,9 @@ class Sales {
           }
           $send_custom_emails = true;
         }
+      }
+      if($send_subscription){
+        //\Sales::sendEmailSubscription($sale, $customer);
       }
       if($send_reservation){
         \Sales::sendEmailReservation($sale, $customer);
