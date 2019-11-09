@@ -9,11 +9,16 @@ class CustomSales {
     public static function after_seed_actions() {
         $sale_menu = \Solunes\Master\App\Menu::where('level',1)->where('permission','sales')->first();
         if(config('sales.delivery')){
-            \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Envíos Pendientes','link'=>'admin/sale-pending-deliveries']);
+            $menu = \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Envíos Pendientes','link'=>'admin/sale-pending-deliveries']);
+            $menu = \FuncNode::generate_translations($menu);
         }
-        \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Cotizaciones Pendientes','link'=>'admin/pending-quotations']);
-        \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Crear Venta','link'=>'admin/create-manual-sale']);
-        \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Crear Cotización','link'=>'admin/create-manual-quotation']);
+        $menu = \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Cotizaciones Pendientes','link'=>'admin/pending-quotations']);
+        $menu = \FuncNode::generate_translations($menu);
+        $menu = \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Crear Venta','link'=>'admin/create-manual-sale']);
+        $menu = \FuncNode::generate_translations($menu);
+        $menu = \Solunes\Master\App\Menu::create(['parent_id'=>$sale_menu->id,'level'=>'2','menu_type'=>'admin','icon'=>'user','permission'=>'sales','name'=>'Crear Cotización','link'=>'admin/create-manual-quotation']);
+        $menu = \FuncNode::generate_translations($menu);
+
 
         /*// Arreglar Action Fields y Action Nodes
         $node_array['sale'] = ['action_field'=>['view'], 'action_node'=>['back','excel']];
