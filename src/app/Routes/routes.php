@@ -28,6 +28,7 @@ Route::group(['prefix'=>'process'], function(){
     Route::get('/confirmar-compra/{type}/{cart_id?}', 'ProcessController@getCheckCart');
     Route::post('/update-cart', 'ProcessController@postUpdateCart');
     // Rutas para Finalizar Compra
+    Route::get('/finalizar-cotizacion/{cart_id?}/{quotation?}', 'ProcessController@getFinishSale');
     Route::get('/finalizar-compra/{cart_id?}', 'ProcessController@getFinishSale');
     Route::post('/finish-sale', 'ProcessController@postFinishSale');
     // Rutas para Revisar Compra Finalizada

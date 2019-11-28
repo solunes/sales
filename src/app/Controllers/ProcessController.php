@@ -277,7 +277,7 @@ class ProcessController extends Controller {
   }
 
   /* Ruta GET para finalizar la compra */
-  public function getFinishSale($cart_id = NULL) {
+  public function getFinishSale($cart_id = NULL, $quotation = false) {
     if(($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkBuyNow()->checkOwner()->status('holding')->first())||($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->first())){
       $array['country_id'] = config('sales.default_country');
       $array['city_id'] = config('sales.default_city');
@@ -343,6 +343,11 @@ class ProcessController extends Controller {
       }
       $array['total'] = $total;
       $array['weight'] = $weight;
+      if($quotation){
+        $array['quotation'] = $quotation;
+      } else {
+        $array['quotation'] = false;
+      }
       $view = 'process.finalizar-compra';
       if(!view()->exists($view)){
         $view = 'sales::'.$view;
@@ -388,6 +393,11 @@ class ProcessController extends Controller {
       return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
     } else if($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkOwner()->status('holding')->first()){
       $new_user = false;
+      if($request->has('quotation')){
+        $quotation = $request->input('quotation');
+      } else {
+        $quotation = false;
+      }
 
       $order_cost = 0;
       $order_weight = 0;
@@ -441,11 +451,14 @@ class ProcessController extends Controller {
       if($customer){
         $sale->customer_id = $customer->id;
       }
+      if($quotation){
+        $sale->lead_status = 'quotation-request';
+      }
       $sale->agency_id = $agency->id;
       $sale->currency_id = $currency->id;
       //$sale->order_amount = $order_cost;
       $sale->amount = $total_cost;
-      if(config('sales.ask_invoice')){
+      if(config('sales.ask_invoice')&&!$quotation){
         $sale->invoice = true;
         $sale->invoice_nit = $request->input('nit_number');
         $sale->invoice_name = $request->input('nit_social');
@@ -454,25 +467,31 @@ class ProcessController extends Controller {
       }
       //$sale->type = 'online';
       $sale->save();
-      $sale->name = 'Venta Online: #'.$sale->id;
+      if($quotation){
+        $sale->name = 'Cotización Online: #'.$sale->id;
+      } else {
+        $sale->name = 'Venta Online: #'.$sale->id;
+      }
       $sale->save();
 
       // Sale Payment
-      $sale_payment = new \Solunes\Sales\App\SalePayment;
-      $sale_payment->parent_id = $sale->id;
-      $sale_payment->payment_method_id = $request->input('payment_method_id');
-      $sale_payment->currency_id = $currency->id;
-      $sale_payment->exchange = $currency->main_exchange;
-      $sale_payment->amount = $total_cost;
-      if(config('payments.sfv_version')>1||config('payments.discounts')){
-        $sale_payment->discount_amount = $discount_amount;
+      if(!$quotation){
+        $sale_payment = new \Solunes\Sales\App\SalePayment;
+        $sale_payment->parent_id = $sale->id;
+        $sale_payment->payment_method_id = $request->input('payment_method_id');
+        $sale_payment->currency_id = $currency->id;
+        $sale_payment->exchange = $currency->main_exchange;
+        $sale_payment->amount = $total_cost;
+        if(config('payments.sfv_version')>1||config('payments.discounts')){
+          $sale_payment->discount_amount = $discount_amount;
+        }
+        if(config('sales.delivery')){
+          $sale_payment->pay_delivery = 1;
+        }
+        $sale_payment->pending_amount = $total_cost;
+        $sale_payment->detail = 'Pago por compra online: #'.$sale_payment->id;
+        $sale_payment->save();
       }
-      if(config('sales.delivery')){
-        $sale_payment->pay_delivery = 1;
-      }
-      $sale_payment->pending_amount = $total_cost;
-      $sale_payment->detail = 'Pago por compra online: #'.$sale_payment->id;
-      $sale_payment->save();
 
       // Sale Delivery
       if(config('sales.delivery')){
@@ -545,7 +564,7 @@ class ProcessController extends Controller {
         }
         //$sale_item->weight = $cart_item->weight;
         $sale_item->save();
-        if(config('solunes.inventory')&&$sale_item->product_bridge->stockable){
+        if(config('solunes.inventory')&&$sale_item->product_bridge->stockable&&!$quotation){
           \Inventory::reduce_inventory($store_agency, $sale_item->product_bridge, $sale_item->quantity);
         }
       }
@@ -555,17 +574,23 @@ class ProcessController extends Controller {
       $cart->save();
 
       // Send Email
-      $vars = ['@name@'=>$user->name, '@total_cost@'=>$sale->total_cost, '@sale_link@'=>url('process/sale/'.$sale->id)];
-      \FuncNode::make_email('new-sale', [$user->email], $vars);
+      if($quotation){
+        //$vars = ['@name@'=>$user->name, '@total_cost@'=>$sale->total_cost, '@sale_link@'=>url('process/sale/'.$sale->id)];
+        //\FuncNode::make_email('new-sale', [$user->email], $vars);
+      } else {
+        $vars = ['@name@'=>$user->name, '@total_cost@'=>$sale->total_cost, '@sale_link@'=>url('process/sale/'.$sale->id)];
+        \FuncNode::make_email('new-sale', [$user->email], $vars);
+      }
 
       $redirect = 'process/sale/'.$sale->id;
-
+      if($quotation){
+        return redirect($redirect)->with('message_success', 'Su cotización fue generada correctamente.');
+      }
       // Revisar redirección a método de pago antes.
       if(config('sales.redirect_to_payment')){
         $model = '\\'.$sale_payment->payment_method->model;
         return \Payments::generateSalePayment($sale, $model, $redirect);
       }
-
       return redirect($redirect)->with('message_success', 'Su compra fue confirmada correctamente, ahora debe proceder al pago para finalizarla.');
     } else {
       return redirect($this->prev)->with('message_error', 'Hubo un error al actualizar su carro de compras.');

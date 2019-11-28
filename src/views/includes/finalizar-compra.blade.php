@@ -2,7 +2,11 @@
   <div class="col-lg-6 col-md-6">
 
     <div class="order-block">
-      <h3>SU ORDEN</h3>
+      @if(isset($quotation)&&$quotation)
+        <h3>SU COTIZACIÓN</h3>
+      @else
+        <h3>SU ORDEN</h3>
+      @endif
       <div class="order-summary">
         <table class="table table-bordered-top table-responsive table-store">
           <thead>
@@ -130,17 +134,27 @@
       @if(!$auth)
         <h3>REGISTRO DE CLIENTE</h3>
       @else
-        <h3>DATOS DE ENVÍO</h3>
+        <h3>DATOS ADICIONALES</h3>
       @endif
       <div class="store-form">           
         <div class="row">
-          @include('sales::includes.user-registration', ['user_cart_registration'=>true,'cities'=>$cities,'city_id'=>$city_id,'auth'=>$auth,'address'=>$address,'address_extra'=>$address_extra,'shipping_options'=>$shipping_options,'payment_options'=>$payment_options])
-          <div class="col-md-12">
-            <input name="cart_id" type="hidden" value="{{ $cart->id }}">
-            <input class="btn btn-site" type="submit" value="FINALIZAR COMPRA @if(config('sales.redirect_to_payment')) Y REALIZAR PAGO @endif ">
-          </div>
+          @if(isset($quotation)&&$quotation)
+            @include('sales::includes.user-registration', ['user_cart_registration'=>true,'cities'=>$cities,'city_id'=>$city_id,'auth'=>$auth,'address'=>$address,'address_extra'=>$address_extra,'shipping_options'=>$shipping_options,'payment_options'=>$payment_options,'quotation'=>true])
+            <div class="col-md-12">
+              <input name="cart_id" type="hidden" value="{{ $cart->id }}">
+              <input name="quotation" type="hidden" value="true">
+              <input class="btn btn-site" type="submit" value="SOLICITAR COTIZACIÓN">
+            </div>
+          @else
+            @include('sales::includes.user-registration', ['user_cart_registration'=>true,'cities'=>$cities,'city_id'=>$city_id,'auth'=>$auth,'address'=>$address,'address_extra'=>$address_extra,'shipping_options'=>$shipping_options,'payment_options'=>$payment_options,'quotation'=>false])
+            <div class="col-md-12">
+              <input name="cart_id" type="hidden" value="{{ $cart->id }}">
+              <input name="quotation" type="hidden" value="false">
+              <input class="btn btn-site" type="submit" value="FINALIZAR COMPRA @if(config('sales.redirect_to_payment')) Y REALIZAR PAGO @endif ">
+            </div>
+          @endif
         </div>   
       </div>
-    </form>                   
+    </form>     
   </div>  
 </div>

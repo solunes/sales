@@ -36,7 +36,7 @@
     </div>
   </div>
 @endif
-@if(config('sales.ask_address'))
+@if(config('sales.ask_address')&&!$quotation)
   <div class="col-md-12">
     <div class="checkout-form-list">
       <label>Dirección <span class="required">*</span></label>
@@ -49,7 +49,7 @@
     </div>
   </div>
   @endif
-@if(config('sales.ask_coordinates'))
+@if(config('sales.ask_coordinates')&&!$quotation)
   <p>En construcción, selector de mapa aqui.</p>
 @endif
 @if(!$auth)
@@ -78,7 +78,7 @@
     </div>
   @endif
 @endif
-@if(config('sales.ask_invoice'))
+@if(config('sales.ask_invoice')&&!$quotation)
   <div class="col-md-6">
     <div class="checkout-form-list">
       <label>Número de NIT <span class="required">*</span></label>                   
@@ -101,7 +101,7 @@
       </div>
     </div>
   @endif
-  <div class="col-md-6">
+  <div class="col-md-6"  @if(!$quotation) style="opacity: 0; visibility: hidden;" @endif>
     <div class="checkout-form-list">
       <label>Método de Pago <span class="required">*</span></label>                    
       {!! Form::select('payment_method_id', $payment_options, NULL, ['id'=>'payment_id']) !!}
