@@ -10,7 +10,7 @@
   </div>  
 
   <div class="col-lg-6 col-md-6">
-    @if(config('sales.ask_invoice')&&config('sales.sale_edit_invoice'))
+    @if(config('sales.ask_invoice')&&config('sales.sale_edit_invoice')&&$sale->lead_status=='sale')
       <h3>DATOS PARA FACTURA</h3>
       <div class="store-form">           
         <form action="{{ url('process/sale-update-nit') }}" method="post">
@@ -50,13 +50,22 @@
         </div>
       @endforeach
     @endif
-    <h3>MÉTODO DE PAGO</h3>
-    @foreach($sale_payments as $sale_payment)
+    @if($sale->lead_status=='sale')
+      <h3>MÉTODO DE PAGO</h3>
+      @foreach($sale_payments as $sale_payment)
+        <div class="store-form">           
+          <h4>{{ mb_strtoupper($sale_payment->payment_method->name, 'UTF-8') }}</h4>
+          {!! $sale_payment->payment_method->content !!}
+        </div>
+        @include('payments::includes.sp-'.$sale_payment->payment_method->code)
+      @endforeach
+    @else
+      <h3>COTIZACIÓN</h3>
       <div class="store-form">           
-        <h4>{{ mb_strtoupper($sale_payment->payment_method->name, 'UTF-8') }}</h4>
-        {!! $sale_payment->payment_method->content !!}
+        <h4>COTIZACIÓN: #{{ $sale->id }}</h4>
+        <p>A continuación, podrá descargar la cotización generada en PDF.</p>
+        <a target="_blank" href="{{ \Asset::get_file('sale-quotation_file', $sale->quotation_file) }}" class="btn btn-site">Descargar Cotización</a>
       </div>
-      @include('payments::includes.sp-'.$sale_payment->payment_method->code)
-    @endforeach
+    @endif
   </div>  
 </div>

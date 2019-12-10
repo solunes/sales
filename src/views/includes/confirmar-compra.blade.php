@@ -22,6 +22,11 @@
               </tr>                     
             </tbody>
           </table>
+          @if(config('sales.cart_quotation'))
+          <div class="wc-proceed-to-checkout">
+            <a href="{{ url('process/finalizar-cotizacion/'.$cart->id.'/true') }}">Generar Cotización</a>
+          </div>
+          @endif
           <div class="wc-proceed-to-checkout">
             <a href="{{ url('process/finalizar-compra/'.$cart->id) }}">Confirmar Compra</a>
           </div>

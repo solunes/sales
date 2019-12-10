@@ -70,7 +70,7 @@ class Sales {
     $sale->invoice_nit = $invoice_number;
     $sale->lead_status = 'sale';
     $sale->save();
-    
+   
     $sale_item = new \Solunes\Sales\App\SaleItem;
     $sale_item->parent_id = $sale->id;
     $sale_item->product_bridge_id = $product_bridge_id;

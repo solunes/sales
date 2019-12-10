@@ -38,7 +38,16 @@
         <td>{{ $sale_item->detail }}</td>
         <td>{{ $sale_item->price }}</td>
         <td>{{ $sale_item->quantity }}</td>
-        <td>{{ $sale_item->currency->name }} {{ $sale_item->total }}</td>
+        <td>{{ $sale_item->currency->name }} {{ $sale_item->total_price }}</td>
+      </tr>
+      @endforeach
+      @foreach($item->sale_deliveries as $key => $sale_delivery)
+      <tr>
+        <td></td>
+        <td>Costo de Envío - {{ $sale_delivery->city->name }} @if($sale_delivery->city_other) - {{ $sale_delivery->city_other }} @endif - {{ $sale_delivery->delivery_time }}</td>
+        <td>{{ $sale_delivery->shipping_cost }}</td>
+        <td>1</td>
+        <td>{{ $sale_delivery->currency->name }} {{ $sale_delivery->shipping_cost }}</td>
       </tr>
       @endforeach
     </tbody>

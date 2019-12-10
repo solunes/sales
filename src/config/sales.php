@@ -27,6 +27,7 @@ return [
 	'send_confirmation_purchase_email' => false,
 	'check_cart_stock' => true,
 	'quotation' => true,
+	'cart_quotation' => false,
 	'sign_contract' => false,
 	'editable_price' => false,
 

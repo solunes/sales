@@ -372,7 +372,7 @@ class ProcessController extends Controller {
     if(!config('sales.delivery_city')){
       unset($rules['city_id']);
     }
-    if(!config('sales.ask_address')){
+    if(!config('sales.ask_address')||$request->has('quotation')){
       unset($rules['address']);
     }
     if(!config('sales.sales_email')){
@@ -384,7 +384,7 @@ class ProcessController extends Controller {
     if(!config('sales.sales_username')){
       unset($rules['username']);
     }
-    if(!config('sales.ask_invoice')){
+    if(!config('sales.ask_invoice')||$request->has('quotation')){
       unset($rules['nit_number']);
       unset($rules['nit_social']);
     }
@@ -572,6 +572,9 @@ class ProcessController extends Controller {
       $cart->status = 'sale';
       $cart->user_id = $user->id;
       $cart->save();
+
+      $sale->updated_at = NULL;
+      $sale->save();
 
       // Send Email
       if($quotation){
