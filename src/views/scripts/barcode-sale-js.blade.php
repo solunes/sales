@@ -275,7 +275,7 @@
   });
   $('#products').on('click', 'a.delete_row', function(e){
     e.preventDefault();
-    var count = $('#products>tbody>tr').size();
+    var count = $('#products>tbody>tr').length;
     // Remover uno al counter_val si el contador si existe
     /*var counter_val = $('#'+rel+'>tfoot .calculate-count').val();
     $('#'+rel+'>tfoot .calculate-count').val(parseInt(counter_val)-1);*/
