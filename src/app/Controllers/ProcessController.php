@@ -393,7 +393,7 @@ class ProcessController extends Controller {
       return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
     } else if($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkOwner()->status('holding')->first()){
       $new_user = false;
-      if($request->has('quotation')){
+      if($request->has('quotation')&&$request->input('quotation')!='false'&&$request->input('quotation')!=false){
         $quotation = $request->input('quotation');
       } else {
         $quotation = false;
@@ -453,6 +453,8 @@ class ProcessController extends Controller {
       }
       if($quotation){
         $sale->lead_status = 'quotation-request';
+      } else {
+        $sale->lead_status = 'sale';
       }
       $sale->agency_id = $agency->id;
       $sale->currency_id = $currency->id;
