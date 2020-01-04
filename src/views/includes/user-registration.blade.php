@@ -101,7 +101,7 @@
       </div>
     </div>
   @endif
-  <div class="col-md-6"  @if(!$quotation) style="opacity: 0; visibility: hidden;" @endif>
+  <div class="col-md-6"  @if(!$quotation) style="opacity: 0; visibility: hidden; height: 0;" @endif>
     <div class="checkout-form-list">
       <label>Método de Pago <span class="required">*</span></label>                    
       {!! Form::select('payment_method_id', $payment_options, NULL, ['id'=>'payment_id']) !!}
