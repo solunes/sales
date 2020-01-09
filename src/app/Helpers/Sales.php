@@ -524,6 +524,7 @@ class Sales {
             $reservation->status = 'paid';
             $reservation->save();
             foreach($reservation->reservation_users as $reservation_user){
+              $reservation_user->ticket_code = \Reservation::generateTicketCode();
               $reservation_user->status = 'paid';
               $reservation_user->save();
             }
