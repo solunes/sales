@@ -605,6 +605,9 @@ class ProcessController extends Controller {
   /* Ruta GET para revisar venta pendiente */
   public function getSale($sale_id) {
     if($sale = \Solunes\Sales\App\Sale::findId($sale_id)->checkOwner()->with('cart','cart.cart_items')->first()){
+      if($sale->status!='holding'){
+        return redirect($this->prev)->with('message_error', 'Esta orden ya no se encuentra disponible para pagar.');
+      }
       $array['page'] = \Solunes\Master\App\Page::find(2);
       $array['sale'] = $sale;
       $array['sale_payments'] = $sale->sale_payments;
