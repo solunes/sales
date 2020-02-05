@@ -62,7 +62,7 @@ class CustomAdminController extends Controller {
 		$array['action'] = 'create';
 		$array['model'] = 'sale';
 		$array['currency'] = \Solunes\Business\App\Currency::where('type', 'main')->first();
-		$array['node'] = \Solunes\Master\App\Node::where('name', 'product')->first();
+		$array['node'] = \Solunes\Master\App\Node::where('name', 'product-bridge')->first();
         $categories = \Solunes\Business\App\Category::has('product_bridges')->with('product_bridges')->get()->sortBy('name');
         $product_options = [''=>'-'];
         foreach($categories as $category){
