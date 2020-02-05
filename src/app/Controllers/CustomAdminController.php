@@ -63,18 +63,30 @@ class CustomAdminController extends Controller {
 		$array['model'] = 'sale';
 		$array['currency'] = \Solunes\Business\App\Currency::where('type', 'main')->first();
 		$array['node'] = \Solunes\Master\App\Node::where('name', 'product-bridge')->first();
-        $categories = \Solunes\Business\App\Category::has('product_bridges')->with('product_bridges')->get()->sortBy('name');
-        $product_options = [''=>'-'];
-        foreach($categories as $category){
-            foreach($category->product_bridges as $product){
-            	if($product->total_stock>0){
-            		$name = $product->name;
-            		if(config('business.product_barcode')){
-            			$name .= ' ('.$product->barcode.')';
-            		}
-                	$product_options[$category->name][$product->id] = $name;
-            	}
-            }
+	    $product_options = [''=>'-'];
+        if(config('business.categories')){
+	        $categories = \Solunes\Business\App\Category::has('product_bridges')->with('product_bridges')->get()->sortBy('name');
+	        foreach($categories as $category){
+	            foreach($category->product_bridges as $product){
+	            	//if($product->total_stock>0){
+	            		$name = $product->name;
+	            		if(config('business.product_barcode')){
+	            			$name .= ' ('.$product->barcode.')';
+	            		}
+	                	$product_options[$category->name][$product->id] = $name;
+	            	//}
+	            }
+	        }
+	    }
+        $product_bridges = \Solunes\Business\App\ProductBridge::whereNull('category_id')->get()->sortBy('name');
+        foreach($product_bridges as $product){
+        	//if($product->total_stock>0){
+        		$name = $product->name;
+        		if(config('business.product_barcode')){
+        			$name .= ' ('.$product->barcode.')';
+        		}
+            	$product_options['Sin categoría'][$product->id] = $name;
+        	//}
         }
 		$array['products'] = $product_options;
       	return view('sales::item.create-sale', $array);
@@ -137,18 +149,30 @@ class CustomAdminController extends Controller {
 		$array['model'] = 'sale';
 		$array['currency'] = \Solunes\Business\App\Currency::where('type', 'main')->first();
 		$array['node'] = \Solunes\Master\App\Node::where('name', 'product-bridge')->first();
-        $categories = \Solunes\Business\App\Category::has('product_bridges')->with('product_bridges')->get()->sortBy('name');
-        $product_options = [''=>'-'];
-        foreach($categories as $category){
-            foreach($category->product_bridges as $product){
-            	//if($product->total_stock>0){
-            		$name = $product->name;
-            		if(config('business.product_barcode')){
-            			$name .= ' ('.$product->barcode.')';
-            		}
-                	$product_options[$category->name][$product->id] = $name;
-            	//}
-            }
+	    $product_options = [''=>'-'];
+        if(config('business.categories')){
+	        $categories = \Solunes\Business\App\Category::has('product_bridges')->with('product_bridges')->get()->sortBy('name');
+	        foreach($categories as $category){
+	            foreach($category->product_bridges as $product){
+	            	//if($product->total_stock>0){
+	            		$name = $product->name;
+	            		if(config('business.product_barcode')){
+	            			$name .= ' ('.$product->barcode.')';
+	            		}
+	                	$product_options[$category->name][$product->id] = $name;
+	            	//}
+	            }
+	        }
+	    }
+        $product_bridges = \Solunes\Business\App\ProductBridge::whereNull('category_id')->get()->sortBy('name');
+        foreach($product_bridges as $product){
+        	//if($product->total_stock>0){
+        		$name = $product->name;
+        		if(config('business.product_barcode')){
+        			$name .= ' ('.$product->barcode.')';
+        		}
+            	$product_options['Sin categoría'][$product->id] = $name;
+        	//}
         }
 		$array['products'] = $product_options;
       	return view('sales::item.create-quotation', $array);
