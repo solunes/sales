@@ -531,6 +531,16 @@ class Sales {
             $reservation->save();
           } else if($product_bridge->delivery_type=='ticket'){
             $send_ticket = true;
+            $reservation = \Solunes\Reservation\App\Reservation::where('sale_id', $sale->id)->first();
+            foreach($reservation->reservation_users as $reservation_user){
+              $reservation_user->ticket_code = \Reservation::generateTicketCode();
+              $reservation_user->manual_ticket_code = \Reservation::generateManualTicketCode();
+              $reservation_user->status = 'paid';
+              $reservation_user->save();
+            }
+            $reservation = \Reservation::generateVoucherPdf($reservation);
+            $reservation->status = 'paid';
+            $reservation->save();
           }
           $send_custom_emails = true;
         }
