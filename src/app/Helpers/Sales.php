@@ -509,29 +509,26 @@ class Sales {
             }
           } else if($product_bridge->delivery_type=='subscription'){
             $customer_subscription_month = \Solunes\Customer\App\CustomerSubscriptionMonth::where('sale_id', $sale->id)->where('status','pending')->first();
-            if($customer_subscription_month){
-              $customer_subscription_month->status = 'paid';
-              $customer_subscription_month->processing = 1;
-              $customer_subscription_month->invoice_url = $customer_subscription_month->sale->sale_payment->payment->invoice_url;
-              $customer_subscription_month->save();
-            } else {
-              // Notificar con error de suscripción? Se envian varias confirmaciones asi que no
+            if(!$customer_subscription_month){
+              // TODO: Notificar con error de suscripción
             }
+            $customer_subscription_month->status = 'paid';
+            $customer_subscription_month->processing = 1;
+            $customer_subscription_month->invoice_url = $customer_subscription_month->sale->sale_payment->payment->invoice_url;
+            $customer_subscription_month->save();
           } else if($product_bridge->delivery_type=='reservation'){
             $send_reservation = true;
-            $reservation = \Solunes\Reservation\App\Reservation::where('sale_id', $sale->id)->where('status','!=','paid')->first();
-            if($reservation){
-              $reservation = \Reservation::generateReservationPdf($reservation);
-              foreach($reservation->reservation_users as $reservation_user){
-                $reservation_user->ticket_code = \Reservation::generateTicketCode();
-                $reservation_user->manual_ticket_code = \Reservation::generateManualTicketCode();
-                $reservation_user->status = 'paid';
-                $reservation_user->save();
-              }
-              $reservation = \Reservation::generateVoucherPdf($reservation);
-              $reservation->status = 'paid';
-              $reservation->save();
+            $reservation = \Solunes\Reservation\App\Reservation::where('sale_id', $sale->id)->first();
+            $reservation = \Reservation::generateReservationPdf($reservation);
+            foreach($reservation->reservation_users as $reservation_user){
+              $reservation_user->ticket_code = \Reservation::generateTicketCode();
+              $reservation_user->manual_ticket_code = \Reservation::generateManualTicketCode();
+              $reservation_user->status = 'paid';
+              $reservation_user->save();
             }
+            $reservation = \Reservation::generateVoucherPdf($reservation);
+            $reservation->status = 'paid';
+            $reservation->save();
           } else if($product_bridge->delivery_type=='ticket'){
             $send_ticket = true;
             $reservation = \Solunes\Reservation\App\Reservation::where('sale_id', $sale->id)->first();
@@ -598,7 +595,8 @@ class Sales {
   }
 
   public static function sendEmailTicket($sale, $customer) {
-    \Mail::send('sales::emails.successful-ticket', ['sale'=>$sale, 'email'=>$customer['email']], function($m) use($customer) {
+    $reservation = \Solunes\Reservation\App\Reservation::where('sale_id', $sale->id)->first();
+    \Mail::send('sales::emails.successful-ticket', ['sale'=>$sale, 'email'=>$customer['email'], 'reservation'=>$reservation], function($m) use($customer) {
       if($customer['name']){
         $name = $customer['name'];
       } else {
