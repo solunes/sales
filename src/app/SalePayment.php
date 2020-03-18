@@ -49,4 +49,8 @@ class SalePayment extends Model {
         return $this->hasMany('Solunes\Sales\App\SalePaymentItem', 'parent_id');
     }
 
+    public function sale_payment_item() {
+        return $this->hasOne('Solunes\Sales\App\SalePaymentItem', 'parent_id');
+    }
+
 }

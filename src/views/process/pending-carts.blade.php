@@ -1,4 +1,4 @@
-@extends('layouts/master')
+@extends('master::layouts/admin-2')
 @include('helpers.meta')
 
 @section('css')
@@ -6,90 +6,70 @@
 @endsection
 
 @section('content')
-<div class="solunes-store container">
-  <h1>Mis Carros de Compras</h1>
-  @if(count($items)>0||count($sales)>0)
-    <div class="cart-waiting">
+<div class="content-header-left col-md-9 col-12 mb-2">
+    <div class="row breadcrumbs-top">
+        <div class="col-12">
+            <h2 class="content-header-title float-left mb-0">Mis Carros de Compras</h2>
+            <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url(config('customer.redirect_after_login')) }}">Inicio</a></li>
+                    <li class="breadcrumb-item active">Mis Carros de Compras</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
 
-      <div class="row">
+
+<div class="content-body ecommerce-application">             
+    <!-- Wishlist Starts -->
+    <section id="wishlist" class="grid-view wishlist-items">
         @foreach($sales as $item)
-          <div class="col-md-4">
-            <div class="each_cart">
-              <div class="row title_cart">
-                <div class="col-md-5 ">
-                  <p class="status pending"><span>Venta Pendiente</span></p>
+        <div class="card ecommerce-card">
+            <div class="card-content">
+                <?php $sale_image = $item->sale_item; ?>
+                @if($sale_image&&$sale_image->product_bridge->image)
+                <div class="item-img text-center">
+                  <img src="{{ asset(\Asset::get_image_path('product-bridge-image','thumb',$sale_image->product_bridge->image)) }}" class="img-fluid" alt="img-placeholder">
                 </div>
-                <div class="col-md-7">
-                  <h5>Items: {{ count($item->sale_items) }} </h5>
-                </div>          
-              </div>
-              <hr>
-              <div class="row description_cart">
-                <div class="col-xs-12">
-                  <p><i class="fa fa-calendar"></i>Fecha: {{ $item->created_at->format('d/m/Y') }}</p>
+                @endif
+                <div class="card-body">
+                    <div class="item-wrapper">
+                        <div>
+                            <h4 class="item-price">
+                                Monto: Bs. {{ $item->amount }}
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="item-name">
+                        <span>{{ $item->name }}</span>
+                    </div>
+                    <div
+                        <p class="item-description">
+                            {{ $item->sale_item->detail }}
+                        </p>
+                    </div>
                 </div>
-              </div>
-              <hr>
-              <div class="row products_cart">
-                @foreach($item->sale_items as $sale_item)
-                <div class="col-md-4">
-                  @if($sale_item->product_bridge->image)
-                    {!! Asset::get_image('product-bridge-image', 'subdetail', $sale_item->product_bridge->image) !!}
-                  @else
-                    <img class="img-responsive" src="{{ asset('assets/admin/img/no_picture.jpg') }}" />
-                  @endif
-                  <p class="center">{{ $sale_item->price }} (x{{ $sale_item->quantity }})</p>
+                <div class="item-options text-center">
+                    <div class="wishlist remove-wishlist">
+                      @if(config('payments.customer_cancel_payments')&&$payment->customer_cancel_payments)
+                      <a href="{{ url('payments/cancel-payment/'.$payment->id) }}">
+                        <i class="feather icon-x align-middle"></i> Cancelar
+                      </a>
+                      @endif
+                    </div>
+                    <div class="cart move-cart">
+                      <a href="{{ url('process/sale/'.$item->id) }}">
+                        <i class="feather icon-home"></i> <span class="move-to-cart">Finalizar Compra</span>
+                      </a>
+                    </div>
                 </div>
-                @endforeach
-              </div>
-              <div class="btn_contain">
-                <a class="view-btn" href="{{ url('process/sale/'.$item->id) }}">Finalizar Compra</a>
-              </div>
             </div>
-          </div>
+        </div>
         @endforeach
-        @foreach($items as $item)
-          <div class="col-md-4">
-            <div class="each_cart">
-              <div class="row title_cart">
-                <div class="col-md-5 ">
-                  <p class="status pending"><span>Carro de Compras</span></p>
-                </div>
-                <div class="col-md-7">
-                  <h5>Items: {{ count($item->cart_items) }} </h5>
-                </div>          
-              </div>
-              <hr>
-              <div class="row description_cart">
-                <div class="col-xs-12">
-                  <p><i class="fa fa-calendar"></i>Fecha: {{ $item->created_at->format('d/m/Y') }}</p>
-                </div>
-              </div>
-              <hr>
-              <div class="row products_cart">
-                @foreach($item->cart_items as $cart_item)
-                <div class="col-md-4">
-                  @if($cart_item->product_bridge->image)
-                    {!! Asset::get_image('product-bridge-image', 'subdetail', $cart_item->product_bridge->image) !!}
-                  @else
-                    <img class="img-responsive" src="{{ asset('assets/admin/img/no_picture.jpg') }}" />
-                  @endif
-                  <p class="center">{{ $cart_item->price }} (x{{ $cart_item->quantity }})</p>
-                </div>
-                @endforeach
-              </div>
-              <div class="btn_contain">
-                <a class="view-btn" href="{{ url('process/confirmar-compra/carro-de-compras/'.$item->id) }}">Ver Carro</a>
-              </div>
-            </div>
-          </div>
-        @endforeach
-      </div>
 
-    </div><!-- End container -->
-  @else
-    <p>Actualmente no se encontraron carros de compra pendientes en su cuenta.</p>
-  @endif
+    </section>
+    <!-- Wishlist Ends -->            
 </div>
 @endsection
 

@@ -1,4 +1,4 @@
-@extends('layouts/master')
+@extends('master::layouts/admin-2')
 @include('helpers.meta')
 
 @section('css')
@@ -6,50 +6,67 @@
 @endsection
 
 @section('content')
-<div class="container solunes-store">
-  <h1>Historial de Ventas</h1>
-  @if(count($items)>0)
-    <div class="payment-history">
+<div class="content-header-left col-md-9 col-12 mb-2">
+    <div class="row breadcrumbs-top">
+        <div class="col-12">
+            <h2 class="content-header-title float-left mb-0">Historial de Ventas</h2>
+            <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url(config('customer.redirect_after_login')) }}">Inicio</a></li>
+                    <li class="breadcrumb-item active">Historial de Ventas</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
 
-      <div class="row">
-        <div class="payment-table" style="width:100%">
-          <table style="width:100%">
-            <tr>
-              <th>N° ORDEN</th>
-              <th>FECHA DE PAGO</th> 
-              <th>VÍA DE PAGO</th>
-              <th>MONTO</th>
-              <th style="width:10%">VER FACTURA</th>
-            </tr>
+<!-- Data list view starts -->
+<section id="data-thumb-view" class="data-thumb-view-header">
+  <!-- dataTable starts -->
+  <div class="table-responsive">
+      <table class="table data-thumb-view">
+          <thead>
+              <tr>
+                  <th></th>
+                  <th>N° ORDEN</th>
+                  <th>FECHA DE PAGO</th> 
+                  <th>VÍA DE PAGO</th>
+                  <th>MONTO</th>
+                  <th style="width:10%">VER FACTURA</th>
+              </tr>
+          </thead>
+          <tbody>
             @foreach($items as $item)
               @foreach($item->sale_payments as $sale_payment)
                 <?php $payment = $sale_payment->payment; ?>
                 @if($payment)
-                  <tr class="each">
-                    <td class="border-site">#{{ $item->id }}</td>
-                    <td>{{ $payment->payment_date }}</td> 
-                    <td>Pagos TT</td>
-                    <td>{{ $payment->currency->name }} {{ $payment->amount }}</td>
-                    <td class="icon-cell">
-                      @foreach($payment->payment_invoices as $payment_invoice)
-                        <a target="_blank" href="{{ $payment_invoice->invoice_url }}">
-                          ABRIR <i class="fa fa-plus-circle"></i>
-                        </a>
-                      @endforeach
+                  <tr>
+                    <td></td>
+                    <td class="product-name">#{{ $payment->id }}</td>
+                    <td class="product-name">{{ $payment->payment_date }}</td>
+                    <td class="product-name">{{ $sale_payment->payment_method->name }}</td>
+                    <td class="product-name">{{ $payment->currency->name }} {{ $payment->amount }}</td>
+                    <td>
+                      <div class="chip chip-warning">
+                        @foreach($payment->payment_invoices as $payment_invoice)
+                          <div class="chip-body">
+                            <div class="chip-text"><a target="_blank" href="{{ $payment_invoice->invoice_url }}">Ver Factura</a></div>
+                          </div>
+                        @endforeach
+                      </div>
                     </td>
                   </tr>
                 @endif
               @endforeach
             @endforeach
-          </table>
-        </div>
-      </div>
 
-    </div>
-  @else
-    <p>Actualmente no se encontraron carros de compra pendientes en su cuenta.</p>
-  @endif
-</div><!-- End container  -->
+          </tbody>
+      </table>
+  </div>
+  <!-- dataTable ends -->
+</section>
+
+
 @endsection
 
 @section('script')
