@@ -29,9 +29,14 @@ class FixSalesStatus extends Command
         $this->info('Comenzando la revision de estado de ventas pendientes.');
         $count = 0;
         $stock_count = 0;
-        if(config('solunes.inventory')){
-            $datetime = date("Y-m-d H:i:s", strtotime('-1 day'));
-            $items = \Solunes\Sales\App\Sale::where('created_at','<',$datetime)->where('status', 'holding')->get();
+        if(config('solunes.inventory')&&config('sales.sale_duration_hours')){
+            $date = date("Y-m-d");
+            $time = date("H:i:s");
+            $items = \Solunes\Sales\App\Sale::where(function ($query) use($date, $time) {
+                $query->where('status', 'holding')->where('expiration_date',$date)->where('expiration_time','<',$time);
+            })->orWhere(function ($query) use($date, $time) {
+                $query->where('status', 'holding')->where('expiration_date','<',$date);
+            })->get();
             $store_agency = \Solunes\Business\App\Agency::find(config('business.online_store_agency_id'));
             if(count($items)>0){
                 foreach($items as $item){

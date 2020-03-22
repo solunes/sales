@@ -440,9 +440,12 @@ class Sales {
         $customer->address = $request->input('address');
         $customer->address_extra = $request->input('address_extra');
       }
-      if(config('sales.ask_coordinates')){
-        $customer->latitude = $request->input('latitude');
-        $customer->longitude = $request->input('longitude');
+      if(config('sales.ask_coordinates')&&$request->has('map_coordinates')){
+        $coordinates = explode(';',$request->input('map_coordinates'));
+        if(isset($coordinates[0])&&isset($coordinates[1])&&!$customer->latitude&&!$customer->longitude){
+          $customer->latitude = $coordinates[0];
+          $customer->longitude = $coordinates[1];
+        }
       }
     }
     if(config('sales.ask_invoice')){

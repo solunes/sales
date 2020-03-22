@@ -17,4 +17,8 @@
 
 @section('script')
   @include('sales::scripts.finalizar-compra-js')
+  @if(isset($map_coordinates))
+  	@include('master::scripts.map-js')
+  	@include('master::scripts.map-register-js')
+  @endif
 @endsection

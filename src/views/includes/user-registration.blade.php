@@ -50,7 +50,17 @@
   </div>
   @endif
 @if(config('sales.ask_coordinates')&&!$quotation)
-  <p>En construcción, selector de mapa aqui.</p>
+  <div class="col-md-12">
+    @if($map_coordinates['type']=='default')
+      <h3>Seleccionar Ubicación</h3>
+      <p>Por favor, seleccione su ubicación exacta en el mapa.</p>
+    @else
+      <h3>Confirmar Ubicación</h3>
+      <p>Por favor, valide que la ubicación seleccionada en el mapa sea correcta. Caso contrario, puede seleccionar una nueva ubicación para el envío.</p>
+    @endif
+    {!! \Field::generate_map_field('map_coordinates', 'map', [], ['id'=>'map_coordinates'], $map_coordinates['latitude'].';'.$map_coordinates['longitude'], 'edit'); !!}
+    <br>
+  </div>
 @endif
 @if(!$auth)
   @if(config('sales.sales_email'))

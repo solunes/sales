@@ -58,6 +58,7 @@ class ProcessController extends Controller {
 
   /* Ruta GET para añadir un item de carro de compras. Cantidad: 1 */
   public function getAddCartItem($product_id) {
+    \Artisan::call('fix-sales-status');
     if($product = \Solunes\Business\App\ProductBridge::find($product_id)){
       $cart = \Sales::get_cart();
       \Sales::add_cart_item($cart, $product, 1);
@@ -69,6 +70,7 @@ class ProcessController extends Controller {
 
   /* Ruta POST para añadir un carro de compras. Cantidad: Definida en input */
   public function postAddCartItem(Request $request) {
+    \Artisan::call('fix-sales-status');
     if($product = \Solunes\Business\App\ProductBridge::find($request->input('product_id'))){
       if(config('sales.custom_add_cart')){
         if(!\CustomFunc::checkCustomAddCart($product, $request)){
@@ -297,6 +299,9 @@ class ProcessController extends Controller {
           $array['address_extra'] = $user->customer->address_extra;
           $array['nit_number'] = $user->customer->nit_number;
           $array['nit_social'] = $user->customer->nit_name;
+          if(config('sales.ask_coordinates')&&!$quotation){
+            $array['map_coordinates'] = ['type'=>'customer', 'latitude'=>$user->customer->latitude, 'longitude'=>$user->customer->longitude];
+          }
         } else {
           if($user->country_id){
             $array['country_id'] = $user->country_id;
@@ -309,6 +314,9 @@ class ProcessController extends Controller {
           $array['address_extra'] = $user->address_extra;
           $array['nit_number'] = $user->nit_number;
           $array['nit_social'] = $user->nit_name;
+          if(config('sales.ask_coordinates')&&!$quotation){
+            $array['map_coordinates'] = ['type'=>'user', 'latitude'=>$user->latitude, 'longitude'=>$user->longitude];
+          }
         }
       } else {
         session()->set('url.intended', url()->current());
@@ -317,6 +325,9 @@ class ProcessController extends Controller {
         $array['address_extra'] = NULL;
         $array['nit_number'] = NULL;
         $array['nit_social'] = NULL;
+        if(config('sales.ask_coordinates')&&!$quotation){
+          $array['map_coordinates'] = ['type'=>'none', 'latitude'=>NULL, 'longitude'=>NULL];
+        }
       }
       if(config('sales.delivery_country')){
         $array['countries'] = \Solunes\Business\App\Country::get()->lists('name','id')->toArray();
@@ -348,6 +359,11 @@ class ProcessController extends Controller {
       } else {
         $array['quotation'] = false;
       }
+      if(config('sales.ask_coordinates')&&!$quotation&&$array['map_coordinates']['type']=='none'){
+        $coordinates = config('solunes.default_location');
+        $coordinates = explode(';',$coordinates);
+        $array['map_coordinates'] = ['type'=>'default', 'latitude'=>$coordinates[0], 'longitude'=>$coordinates[1]];
+      }
       $view = 'process.finalizar-compra';
       if(!view()->exists($view)){
         $view = 'sales::'.$view;
@@ -360,6 +376,7 @@ class ProcessController extends Controller {
 
   /* Ruta POST para confirmar su compra */
   public function postFinishSale(Request $request) {
+    \Artisan::call('fix-sales-status');
     $cart_id = $request->input('cart_id');
     if(auth()->check()){
       $rules = \Solunes\Sales\App\Sale::$rules_auth_send;
@@ -412,11 +429,13 @@ class ProcessController extends Controller {
           $stock = \Business::getProductBridgeStockItem($item->product_bridge, config('business.online_store_agency_id'));
           if($stock){
             if($stock&&$stock->quantity<$item->quantity){
-              $stock->quantity = $stock->quantity - $item->quantity;
-            } else {
-              $stock->quantity = 0;
+              //$stock->quantity = $stock->quantity - $item->quantity;
+              return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock suficiente. Actualmente tiene "'.$stock->quantity.'" unidades disponibles.')->withInput();
+            } else if(!$stock) {
+              //$stock->quantity = 0;
+              return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock.')->withInput();
             }
-            $stock->save();
+            //$stock->save();
           }
         }
       }
@@ -538,6 +557,21 @@ class ProcessController extends Controller {
           } else {
             $sale_delivery->delivery_time = $delivery_time.' días';
           }
+          if(config('sales.ask_coordinates')&&!$quotation){
+            $coordinates = $request->input('map_coordinates');
+            if($coordinates){
+              $coordinates = explode(';', $coordinates);
+              if(isset($coordinates[0])&&isset($coordinates[1])){
+                $sale_delivery->latitude = $coordinates[0];
+                $sale_delivery->longitude = $coordinates[1];
+                if(!$customer->latitude&&!$customer->longitude){
+                  $customer->latitude = $coordinates[0];
+                  $customer->longitude = $coordinates[1];
+                  $customer->save();
+                }
+              }
+            }
+          }
           $sale_delivery->save();
         }
       }
@@ -576,6 +610,11 @@ class ProcessController extends Controller {
       $cart->save();
 
       $sale->updated_at = NULL;
+      if(config('sales.sale_duration_hours')){
+        $now = new \DateTime('+'.config('sales.sale_duration_hours').' hours');
+        $sale->expiration_date = $now->format('Y-m-d');
+        $sale->expiration_time = $now->format('H:i:s');
+      }
       $sale->save();
 
       // Send Email
@@ -583,6 +622,7 @@ class ProcessController extends Controller {
         //$vars = ['@name@'=>$user->name, '@total_cost@'=>$sale->total_cost, '@sale_link@'=>url('process/sale/'.$sale->id)];
         //\FuncNode::make_email('new-sale', [$user->email], $vars);
       } else {
+        \Payments::generatePayment($sale); // Generar pagos de la venta
         $vars = ['@name@'=>$user->name, '@total_cost@'=>$sale->total_cost, '@sale_link@'=>url('process/sale/'.$sale->id)];
         \FuncNode::make_email('new-sale', [$user->email], $vars);
       }
@@ -639,30 +679,6 @@ class ProcessController extends Controller {
       return redirect($this->prev)->with('message_success', 'Sus datos fueron actualizados correctamente.');
     } else {
       return redirect($this->prev)->with('message_error', 'Debe llenar sus datos de facturación.');
-    }
-  }
-
-  /* Ruta POST para deposito bancario */
-  public function postSpBankDeposit(Request $request) {
-    $sale_id = $request->input('sale_id');
-    $validator = \Validator::make($request->all(), \Solunes\Sales\App\SpBankDeposit::$rules_send);
-    if(!$validator->passes()){
-      return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
-    } else if($sale_id&&$sale = \Solunes\Sales\App\Sale::findId($sale_id)->checkOwner()->status('holding')->first()){
-      if(count($sale->payment_receipts)>0){
-        $payment_receipt = $sale->payment_receipts->first();
-      } else {
-        $payment_receipt = new \Solunes\Sales\App\SpBankDeposit;
-        $payment_receipt->sale_id = $sale->id;
-        $payment_receipt->sale_payment_id = $sale->sale_payments()->first()->id;
-        $payment_receipt->status = 'holding';
-      }
-      $payment_receipt->image = \Asset::upload_image($request->file('image'), 'sp-bank-deposit-image');
-      $payment_receipt->save();
-
-      return redirect($this->prev)->with('message_success', 'Su pago fue recibido, sin embargo aún debe ser confirmado por nuestros administradores.');
-    } else {
-      return redirect($this->prev)->with('message_error', 'Hubo un error al encontrar su compra.');
     }
   }
 

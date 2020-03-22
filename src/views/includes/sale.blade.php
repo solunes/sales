@@ -51,13 +51,26 @@
       @endforeach
     @endif
     @if($sale->lead_status=='sale')
-      <h3>MÉTODO DE PAGO</h3>
+      <h3>PAGO(S)</h3>
       @foreach($sale_payments as $sale_payment)
         <div class="store-form">           
           <h4>{{ mb_strtoupper($sale_payment->payment_method->name, 'UTF-8') }}</h4>
-          {!! $sale_payment->payment_method->content !!}
+          <p><strong>Monto:</strong> {{ $sale_payment->currency->name }} {{ $sale_payment->amount }}</p>
+          @if($sale_payment->status=='paid'||$sale_payment->status=='accounted')
+            <p><strong>Estado:</strong> Pagado</p>
+            <p><strong>Fecha de Pago:</strong> {{ $sale_payment->payment->payment_date }}</p>
+          @elseif($sale_payment->status=='to-pay'&&$sale_payment->payment_method->code=='cash-payment'&&$sale_payment->cash_payment)
+            <p><strong>Estado:</strong> Pago contra entrega</p>
+            <p>Su pago se encuentra en espera y el envío fue enviado, debe realizar el pago cuando reciba su pedido.</p><p>Indicó que pagaría con un billete de: <strong>Bs. {{ $sale_payment->cash_payment->amount }}</strong>.</p>
+          @elseif($sale_payment->status=='to-pay')
+            <p><strong>Estado:</strong> En Tránsito</p>
+            <p>Su pago se encuentra en tránsito.</p>
+          @else
+            <p><strong>Estado:</strong> Pago Pendiente</p>
+            {!! $sale_payment->payment_method->content !!}
+            @include('payments::includes.sp-'.$sale_payment->payment_method->code)
+          @endif
         </div>
-        @include('payments::includes.sp-'.$sale_payment->payment_method->code)
       @endforeach
     @else
       <h3>COTIZACIÓN</h3>

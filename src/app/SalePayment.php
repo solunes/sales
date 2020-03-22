@@ -53,4 +53,16 @@ class SalePayment extends Model {
         return $this->hasOne('Solunes\Sales\App\SalePaymentItem', 'parent_id');
     }
 
+    public function online_bank_deposit() {
+        return $this->hasOne('Solunes\Payments\App\OnlineBankDeposit');
+    }
+
+    public function online_bank_deposits() {
+        return $this->hasMany('Solunes\Payments\App\OnlineBankDeposit');
+    }
+
+    public function cash_payment() {
+        return $this->hasOne('Solunes\Payments\App\CashPayment');
+    }
+
 }

@@ -137,6 +137,10 @@ class NodesSales extends Migration
             if(config('sales.solunes_project')){
                 $table->boolean('solunes_project')->nullable()->default(1);
             }
+            if(config('sales.sale_duration_hours')){
+                $table->date('expiration_date')->nullable();
+                $table->time('expiration_time')->nullable();
+            }
             $table->timestamps();
         });
         Schema::create('sale_items', function (Blueprint $table) {
@@ -223,8 +227,10 @@ class NodesSales extends Migration
                 $table->string('postal_code')->nullable();
                 $table->string('address')->nullable();
                 $table->string('address_extra')->nullable();
-                $table->string('latitude')->nullable();
-                $table->string('longitude')->nullable();
+                if(config('sales.ask_coordinates')){
+                    $table->string('latitude')->nullable();
+                    $table->string('longitude')->nullable();
+                }
                 $table->string('phone')->nullable();
                 $table->string('delivery_time')->nullable();
                 $table->decimal('total_weight', 10, 2)->nullable();
