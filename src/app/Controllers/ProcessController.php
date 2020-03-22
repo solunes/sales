@@ -491,7 +491,15 @@ class ProcessController extends Controller {
       if($quotation){
         $sale->name = 'Cotización Online: #'.$sale->id;
       } else {
-        $sale->name = 'Venta Online: #'.$sale->id;
+        $sale_name = 'Venta Online: #'.$sale->id;
+        $sale->load('sale_items');
+        $count_sale_items = count($cart->cart_items);
+        if($count_sale_items>1){
+          $sale_name .= ' (x'.$count_sale_items.' items)';
+        } else if($count_sale_items==1){
+          $sale_name .= ' (x1 item)';
+        }
+        $sale->name = $sale_name;
       }
       $sale->save();
 

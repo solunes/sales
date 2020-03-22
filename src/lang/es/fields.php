@@ -111,5 +111,6 @@ return [
     'lead_status' => 'Estado de Lead',
     'contract_file' => 'Archivo de Contrato',
     'quotation_file' => 'Archivo de Cotización',
-    
+    'expiration_date' => 'Fecha de Expiración',
+    'expiration_time' => 'Hora de Expiración',
 ];
