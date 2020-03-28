@@ -10,8 +10,8 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('productos', 'ProcessController@getProducts');
-Route::get('producto/{slug}', 'ProcessController@findProduct');
+Route::get('todos-los-productos', 'ProcessController@getProducts');
+Route::get('ver-producto/{slug}', 'ProcessController@findProduct');
 
 Route::group(['prefix'=>'process'], function(){
 
