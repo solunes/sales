@@ -288,15 +288,27 @@ class ProcessController extends Controller {
         $user = \Auth::user();
         $array['auth'] = true;
         if('solunes.customer'&&$user->customer){
-          if($user->customer->country_id){
-            $array['country_id'] = $user->customer->country_id;
+          if(config('solunes.addresses')){
+            if($user->customer->main_customer_address->country_id){
+              $array['country_id'] = $user->customer->main_customer_address->country_id;
+            }
+            if($user->customer->main_customer_address->city_id){
+              $array['city_id'] = $user->customer->main_customer_address->city_id;
+            }
+            $array['city_other'] = $user->customer->main_customer_address->city_other;
+            $array['address'] = $user->customer->main_customer_address->address;
+            $array['address_extra'] = $user->customer->main_customer_address->address_extra;
+          } else {
+            if($user->customer->country_id){
+              $array['country_id'] = $user->customer->country_id;
+            }
+            if($user->customer->city_id){
+              $array['city_id'] = $user->customer->city_id;
+            }
+            $array['city_other'] = $user->customer->city_other;
+            $array['address'] = $user->customer->address;
+            $array['address_extra'] = $user->customer->address_extra;
           }
-          if($user->customer->city_id){
-            $array['city_id'] = $user->customer->city_id;
-          }
-          $array['city_other'] = $user->customer->city_other;
-          $array['address'] = $user->customer->address;
-          $array['address_extra'] = $user->customer->address_extra;
           $array['nit_number'] = $user->customer->nit_number;
           $array['nit_social'] = $user->customer->nit_name;
           if(config('sales.ask_coordinates')&&!$quotation){
