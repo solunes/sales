@@ -80,7 +80,7 @@ class NodesSales extends Migration
                 $table->decimal('weight', 10, 2)->nullable();
             }
             if(config('payments.sfv_version')>1||config('payments.discounts')){
-                $table->decimal('discount_price', 10, 2);
+                $table->decimal('discount_price', 10, 2)->nullable();
             }
             $table->timestamps();
             $table->foreign('parent_id')->references('id')->on('carts')->onDelete('cascade');
