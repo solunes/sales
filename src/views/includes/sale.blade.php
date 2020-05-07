@@ -61,7 +61,7 @@
             <p><strong>Fecha de Pago:</strong> {{ $sale_payment->payment->payment_date }}</p>
           @elseif($sale_payment->status=='to-pay'&&$sale_payment->payment_method->code=='cash-payment'&&$sale_payment->cash_payment)
             <p><strong>Estado:</strong> Pago contra entrega</p>
-            <p>Su pago se encuentra en espera y el envío fue enviado, debe realizar el pago cuando reciba su pedido.</p><p>Indicó que pagaría con un billete de: <strong>Bs. {{ $sale_payment->cash_payment->amount }}</strong>.</p>
+            <p>Su pago se encuentra en espera y el envío fue enviado, debe realizar el pago cuando reciba su pedido.</p><p>Indicó que pagaría con: <strong>Bs. {{ $sale_payment->cash_payment->amount }}</strong>.</p>
           @elseif($sale_payment->status=='to-pay')
             <p><strong>Estado:</strong> En Tránsito</p>
             <p>Su pago se encuentra en tránsito.</p>

@@ -82,12 +82,6 @@ class ProcessController extends Controller {
         $detail = $product->name;
         $count = 0;
         $custom_price = \Business::getProductPrice($product, $request->input('quantity'));
-        $variation_id = NULL;
-        $variation_value = NULL;
-        $variation_2_id = NULL;
-        $variation_2_value = NULL;
-        $variation_3_id = NULL;
-        $variation_3_value = NULL;
         if(config('business.product_variations')){
           $count = 0;
           foreach($product->product_bridge_variation as $product_bridge_variation){
@@ -95,19 +89,8 @@ class ProcessController extends Controller {
               if(!$request->has('variation_'.$product_bridge_variation->id)||$request->input('variation_'.$product_bridge_variation->id)=='0'||$request->input('variation_'.$product_bridge_variation->id)==0){
                 return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
               }
-              if($count==0){
-                $variation_id = $product_bridge_variation->id;
-                $variation_value = $request->input('variation_'.$product_bridge_variation->id);
-                $detail .= ' - '.$product_bridge_variation->name.': '.$product_bridge_variation->variation_options()->where('id', $variation_value)->first()->name;
-              } else if($count==1){
-                $variation_2_id = $product_bridge_variation->id;
-                $variation_2_value = $request->input('variation_'.$product_bridge_variation->id);
-                $detail .= ' - '.$product_bridge_variation->name.': '.$product_bridge_variation->variation_options()->where('id', $variation_value)->first()->name;
-              } else if($count==2){
-                $variation_3_id = $product_bridge_variation->id;
-                $variation_3_value = $request->input('variation_'.$product_bridge_variation->id);
-                $detail .= ' - '.$product_bridge_variation->name.': '.$product_bridge_variation->variation_options()->where('id', $variation_value)->first()->name;
-              }
+              $variation_value = $request->input('variation_'.$product_bridge_variation->id);
+              $detail .= ' - '.$product_bridge_variation->name.': '.$product->product_bridge_variation_option()->where('variation_option_id', $variation_value)->first()->name;
               $count++;
             }
           }
@@ -122,15 +105,15 @@ class ProcessController extends Controller {
                   $subarray = [$subarray];
                 }
                 //\Log::info(json_encode($subarray));
-                foreach($product->product_bridge_variation_options()->whereIn('variation_option_id', $subarray)->get() as $key => $option){
+                foreach($product->product_bridge_variation_option()->whereIn('variation_option_id', $subarray)->get() as $key => $option){
                   if($key>0){
                     $detail .= ', ';
                   }
-                  $detail .= $option->variation_option->name.' ';
+                  $detail .= $option->name.' ';
                   if(config('sales.custom_add_cart_extra_price')){
-                    $custom_price += \CustomFunc::checkCustomAddCartExtraPrice($product, $option, $option->variation_option->extra_price, $request);
+                    $custom_price += \CustomFunc::checkCustomAddCartExtraPrice($product, $option, $option->extra_price, $request);
                   } else {
-                    $custom_price += $option->variation_option->extra_price;
+                    $custom_price += $option->extra_price;
                   }
                 }
               } else if($product_bridge_variation->optional==0){
@@ -138,7 +121,7 @@ class ProcessController extends Controller {
               }
             }
           }
-          $product = \Business::getProductBridgeVariable($product, $variation_id, $variation_value, $variation_2_id, $variation_2_value, $variation_3_id, $variation_3_value);
+          $product = \Business::getProductBridgeVariable($product, $subarray);
         }
 
         $stock_changed = false;
@@ -311,8 +294,10 @@ class ProcessController extends Controller {
           }
           $array['nit_number'] = $user->customer->nit_number;
           $array['nit_social'] = $user->customer->nit_name;
-          if(config('sales.ask_coordinates')&&!$quotation){
+          if(config('sales.ask_coordinates')&&!$quotation&&$user->customer->latitude&&$user->customer->longitude){
             $array['map_coordinates'] = ['type'=>'customer', 'latitude'=>$user->customer->latitude, 'longitude'=>$user->customer->longitude];
+          } else {
+            $array['map_coordinates'] = ['type'=>'none', 'latitude'=>NULL, 'longitude'=>NULL];
           }
         } else {
           if($user->country_id){
@@ -326,8 +311,10 @@ class ProcessController extends Controller {
           $array['address_extra'] = $user->address_extra;
           $array['nit_number'] = $user->nit_number;
           $array['nit_social'] = $user->nit_name;
-          if(config('sales.ask_coordinates')&&!$quotation){
+          if(config('sales.ask_coordinates')&&!$quotation&&$user->latitude&&$user->longitude){
             $array['map_coordinates'] = ['type'=>'user', 'latitude'=>$user->latitude, 'longitude'=>$user->longitude];
+          } else {
+            $array['map_coordinates'] = ['type'=>'none', 'latitude'=>NULL, 'longitude'=>NULL];
           }
         }
       } else {
