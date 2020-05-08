@@ -82,6 +82,7 @@ class ProcessController extends Controller {
         $detail = $product->name;
         $count = 0;
         $custom_price = \Business::getProductPrice($product, $request->input('quantity'));
+        $product_bridge_variation_array = [];
         if(config('business.product_variations')){
           $count = 0;
           foreach($product->product_bridge_variation as $product_bridge_variation){
@@ -91,6 +92,7 @@ class ProcessController extends Controller {
               }
               $variation_value = $request->input('variation_'.$product_bridge_variation->id);
               $detail .= ' - '.$product_bridge_variation->name.': '.$product->product_bridge_variation_option()->where('variation_option_id', $variation_value)->first()->name;
+              $product_bridge_variation_array[$product_bridge_variation->id] = $request->input('variation_'.$product_bridge_variation->id);
               $count++;
             }
           }
@@ -121,7 +123,7 @@ class ProcessController extends Controller {
               }
             }
           }
-          $product = \Business::getProductBridgeVariable($product, $subarray);
+          $product = \Business::getProductBridgeVariable($product, $product_bridge_variation_array);
         }
 
         $stock_changed = false;
@@ -476,7 +478,7 @@ class ProcessController extends Controller {
       }
       $sale->agency_id = $agency->id;
       $sale->currency_id = $currency->id;
-      //$sale->order_amount = $order_cost;
+      $sale->order_amount = $order_cost;
       $sale->amount = $total_cost;
       if(config('sales.ask_invoice')&&!$quotation){
         $sale->invoice = true;
