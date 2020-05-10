@@ -32,6 +32,7 @@ return [
 	'cart_quotation' => false,
 	'sign_contract' => false,
 	'editable_price' => false,
+	'product_bridge_price' => false,
 	'sale_duration_hours' => null, // Se debe definir si las ventas tienen una cantidad de horas antes de que expiren.
 
 	// INTEGRATIONS

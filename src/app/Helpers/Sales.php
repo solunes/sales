@@ -54,7 +54,11 @@ class Sales {
 
     $currency = \Solunes\Business\App\Currency::find($currency_id);
     $product_bridge = \Solunes\Business\App\ProductBridge::find($product_bridge_id);
-    $custom_price = \Business::getProductPrice($product_bridge, $quantity);
+    if(config('sales.product_bridge_price')){
+      $custom_price = \Business::getProductPrice($product_bridge, $quantity);
+    } else {
+      $custom_price = $amount;
+    }
     $custom_price = \Business::calculate_currency($custom_price, $currency, $product_bridge->currency);
     $amount = $custom_price * $quantity;
 
