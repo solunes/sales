@@ -64,6 +64,9 @@ class NodesSales extends Migration
             $table->increments('id');
             $table->integer('user_id')->nullable();
             $table->string('session_id')->nullable();
+            if(config('sales.sales_agency')){
+                $table->integer('agency_id')->nullable();
+            }
             $table->enum('type', ['cart','buy-now'])->default('cart');
             $table->enum('status', ['holding','sale'])->default('holding');
             $table->timestamps();
@@ -90,7 +93,9 @@ class NodesSales extends Migration
             $table->increments('id');
             $table->integer('user_id')->nullable();
             $table->integer('customer_id')->nullable();
-            $table->integer('agency_id')->nullable();
+            if(config('sales.sales_agency')){
+                $table->integer('agency_id')->nullable();
+            }
             if(config('business.companies')&&config('sales.company_relation')){
                 $table->integer('company_id')->nullable();
             }

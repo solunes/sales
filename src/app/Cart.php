@@ -52,11 +52,14 @@ class Cart extends Model {
         return $query->where('type', 'buy-now');
     }
 
-    public function scopeCheckOwner($query) {
+    public function scopeCheckOwner($query, $agency_id) {
         if(\Auth::check()){
             return $query->where('user_id', \Auth::user()->id);
         } else {
             return $query->where('session_id', \Session::getId());
+        }
+        if($agency_id){
+            $query->where('agency_id', $agency_id);
         }
     }
 

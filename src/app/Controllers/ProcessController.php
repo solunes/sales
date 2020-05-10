@@ -57,10 +57,10 @@ class ProcessController extends Controller {
   }
 
   /* Ruta GET para añadir un item de carro de compras. Cantidad: 1 */
-  public function getAddCartItem($product_id) {
+  public function getAddCartItem($product_id, $agency_id = NULL) {
     \Artisan::call('fix-sales-status');
     if($product = \Solunes\Business\App\ProductBridge::find($product_id)){
-      $cart = \Sales::get_cart();
+      $cart = \Sales::get_cart($agency_id);
       \Sales::add_cart_item($cart, $product, 1);
       return redirect($this->prev)->with('message_success', 'Se añadió su producto al carro de compras.');
     } else {
@@ -77,8 +77,12 @@ class ProcessController extends Controller {
           return redirect($this->prev)->with('message_error', 'Hubo un error al agregar su producto.');
         }
       }
+      $agency_id = NULL;
       if($request->input('quantity')>0){
-        $cart = \Sales::get_cart();
+        if($request->has('agency_id')){
+          $agency_id = $request->input('agency_id');
+        }
+        $cart = \Sales::get_cart($agency_id);
         $detail = $product->name;
         $count = 0;
         $custom_price = \Business::getProductPrice($product, $request->input('quantity'));
@@ -197,6 +201,9 @@ class ProcessController extends Controller {
       $cart = new \Solunes\Sales\App\Cart;
       if(\Auth::check()){
         $cart->user_id = \Auth::user()->id;
+      }
+      if(config('sales.sales_agency')&&$request->has('agency_id')){
+        $cart->agency_id = $request->input('agency_id');
       }
       $cart->session_id = \Session::getId();
       $cart->type = 'buy-now';
@@ -464,7 +471,13 @@ class ProcessController extends Controller {
       
       // Sale
       $total_cost = $order_cost + $shipping_cost;
-      $agency = \Solunes\Business\App\Agency::find(1); // Parametrizar tienda en config
+      if(config('sales.sales_agency')){
+        if($request->has('agency_id')){
+          $agency = $request->input('agency_id');
+        } else {
+          $agency = \Solunes\Business\App\Agency::find(1); // Parametrizar tienda en config
+        }
+      }
       $currency = $item->currency;
       $sale = new \Solunes\Sales\App\Sale;
       $sale->user_id = $user->id;
@@ -476,7 +489,9 @@ class ProcessController extends Controller {
       } else {
         $sale->lead_status = 'sale';
       }
-      $sale->agency_id = $agency->id;
+      if(config('sales.sales_agency')){
+        $sale->agency_id = $agency->id;
+      }
       $sale->currency_id = $currency->id;
       $sale->order_amount = $order_cost;
       $sale->amount = $total_cost;

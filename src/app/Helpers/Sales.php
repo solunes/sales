@@ -3,8 +3,8 @@
 namespace Solunes\Sales\App\Helpers;
 
 class Sales {
-  public static function get_cart() {
-    if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->where('status','holding')->with('cart_items','cart_items.product_bridge')->first()){
+  public static function get_cart($agency_id = NULL) {
+    if($cart = \Solunes\Sales\App\Cart::checkOwner($agency_id)->checkCart()->where('status','holding')->with('cart_items','cart_items.product_bridge')->first()){
       if($cart->session_id!=session()->getId()){
         $cart->session_id = session()->getId();
         $cart->save();
@@ -14,6 +14,9 @@ class Sales {
       $cart = new \Solunes\Sales\App\Cart;
       if(\Auth::check()){
         $cart->user_id = \Auth::user()->id;
+      }
+      if($agency_id){
+        $cart->agency_id = $agency_id;
       }
       $cart->session_id = \Session::getId();
       $cart->save();
@@ -65,7 +68,9 @@ class Sales {
     $sale = new \Solunes\Sales\App\Sale;
     $sale->user_id = $user_id;
     $sale->customer_id = $customer_id;
-    $sale->agency_id = $agency_id;
+    if(config('sales.sales_agency')){
+      $sale->agency_id = $agency_id;
+    }
     $sale->currency_id = $currency_id;
     $sale->name = $detail;
     $sale->amount = $amount;
@@ -80,7 +85,7 @@ class Sales {
     $sale_item->product_bridge_id = $product_bridge_id;
     $sale_item->currency_id = $currency_id;
     $sale_item->detail = $detail;
-    $sale_item->price = $amount;
+    $sale_item->price = $custom_price;
     $sale_item->quantity = $quantity;
     //$sale_item->weight = $cart_item->weight;
     $sale_item->total = $sale_item->price * $sale_item->quantity;
@@ -121,10 +126,16 @@ class Sales {
   }
 
   public static function generateSale($user_id, $customer_id, $currency_id, $payment_method_id, $invoice, $invoice_name, $invoice_number, $sale_details, $agency_id = NULL, $detail = NULL) {
+    if(!$agency_id){
+      $agency_id = config('business.online_store_agency_id');
+    }
+
     $sale = new \Solunes\Sales\App\Sale;
     $sale->user_id = $user_id;
     $sale->customer_id = $customer_id;
-    $sale->agency_id = $agency_id;
+    if(config('sales.sales_agency')){
+      $sale->agency_id = $agency_id;
+    }
     $sale->currency_id = $currency_id;
     $sale->invoice = $invoice;
     $sale->invoice_name = $invoice_name;
@@ -231,7 +242,11 @@ class Sales {
       } else {
         $quantity = 1;
       }
-      $custom_price = \Business::getProductPrice($product_bridge, $quantity);
+      if(config('sales.product_bridge_price')){
+        $custom_price = \Business::getProductPrice($product_bridge, $quantity);
+      } else {
+        $custom_price = $sale_detail['amount'];
+      }
       $custom_price = \Business::calculate_currency($custom_price, $sale->currency, $product_bridge->currency);
       $sale_item = new \Solunes\Sales\App\SaleItem;
       $sale_item->parent_id = $sale->id;

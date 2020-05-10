@@ -30,6 +30,7 @@ return [
 	'check_cart_stock' => true,
 	'quotation' => true,
 	'cart_quotation' => false,
+	'sales_agency' => false,
 	'sign_contract' => false,
 	'editable_price' => false,
 	'product_bridge_price' => false,
