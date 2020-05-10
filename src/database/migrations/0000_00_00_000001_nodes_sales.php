@@ -98,8 +98,8 @@ class NodesSales extends Migration
                 $table->integer('contact_id')->nullable();
             }
             $table->integer('currency_id')->nullable();
+            $table->decimal('order_amount', 10, 2)->nullable();
             if(config('sales.desk_sale')){
-                $table->decimal('order_amount', 10, 2)->nullable();
                 $table->decimal('change', 10, 2)->nullable()->default(0);
             }
             $table->string('name')->nullable();
