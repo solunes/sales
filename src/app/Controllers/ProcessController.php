@@ -232,9 +232,9 @@ class ProcessController extends Controller {
   /* Ruta GET para revisar el carro de compras */
   public function getCheckCart($type, $cart_id = NULL) {
     if($cart_id){
-      $cart = \Solunes\Sales\App\Cart::where('id', $cart_id)->status('holding')->first();
+      $cart = \Solunes\Sales\App\Cart::where('id', $cart_id)->status('holding')->orderBy('updated_at','DESC')->first();
     } else {
-      $cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->first();
+      $cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->orderBy('updated_at','DESC')->first();
     }
     if($cart){
       $page = \Solunes\Master\App\Page::find(2);
@@ -272,7 +272,7 @@ class ProcessController extends Controller {
 
   /* Ruta GET para finalizar la compra */
   public function getFinishSale($cart_id = NULL, $quotation = false) {
-    if(($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkBuyNow()->checkOwner()->status('holding')->first())||($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->first())){
+    if(($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkOwner()->status('holding')->first())||($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->orderBy('updated_at','DESC')->first())){
       $array['country_id'] = config('sales.default_country');
       $array['city_id'] = config('sales.default_city');
       $array['city_other'] = NULL;

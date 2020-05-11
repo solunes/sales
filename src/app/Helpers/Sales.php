@@ -4,7 +4,7 @@ namespace Solunes\Sales\App\Helpers;
 
 class Sales {
   public static function get_cart($agency_id = NULL) {
-    if($cart = \Solunes\Sales\App\Cart::checkOwner($agency_id)->checkCart()->where('status','holding')->with('cart_items','cart_items.product_bridge')->first()){
+    if($cart = \Solunes\Sales\App\Cart::checkOwner($agency_id)->checkCart()->where('status','holding')->orderBy('updated_at','DESC')->with('cart_items','cart_items.product_bridge')->first()){
       if($cart->session_id!=session()->getId()){
         $cart->session_id = session()->getId();
         $cart->save();
@@ -47,6 +47,7 @@ class Sales {
         $cart_item->weight = $product->weight;
     }
     $cart_item->save();
+    $cart->touch();
     return $cart_item;
   }
 
