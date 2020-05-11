@@ -113,4 +113,6 @@ return [
     'quotation_file' => 'Archivo de Cotización',
     'expiration_date' => 'Fecha de Expiración',
     'expiration_time' => 'Hora de Expiración',
+    'script' => '¿Script Integrado?',
+
 ];

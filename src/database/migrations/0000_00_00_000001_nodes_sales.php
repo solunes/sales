@@ -42,6 +42,7 @@ class NodesSales extends Migration
                 $table->string('name')->nullable();
                 $table->integer('city_id')->unsigned();
                 $table->boolean('active')->nullable()->default(1);
+                $table->boolean('script')->nullable()->default(0);
                 $table->text('content')->nullable();
                 $table->timestamps();
                 $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
