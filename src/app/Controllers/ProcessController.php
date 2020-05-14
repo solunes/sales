@@ -254,7 +254,7 @@ class ProcessController extends Controller {
 
   /* Ruta POST para editar el carro de compras */
   public function postUpdateCart(Request $request) {
-    if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->first()){
+    if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->orderBy('updated_at','DESC')->first()){
       $cart->touch();
       foreach($cart->cart_items as $item){
         if(isset($request->input('product_id')[$item->id])&&$request->input('quantity')[$item->id]>0){
@@ -272,7 +272,7 @@ class ProcessController extends Controller {
 
   /* Ruta GET para finalizar la compra */
   public function getFinishSale($cart_id = NULL, $quotation = false) {
-    if(($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkOwner()->status('holding')->first())||($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->orderBy('updated_at','DESC')->first())){
+    if(($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkOwner()->status('holding')->orderBy('updated_at','DESC')->first())||($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->orderBy('updated_at','DESC')->first())){
       $array['country_id'] = config('sales.default_country');
       $array['city_id'] = config('sales.default_city');
       $array['city_other'] = NULL;
@@ -351,8 +351,17 @@ class ProcessController extends Controller {
       } else {
         $array['shipping_options'] = [];
       }
-      $array['payment_options'] = \Solunes\Payments\App\PaymentMethod::active()->order()->lists('name','id');
-      $array['payment_descriptions'] = \Solunes\Payments\App\PaymentMethod::active()->order()->get();
+      if(config('business.agency_payment_methods')&&$cart->agency_id){
+        $array['payment_options'] = \Solunes\Payments\App\PaymentMethod::whereHas('agency_payment_method', function($q) use($cart) {
+          $q->where('agency_id', $cart->agency_id);
+        })->active()->order()->lists('name','id');
+        $array['payment_descriptions'] = \Solunes\Payments\App\PaymentMethod::whereHas('agency_payment_method', function($q) use($cart) {
+          $q->where('agency_id', $cart->agency_id);
+        })->active()->order()->get();
+      } else {
+        $array['payment_options'] = \Solunes\Payments\App\PaymentMethod::active()->order()->lists('name','id');
+        $array['payment_descriptions'] = \Solunes\Payments\App\PaymentMethod::active()->order()->get();
+      }
       $array['page'] = \Solunes\Master\App\Page::find(2);
       $total = 0;
       $weight = 0;
@@ -472,8 +481,8 @@ class ProcessController extends Controller {
       // Sale
       $total_cost = $order_cost + $shipping_cost;
       if(config('sales.sales_agency')){
-        if($request->has('agency_id')){
-          $agency = $request->input('agency_id');
+        if($cart->agency_id){
+          $agency = $cart->agency;
         } else {
           $agency = \Solunes\Business\App\Agency::find(1); // Parametrizar tienda en config
         }

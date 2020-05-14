@@ -35,6 +35,10 @@ class Cart extends Model {
     public function user() {
         return $this->belongsTo('App\User');
     }
+     
+    public function agency() {
+        return $this->belongsTo('Solunes\Business\App\Agency');
+    }
 
     public function scopeFindId($query, $id) {
         return $query->where('id', $id);
@@ -54,13 +58,14 @@ class Cart extends Model {
 
     public function scopeCheckOwner($query, $agency_id = NULL) {
         if(\Auth::check()){
-            return $query->where('user_id', \Auth::user()->id);
+            $query = $query->where('user_id', \Auth::user()->id);
         } else {
-            return $query->where('session_id', \Session::getId());
+            $query = $query->where('session_id', \Session::getId());
         }
         if($agency_id){
             $query->where('agency_id', $agency_id);
         }
+        return $query;
     }
 
 }

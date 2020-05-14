@@ -40,4 +40,8 @@ class Shipping extends Model {
         return $this->hasMany('Solunes\Sales\App\ShippingCity', 'parent_id');
     }
 
+    public function agency_shipping() {
+        return $this->belongsToMany('Solunes\Sales\App\Shipping', 'agency_shipping', 'shipping_id', 'agency_id');
+    }
+
 }
