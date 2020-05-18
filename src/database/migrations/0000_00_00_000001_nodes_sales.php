@@ -75,7 +75,7 @@ class NodesSales extends Migration
                 Schema::create('shipping_times', function (Blueprint $table) {
                     $table->increments('id');
                     $table->integer('parent_id')->unsigned();
-                    $table->text('name')->nullable();
+                    $table->string('name')->nullable();
                     $table->time('time_in')->nullable();
                     $table->time('time_out')->nullable();
                     $table->foreign('parent_id')->references('id')->on('shippings')->onDelete('cascade');

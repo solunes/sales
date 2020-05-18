@@ -81,6 +81,8 @@ class ProcessController extends Controller {
       if($request->input('quantity')>0){
         if($request->has('agency_id')){
           $agency_id = $request->input('agency_id');
+        } else {
+          $agency_id = config('business.online_store_agency_id');
         }
         $cart = \Sales::get_cart($agency_id);
         $detail = $product->name;
@@ -134,7 +136,7 @@ class ProcessController extends Controller {
         $quantity = $request->input('quantity');
         if(config('solunes.inventory')){
           if(config('sales.check_cart_stock')){
-            $stock = \Business::getProductBridgeStock($product, config('business.online_store_agency_id'));
+            $stock = \Business::getProductBridgeStock($product, $agency_id);
             if($stock==0){
               return redirect($this->prev)->with('message_error', 'Lo sentimos, no contamos con stock para este producto.');
             } else if($stock<$quantity){
@@ -459,6 +461,13 @@ class ProcessController extends Controller {
         $quotation = false;
       }
 
+      if(config('sales.sales_agency')){
+        if($cart->agency_id){
+          $agency = $cart->agency;
+        } else {
+          $agency = \Solunes\Business\App\Agency::find(config('business.online_store_agency_id')); // Parametrizar tienda en config
+        }
+      }
       $order_cost = 0;
       $order_weight = 0;
       $discount_amount = 0;
@@ -469,14 +478,24 @@ class ProcessController extends Controller {
           $discount_amount += $item->discount_price;
         }
         if(config('solunes.inventory')){
-          $stock = \Business::getProductBridgeStockItem($item->product_bridge, config('business.online_store_agency_id'));
+          $stock = \Business::getProductBridgeStockItem($item->product_bridge, $agency->id);
           if($stock){
-            if($stock&&$stock->quantity<$item->quantity){
-              //$stock->quantity = $stock->quantity - $item->quantity;
-              return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock suficiente. Actualmente tiene "'.$stock->quantity.'" unidades disponibles.')->withInput();
-            } else if(!$stock) {
-              //$stock->quantity = 0;
-              return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock.')->withInput();
+            if(is_integer($stock)){
+              if($stock<$item->quantity){
+                //$stock->quantity = $stock->quantity - $item->quantity;
+                return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock suficiente. Actualmente tiene "'.$stock.'" unidades disponibles.')->withInput();
+              } else if(!$stock) {
+                //$stock->quantity = 0;
+                return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock.')->withInput();
+              }
+            } else {
+              if($stock->quantity<$item->quantity){
+                //$stock->quantity = $stock->quantity - $item->quantity;
+                return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock suficiente. Actualmente tiene "'.$stock->quantity.'" unidades disponibles.')->withInput();
+              } else if(!$stock) {
+                //$stock->quantity = 0;
+                return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock.')->withInput();
+              }
             }
             //$stock->save();
           }
@@ -506,13 +525,6 @@ class ProcessController extends Controller {
       
       // Sale
       $total_cost = $order_cost + $shipping_cost;
-      if(config('sales.sales_agency')){
-        if($cart->agency_id){
-          $agency = $cart->agency;
-        } else {
-          $agency = \Solunes\Business\App\Agency::find(1); // Parametrizar tienda en config
-        }
-      }
       $currency = $item->currency;
       $sale = new \Solunes\Sales\App\Sale;
       $sale->user_id = $user->id;
@@ -642,7 +654,7 @@ class ProcessController extends Controller {
       }
 
       // Sale Items
-      $store_agency = \Solunes\Business\App\Agency::find(config('business.online_store_agency_id'));
+      $store_agency = $agency;
       foreach($cart->cart_items as $cart_item){
         $product_bridge = $cart_item->product_bridge;
         $sale_item = new \Solunes\Sales\App\SaleItem;
@@ -665,7 +677,7 @@ class ProcessController extends Controller {
         }
         //$sale_item->weight = $cart_item->weight;
         $sale_item->save();
-        if(config('solunes.inventory')&&$sale_item->product_bridge->stockable&&!$quotation){
+        if(config('solunes.inventory')&&!config('solunes.reduce_inventory_after_purchase')&&$sale_item->product_bridge->stockable&&!$quotation){
           \Inventory::reduce_inventory($store_agency, $sale_item->product_bridge, $sale_item->quantity);
         }
       }
