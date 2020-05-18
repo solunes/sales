@@ -2,6 +2,7 @@
   function queryShipping(){
     var order_cost = {{ $total }};
     var weight = {{ $weight }};
+    var map_coordinates = $('#map_coordinates').val();
     var shipping_id = $('#shipping_id').val();
     @if(config('sales.delivery_country'))
       var country_id = $('#country_id').val();
@@ -9,7 +10,7 @@
       var country_id = 1;
     @endif
     var city_id = $('#city_id').val();
-    $.ajax("{{ url('process/calculate-shipping') }}/" + shipping_id + "/" + country_id + "/" + city_id + "/" + weight, {
+    $.ajax("{{ url('process/calculate-shipping') }}/" + shipping_id + "/" + country_id + "/" + city_id + "/" + weight + "/" + map_coordinates + "/" + 1 , {
       success: function(data) {
         if(city_id!=data.shipping_city){
           var $el = $("#city_id");
@@ -24,6 +25,18 @@
           var total_cost = order_cost + shipping_cost;
           $(".shipping_cost").html(shipping_cost);
           $(".total_cost").html(total_cost);
+          var $el = $("#shipping_date");
+          $el.empty(); // remove old options
+          $.each(data.shipping_dates, function(key,value) {
+            $el.append($("<option></option>")
+               .attr("value", value).text(value));
+          });
+          var $el = $("#shipping_time_id");
+          $el.empty(); // remove old options
+          $.each(data.shipping_times, function(key,value) {
+            $el.append($("<option></option>")
+               .attr("value", value).text(key));
+          });
         } else {
           var shipping_id = $('#shipping_id').val(data.new_shipping_id);
           $('#accordion-shipping .panel-collapse.in').removeClass('in');
@@ -54,6 +67,12 @@
 
   @if(config('sales.delivery'))
     $(document).on('change', 'select.query_shipping', function() {
+      queryShipping();
+    });
+  @endif
+
+  @if(config('sales.ask_coordinates'))
+    $(document).on('change', '#map_coordinates', function() {
       queryShipping();
     });
   @endif

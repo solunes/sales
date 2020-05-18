@@ -36,8 +36,16 @@ class Shipping extends Model {
         return $this->belongsTo('Solunes\Business\App\City');
     }
 
+    public function shipping_city() {
+        return $this->hasOne('Solunes\Sales\App\ShippingCity', 'parent_id');
+    }
+
     public function shipping_cities() {
         return $this->hasMany('Solunes\Sales\App\ShippingCity', 'parent_id');
+    }
+
+    public function shipping_times() {
+        return $this->hasMany('Solunes\Sales\App\ShippingTime', 'parent_id');
     }
 
     public function agency_shipping() {

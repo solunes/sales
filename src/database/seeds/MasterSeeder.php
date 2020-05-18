@@ -18,6 +18,9 @@ class MasterSeeder extends Seeder {
         if(config('sales.delivery')){
             $node_shipping = \Solunes\Master\App\Node::create(['name'=>'shipping', 'location'=>'sales', 'folder'=>'parameters']);
             $node_shipping_city = \Solunes\Master\App\Node::create(['name'=>'shipping-city', 'table_name'=>'shipping_cities', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_shipping->id]);
+            if(config('sales.delivery_select_hour')){
+                $node_shipping_time = \Solunes\Master\App\Node::create(['name'=>'shipping-time', 'table_name'=>'shipping_times', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_shipping->id]);
+            }
         }
         $node_cart = \Solunes\Master\App\Node::create(['name'=>'cart', 'location'=>'sales', 'folder'=>'parameters']);
         $node_cart_item = \Solunes\Master\App\Node::create(['name'=>'cart-item', 'type'=>'subchild', 'location'=>'sales', 'parent_id'=>$node_cart->id]);

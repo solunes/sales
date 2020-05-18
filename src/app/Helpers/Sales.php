@@ -280,10 +280,15 @@ class Sales {
     return $sale_payment;
   }
 
-  public static function calculate_shipping_cost($shipping_id, $country_id, $city_id, $weight) {
+  public static function calculate_shipping_cost($shipping_id, $country_id, $city_id, $weight, $map_coordinates, $agency_id = NULL) {
     $shipping = \Solunes\Sales\App\Shipping::find($shipping_id);
+    $shipping_cost = 0;
+    $shipping_time = 0;
+    $shipping_dates = [];
+    $shipping_times = [];
     if($shipping->script){
-      return \CustomFunc::calculate_shipping_cost($shipping, $country_id, $city_id, $weight);
+      $agency = \Solunes\Business\App\Agency::find($agency_id);
+      return \CustomFunc::calculate_shipping_cost($shipping, $country_id, $city_id, $weight, $map_coordinates, $agency);
     } else {
       if(config('sales.delivery_country')){
           $country = \Solunes\Business\App\Country::find($country_id);
@@ -298,12 +303,17 @@ class Sales {
           $shipping_city = $shipping->shipping_cities()->where('city_id', $city_id)->first();
         }
         $shipping_cities_array = [];
+        if(config('sales.delivery_select_hour')){
+          $shipping_times = $shipping->shipping_times()->lists('id','name')->toArray();
+        }
+
         foreach($shipping_cities as $shipping_city_item){
           $shipping_cities_array[$shipping_city_item->city->name] = $shipping_city_item->city_id;
         }
         $other_city = false;
         if($shipping_city){
           $shipping_cost = $shipping_city->shipping_cost;
+          $shipping_time = $shipping_city->shipping_time;
           if($shipping_city->city->other_city){
             $other_city = true;
           }
@@ -311,12 +321,34 @@ class Sales {
           if($weight>0){
               $shipping_cost += ceil($weight)*$shipping_city->shipping_cost_extra;
           }
-          return ['shipping'=>true, 'shipping_cities'=>$shipping_cities_array, 'shipping_city'=>$shipping_city->city_id, 'other_city'=>$other_city, 'shipping_cost'=>$shipping_cost];
+          if(config('sales.delivery_select_day')){
+            $shipping_dates = \Sales::getShippingDates($shipping, $shipping_time);
+          }
+          return ['shipping'=>true, 'shipping_cities'=>$shipping_cities_array, 'shipping_city'=>$shipping_city->city_id, 'other_city'=>$other_city, 'shipping_cost'=>$shipping_cost, 'shipping_time'=>$shipping_time, 'shipping_dates'=>$shipping_dates, 'shipping_times'=>$shipping_times];
         } else {
           $new_shipping_id = 2;
-          return ['shipping'=>false,  'shipping_cities'=>$shipping_cities_array, 'shipping_city'=>1, 'other_city'=>$other_city, 'shipping_cost'=>0, 'new_shipping_id'=>$new_shipping_id];
+          return ['shipping'=>false,  'shipping_cities'=>$shipping_cities_array, 'shipping_city'=>1, 'other_city'=>$other_city, 'shipping_cost'=>0, 'shipping_time'=>1, 'new_shipping_id'=>$new_shipping_id, 'shipping_dates'=>$shipping_dates, 'shipping_times'=>$shipping_times];
         }
     }
+  }
+
+  public static function getShippingDates($shipping, $shipping_time) {
+    $dates_array = [];
+    $today = date('Y-m-d');
+    $first_date = date('Y-m-d' , strtotime('+'.$shipping_time.' days'));
+    $end_time = $shipping_time + $shipping->days_max;
+    $last_date = date('Y-m-d' , strtotime('+'.$end_time.' days'));
+    $period = new \DatePeriod(
+         new \DateTime($first_date),
+         new \DateInterval('P1D'),
+         new \DateTime($last_date)
+    );
+    $dates_array = [];
+    foreach ($period as $key => $value) {
+      $dates_array[] = $value->format('Y-m-d');
+        //$value->format('Y-m-d')       
+    }
+    return $dates_array;
   }
 
   public static function userRegistration($request) {

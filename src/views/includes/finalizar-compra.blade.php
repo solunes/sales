@@ -76,7 +76,7 @@
               @foreach($payment_descriptions as $key => $payment)
                 <div class="panel panel-default">
                   <div class="panel-heading" role="tab" id="heading{{ $payment->id }}"><h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#accordion-payment" href="#collapse-payment-{{ $payment->id }}" aria-expanded="true" aria-controls="collapse{{ $payment->id }}"><span class="payment-active-icon fa fa-star" @if($key>0) style="opacity: 0" @endif ></span> {{ $payment->name }}</a>
+                    <a role="button" data-toggle="collapse" data-parent="# -payment" href="#collapse-payment-{{ $payment->id }}" aria-expanded="true" aria-controls="collapse{{ $payment->id }}"><span class="payment-active-icon fa fa-star" @if($key>0) style="opacity: 0" @endif ></span> {{ $payment->name }}</a>
                   </h4></div>
                   <div id="collapse-payment-{{ $payment->id }}" class="panel-collapse collapse @if($key==0) in @endif " role="tabpanel" aria-labelledby="heading{{ $payment->id }}">
                     <div class="panel-body">{!! $payment->content !!}</div>

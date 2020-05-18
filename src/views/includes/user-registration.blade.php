@@ -110,6 +110,22 @@
         {!! Form::select('shipping_id', $shipping_options, NULL, ['id'=>'shipping_id', 'class'=>'query_shipping']) !!}
       </div>
     </div>
+    @if(config('sales.delivery_select_day'))
+      <div class="col-md-6">
+        <div class="checkout-form-list">
+          <label>Seleccionar Fecha de Entrega <span class="required">*</span></label>                   
+          {!! Form::select('shipping_date', $shipping_dates, NULL, ['id'=>'shipping_date']) !!}
+        </div>
+      </div>
+    @endif
+    @if(config('sales.delivery_select_hour'))
+      <div class="col-md-6">
+        <div class="checkout-form-list">
+          <label>Seleccionar Hora <span class="required">*</span></label>                   
+          {!! Form::select('shipping_time_id', $shipping_times, NULL, ['id'=>'shipping_time_id']) !!}
+        </div>
+      </div>
+    @endif
   @endif
   <div class="col-md-6"  @if($quotation) style="opacity: 0; visibility: hidden; height: 0;" @endif>
     <div class="checkout-form-list">

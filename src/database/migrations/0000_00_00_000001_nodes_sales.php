@@ -44,6 +44,17 @@ class NodesSales extends Migration
                 $table->boolean('active')->nullable()->default(1);
                 $table->boolean('script')->nullable()->default(0);
                 $table->text('content')->nullable();
+                $table->integer('days_min')->nullable()->default(1);
+                $table->integer('days_max')->nullable()->default(7);
+                if(config('sales.delivery_select_day')){
+                    $table->boolean('enable_monday')->nullable()->default(1);
+                    $table->boolean('enable_tuesday')->nullable()->default(1);
+                    $table->boolean('enable_wendsday')->nullable()->default(1);
+                    $table->boolean('enable_thursday')->nullable()->default(1);
+                    $table->boolean('enable_friday')->nullable()->default(1);
+                    $table->boolean('enable_saturday')->nullable()->default(1);
+                    $table->boolean('enable_sunday')->nullable()->default(1);
+                }
                 $table->timestamps();
                 $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             });
@@ -60,6 +71,16 @@ class NodesSales extends Migration
                 $table->foreign('parent_id')->references('id')->on('shippings')->onDelete('cascade');
                 $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             });
+            if(config('sales.delivery_select_hour')){
+                Schema::create('shipping_times', function (Blueprint $table) {
+                    $table->increments('id');
+                    $table->integer('parent_id')->unsigned();
+                    $table->text('name')->nullable();
+                    $table->time('time_in')->nullable();
+                    $table->time('time_out')->nullable();
+                    $table->foreign('parent_id')->references('id')->on('shippings')->onDelete('cascade');
+                });
+            }
         }
         Schema::create('carts', function (Blueprint $table) {
             $table->increments('id');
@@ -231,6 +252,12 @@ class NodesSales extends Migration
                 $table->string('name')->nullable();
                 $table->enum('status', ['holding','confirmed','paid','delivered'])->default('holding');
                 $table->string('postal_code')->nullable();
+                if(config('sales.delivery_select_day')){
+                    $table->date('shipping_date')->nullable();
+                }
+                if(config('sales.delivery_select_hour')){
+                    $table->integer('shipping_time_id')->nullable();
+                }
                 $table->string('address')->nullable();
                 $table->string('address_extra')->nullable();
                 if(config('sales.ask_coordinates')){
@@ -308,6 +335,7 @@ class NodesSales extends Migration
         Schema::dropIfExists('sales');
         Schema::dropIfExists('cart_items');
         Schema::dropIfExists('carts');
+        Schema::dropIfExists('shipping_times');
         Schema::dropIfExists('shipping_cities');
         Schema::dropIfExists('shippings');
     }

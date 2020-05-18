@@ -16,7 +16,7 @@ Route::get('ver-producto/{slug}', 'ProcessController@findProduct');
 Route::group(['prefix'=>'process'], function(){
 
     // Rutas para AJAX
-    Route::get('/calculate-shipping/{shipping_id}/{country_id}/{city_id}/{weight}', 'ProcessController@getCalculateShipping');
+    Route::get('/calculate-shipping/{shipping_id}/{country_id}/{city_id}/{weight}/{map_coordinates}/{agency_id?}', 'ProcessController@getCalculateShipping');
     // Rutas para añadir y borrar del carro de compras
     Route::get('/add-cart-item/{id}/{agency_id?}', 'ProcessController@getAddCartItem');
     Route::post('/add-cart-item', 'ProcessController@postAddCartItem');

@@ -51,8 +51,8 @@ class ProcessController extends Controller {
   }
 
   /* Ruta para calcular precio de envio en AJAX segun envio, ciudad y peso */
-  public function getCalculateShipping($shipping_id, $country_id, $city_id, $weight) {
-    $shipping_array = \Sales::calculate_shipping_cost($shipping_id, $country_id, $city_id, $weight);
+  public function getCalculateShipping($shipping_id, $country_id, $city_id, $weight, $map_coordinates, $agency_id = NULL) {
+    $shipping_array = \Sales::calculate_shipping_cost($shipping_id, $country_id, $city_id, $weight, $map_coordinates, $agency_id);
     return $shipping_array;
   }
 
@@ -345,11 +345,37 @@ class ProcessController extends Controller {
         $array['cities'] = \Solunes\Business\App\City::get()->lists('name','id')->toArray();
       }
       $array['cart'] = $cart;
+      $array['shipping_dates'] = [];
+      $array['shipping_times'] = [];
       if(config('sales.delivery')){
-        $array['shipping_options'] = \Solunes\Sales\App\Shipping::active()->order()->lists('name','id');
-        $array['shipping_descriptions'] = \Solunes\Sales\App\Shipping::active()->order()->get();
+        if(config('business.agency_shippings')&&$cart->agency_id){
+          $array['shipping_options'] = \Solunes\Sales\App\Shipping::whereHas('agency_shipping', function($q) use($cart) {
+            $q->where('agency_id', $cart->agency_id);
+          })->active()->order()->lists('name','id');
+          $array['shipping_descriptions'] = \Solunes\Sales\App\Shipping::whereHas('agency_shipping', function($q) use($cart) {
+            $q->where('agency_id', $cart->agency_id);
+          })->active()->order()->get();
+          $first_shipping = \Solunes\Sales\App\Shipping::whereHas('agency_shipping', function($q) use($cart) {
+            $q->where('agency_id', $cart->agency_id);
+          })->active()->order()->first();
+        } else {
+          $array['shipping_options'] = \Solunes\Sales\App\Shipping::active()->order()->lists('name','id');
+          $array['shipping_descriptions'] = \Solunes\Sales\App\Shipping::active()->order()->get();
+          $first_shipping = \Solunes\Sales\App\Shipping::active()->order()->first();
+        }
+        if(config('sales.delivery_select_day')&&$first_shipping){
+          $first_shipping_city = $first_shipping->shipping_city()->where('city_id', $array['city_id'])->first();
+          if(!$first_shipping_city){
+            $first_shipping_city = $first_shipping->shipping_city;
+          }
+          $array['shipping_dates'] = \Sales::getShippingDates($first_shipping, $first_shipping_city->shipping_days);
+        }
+        if(config('sales.delivery_select_hour')&&$first_shipping){
+          $array['shipping_times'] = $first_shipping->shipping_times()->lists('name','id')->toArray();
+        }
       } else {
         $array['shipping_options'] = [];
+        $array['shipping_descriptions'] = [];
       }
       if(config('business.agency_payment_methods')&&$cart->agency_id){
         $array['payment_options'] = \Solunes\Payments\App\PaymentMethod::whereHas('agency_payment_method', function($q) use($cart) {
@@ -457,7 +483,7 @@ class ProcessController extends Controller {
         }
       }
       if(config('sales.delivery')){
-        $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $request->input('country_id'), $request->input('city_id'), $order_weight);
+        $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $request->input('country_id'), $request->input('city_id'), $order_weight, null);
         if($shipping_array['shipping']===false){
           return redirect($this->prev)->with('message_error', 'No se encontró el método de envío para esta ciudad, seleccione otro.')->withInput();
         }
@@ -572,6 +598,12 @@ class ProcessController extends Controller {
           } else {
             $sale_delivery->region_id = 1;
             $sale_delivery->city_id = 1;
+          }
+          if(config('sales.delivery_select_day')&&$request->has('shipping_date')){
+            $sale_delivery->shipping_date = $request->input('shipping_date');
+          }
+          if(config('sales.delivery_select_hour')&&$request->has('shipping_time_id')){
+            $sale_delivery->shipping_time_id = $request->input('shipping_time_id');
           }
           $sale_delivery->name = 'Pedido de venta en linea';
           $sale_delivery->address = $request->input('address');

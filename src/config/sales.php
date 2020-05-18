@@ -14,6 +14,8 @@ return [
 	'default_city' => 1,
 	'ask_address' => false,
 	'ask_coordinates' => false,
+	'delivery_select_day' => false,
+	'delivery_select_hour' => false,
 	'seed_shipping' => false,
 	'sales_email' => true,
 	'sales_cellphone' => true,
