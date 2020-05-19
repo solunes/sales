@@ -87,6 +87,7 @@ class ProcessController extends Controller {
         $cart = \Sales::get_cart($agency_id);
         $detail = $product->name;
         $count = 0;
+        $agency = \Solunes\Business\App\Agency::find($agency_id);
         $custom_price = \Business::getProductPrice($product, $request->input('quantity'));
         $product_bridge_variation_array = [];
         if(config('business.product_variations')){
@@ -135,7 +136,7 @@ class ProcessController extends Controller {
         $stock_changed = false;
         $quantity = $request->input('quantity');
         if(config('solunes.inventory')){
-          if(config('sales.check_cart_stock')){
+          if(config('sales.check_cart_stock')&&$agency->stockable){
             $stock = \Business::getProductBridgeStock($product, $agency_id);
             if($stock==0){
               return redirect($this->prev)->with('message_error', 'Lo sentimos, no contamos con stock para este producto.');
@@ -477,7 +478,7 @@ class ProcessController extends Controller {
         if(config('payments.sfv_version')>1||config('payments.discounts')){
           $discount_amount += $item->discount_price;
         }
-        if(config('solunes.inventory')){
+        if(config('solunes.inventory')&&$agency->stockable){
           $stock = \Business::getProductBridgeStockItem($item->product_bridge, $agency->id);
           if($stock){
             if(is_integer($stock)){
