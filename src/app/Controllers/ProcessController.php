@@ -544,7 +544,11 @@ class ProcessController extends Controller {
       $sale->order_amount = $order_cost;
       $sale->amount = $total_cost;
       if(config('sales.ask_invoice')&&!$quotation){
-        $sale->invoice = true;
+        if(config('sales.generate_invoice_pagostt')){
+          $sale->invoice = true;
+        } else {
+          $sale->invoice = false;
+        }
         $sale->invoice_nit = $request->input('nit_number');
         $sale->invoice_name = $request->input('nit_social');
       } else {

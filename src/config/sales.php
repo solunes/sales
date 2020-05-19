@@ -22,6 +22,7 @@ return [
 	'sales_username' => false,
 	'sales_detail' => false,
 	'ask_invoice' => true,
+	'generate_invoice_pagostt' => true,
 	'sale_edit_invoice' => true,
 	'credit' => false,
 	'refunds' => false,
