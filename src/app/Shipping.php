@@ -49,7 +49,7 @@ class Shipping extends Model {
     }
 
     public function agency_shipping() {
-        return $this->belongsToMany('Solunes\Sales\App\Shipping', 'agency_shipping', 'shipping_id', 'agency_id');
+        return $this->belongsToMany('Solunes\Business\App\Agency', 'agency_shipping', 'shipping_id', 'agency_id');
     }
 
 }
