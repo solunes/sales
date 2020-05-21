@@ -626,7 +626,7 @@ class ProcessController extends Controller {
           $sale_delivery->address = $request->input('address');
           $sale_delivery->address_extra = $request->input('address_extra');
           $sale_delivery->postal_code = 'LP01';
-          $sale_delivery->phone = $user->cellphone;
+          $sale_delivery->phone = $request->input('cellphone');
           $sale_delivery->total_weight = $order_weight;
           $sale_delivery->shipping_cost = $shipping_cost;
           if($shipping_city = $shipping->shipping_cities()->where('city_id', $sale_delivery->city_id)->first()){

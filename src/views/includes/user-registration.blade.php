@@ -87,6 +87,15 @@
       </div>
     </div>
   @endif
+@elseif($auth)
+  @if(config('sales.sales_cellphone'))
+    <div class="col-md-6">
+      <div class="checkout-form-list">
+        <label>Teléfono / Celular <span class="required">*</span></label>                   
+        {!! Form::text('cellphone', auth()->user()->cellphone, ['placeholder'=>'Teléfono o celular']) !!}
+      </div>
+    </div>
+  @endif
 @endif
 @if(config('sales.ask_invoice')&&!$quotation)
   <div class="col-md-6">

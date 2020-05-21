@@ -496,6 +496,9 @@ class Sales {
         $customer->address = $request->input('address');
         $customer->address_extra = $request->input('address_extra');
       }
+      if(config('sales.ask_cellphone')){
+        $customer->cellphone = $request->input('cellphone');
+      }
       if(config('sales.ask_coordinates')&&$request->has('map_coordinates')){
         $coordinates = explode(';',$request->input('map_coordinates'));
         if(isset($coordinates[0])&&isset($coordinates[1])&&!$customer->latitude&&!$customer->longitude){

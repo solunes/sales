@@ -35,6 +35,7 @@ class Sale extends Model {
     public static $rules_auth_send = array(
         'city_id'=>'required',
         'address'=>'required',
+        'cellphone'=>'required',
         'nit_number'=>'required',
         'nit_social'=>'required',
         'shipping_id'=>'required',
