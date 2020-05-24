@@ -80,7 +80,7 @@
   @if(config('sales.delivery')&&count($shipping_descriptions)>1)
     let shipping_changed = false;
     @foreach($shipping_descriptions as $key => $shipping)
-      $('#accordion-shipping #collapse-shipping-{{ $shipping->id }}').on('show.bs.collapse', function () {
+      $('#click-accordion-shipping-{{ $key }}').on('click', function () {
         $('.shipping-active-icon').css({opacity:0});
         $('#heading{{ $shipping->id }} .shipping-active-icon').css({opacity:1});
         if(shipping_changed===false){
@@ -88,13 +88,14 @@
           var shipping_id = $('#shipping_id').val({{ $shipping->id }});
         }
         shipping_changed = false;
+        return false;
       })
     @endforeach
     $('#shipping_id').on('change', function () {
       if(shipping_changed===false){
         shipping_changed = true;
-        $('#accordion-shipping .panel-collapse.in').removeClass('in');
-        $('#accordion-shipping #collapse-shipping-'+$(this).val()).collapse('show');
+        $('.shipping-active-icon').css({opacity:0});
+        $('#heading'+$(this).val()+' .shipping-active-icon').css({opacity:1});
       }
       shipping_changed = false;
     })
@@ -103,7 +104,7 @@
   @if(count($payment_descriptions)>1)
     let payment_changed = false;
     @foreach($payment_descriptions as $key => $payment)
-      $('#accordion-payment #collapse-payment-{{ $payment->id }}').on('show.bs.collapse', function () {
+      $('#click-accordion-payment-{{ $key }}').on('click', function () {
         $('.payment-active-icon').css({opacity:0});
         $('#heading{{ $payment->id }} .payment-active-icon').css({opacity:1});
         if(payment_changed===false){
@@ -111,13 +112,14 @@
           var payment_id = $('#payment_id').val({{ $payment->id }});
         }
         payment_changed = false;
+        return false;
       })
     @endforeach
     $('#payment_id').on('change', function () {
       if(payment_changed===false){
         payment_changed = true;
-        $('#accordion-payment .panel-collapse.in').removeClass('in');
-        $('#accordion-payment #collapse-payment-'+$(this).val()).collapse('show');
+        $('.payment-active-icon').css({opacity:0});
+        $('#heading'+$(this).val()+' .payment-active-icon').css({opacity:1});
       }
       payment_changed = false;
     })
