@@ -53,7 +53,7 @@
                 <div class="panel panel-default">
                   <div class="panel-heading" role="tab" id="heading{{ $shipping->id }}">
                     <h4 class="panel-title">
-                      <a role="button" class="click-accordion-shipping-{{ $key }}" href="#">
+                      <a role="button" id="click-accordion-shipping-{{ $key }}" href="#">
                         <span class="shipping-active-icon fa fa-star" @if($key>0) style="opacity: 0" @endif ></span> {{ $shipping->name }}
                       </a>
                     </h4>

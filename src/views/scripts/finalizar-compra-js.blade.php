@@ -25,25 +25,26 @@
           var total_cost = order_cost + shipping_cost;
           $(".shipping_cost").html(shipping_cost);
           $(".total_cost").html(total_cost);
-          var $el = $("#shipping_date");
-          $el.empty(); // remove old options
-          $.each(data.shipping_dates, function(key,value) {
-            $el.append($("<option></option>")
-               .attr("value", value).text(value));
-          });
-          var $el = $("#shipping_time_id");
-          $el.empty(); // remove old options
-          $.each(data.shipping_times, function(key,value) {
-            $el.append($("<option></option>")
-               .attr("value", value).text(key));
-          });
-        } else {
+        } else if(data.new_shipping_id) {
           var shipping_id = $('#shipping_id').val(data.new_shipping_id);
-          $('#accordion-shipping .panel-collapse.in').removeClass('in');
-          $('#accordion-shipping #collapse-shipping-'+$(this).val()).collapse('show');
           queryShipping();
-          alert('No se puede realizar un envío a esa ciudad por ese método de envío. Por lo tanto, le cambiamos a Unibol Courier.');
+          alert('No se puede realizar un envío a esa ciudad por ese método de envío. Por lo tanto, cambiamos el canal de envío por uno disponible.');
+        } else {
+          //queryShipping();
+          alert('No tenemos cobertura hasta la ubicación introducida. Introduzca una zona válida por favor.');
         }
+        var $el = $("#shipping_date");
+        $el.empty(); // remove old options
+        $.each(data.shipping_dates, function(key,value) {
+          $el.append($("<option></option>")
+             .attr("value", value).text(value));
+        });
+        var $el = $("#shipping_time_id");
+        $el.empty(); // remove old options
+        $.each(data.shipping_times, function(key,value) {
+          $el.append($("<option></option>")
+             .attr("value", value).text(key));
+        });
       }
     });
   }
@@ -88,6 +89,7 @@
           var shipping_id = $('#shipping_id').val({{ $shipping->id }});
         }
         shipping_changed = false;
+        queryShipping();
         return false;
       })
     @endforeach
