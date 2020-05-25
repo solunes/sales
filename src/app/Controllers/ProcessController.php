@@ -279,6 +279,11 @@ class ProcessController extends Controller {
       $array['country_id'] = config('sales.default_country');
       $array['city_id'] = config('sales.default_city');
       $array['city_other'] = NULL;
+      if(config('business.agency_shippings')&&$cart->agency_id){
+        $array['agency'] = $cart->agency;
+      } else {
+        $array['agency'] = \Solunes\Business\App\Agency::first();
+      }
       if(\Auth::check()){
         $user = \Auth::user();
         $array['auth'] = true;

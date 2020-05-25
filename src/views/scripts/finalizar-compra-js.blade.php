@@ -10,7 +10,7 @@
       var country_id = 1;
     @endif
     var city_id = $('#city_id').val();
-    $.ajax("{{ url('process/calculate-shipping') }}/" + shipping_id + "/" + country_id + "/" + city_id + "/" + weight + "/" + map_coordinates + "/" + 1 , {
+    $.ajax("{{ url('process/calculate-shipping') }}/" + shipping_id + "/" + country_id + "/" + city_id + "/" + weight + "/" + map_coordinates + "/" + {{ $agency->id }} , {
       success: function(data) {
         if(city_id!=data.shipping_city){
           var $el = $("#city_id");
