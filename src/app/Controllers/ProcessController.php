@@ -687,7 +687,7 @@ class ProcessController extends Controller {
         }
         //$sale_item->weight = $cart_item->weight;
         $sale_item->save();
-        if(config('solunes.inventory')&&!config('solunes.reduce_inventory_after_purchase')&&$sale_item->product_bridge->stockable&&!$quotation){
+        if(config('solunes.inventory')&&!config('inventory.reduce_inventory_after_purchase')&&$sale_item->product_bridge->stockable&&!$quotation){
           \Inventory::reduce_inventory($store_agency, $sale_item->product_bridge, $sale_item->quantity);
         }
       }

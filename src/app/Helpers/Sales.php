@@ -560,7 +560,7 @@ class Sales {
       foreach($sale->sale_items as $sale_item){
         $product_bridge = $sale_item->product_bridge;
         if($product_bridge->delivery_type=='normal'){
-          if(config('solunes.inventory')&&config('solunes.reduce_inventory_after_purchase')&&$sale_item->product_bridge->stockable){
+          if(config('solunes.inventory')&&config('inventory.reduce_inventory_after_purchase')&&$sale_item->product_bridge->stockable){
             \Inventory::reduce_inventory($sale->agency, $sale_item->product_bridge, $sale_item->quantity);
           }
         } else if($product_bridge->delivery_type!='normal'){
