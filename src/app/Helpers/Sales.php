@@ -614,7 +614,7 @@ class Sales {
         \FuncNode::make_email('successful-payment', [$sale->agency->email], []);
     }
     if(config('payments.payment_blocks')){
-        $payment_check = \Solunes\Payments\App\Payment::where('payment_check_id',$sale_payment->payment_id)->first();
+        $payment_check = \Solunes\Payments\App\Payment::where('payment_check_id',$sale->sale_payment->payment_id)->first();
         if($payment_check){
             \Log::info('payment_check'.$payment_check->id);
             $payment_check->payment_check_id = NULL;
@@ -622,7 +622,7 @@ class Sales {
         }
     }
     if(config('solunes.inventory')){
-        \Inventory::successful_sale($sale, $sale_payment);
+        \Inventory::successful_sale($sale, $sale->sale_payment);
     }
     if(config('sales.sales_email')&&filter_var($customer['email'], FILTER_VALIDATE_EMAIL)){
       if($send_subscription){
