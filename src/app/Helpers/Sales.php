@@ -553,64 +553,78 @@ class Sales {
 
   public static function customerSuccessfulPayment($sale, $customer) {
     $send_custom_emails = false;
-    if(config('sales.sales_email')&&filter_var($customer['email'], FILTER_VALIDATE_EMAIL)){
-      $send_reservation = false;
-      $send_ticket = false;
-      $send_subscription = false;
-      foreach($sale->sale_items as $sale_item){
-        $product_bridge = $sale_item->product_bridge;
-        if($product_bridge->delivery_type=='normal'){
-          if(config('solunes.inventory')&&config('inventory.reduce_inventory_after_purchase')&&$sale_item->product_bridge->stockable){
-            \Inventory::reduce_inventory($sale->agency, $sale_item->product_bridge, $sale_item->quantity);
-          }
-        } else if($product_bridge->delivery_type!='normal'){
-          if($product_bridge->delivery_type=='digital'){
-            \Sales::sendEmailDigitalGood($sale, $customer);
-          } else if($product_bridge->delivery_type=='credit'){
-            \Sales::sendEmailWalletCredit($sale, $customer);
-            if(config('customer.credit_wallet')){
-              \Customer::increaseCreditWallet($customer['id'], $sale_item->id, $sale_item->total);
-            } else {
-              // TODO: Notificación de Error, activar credit_wallet
-            }
-          } else if($product_bridge->delivery_type=='subscription'){
-            $customer_subscription_month = \Solunes\Customer\App\CustomerSubscriptionMonth::where('sale_id', $sale->id)->where('status','pending')->first();
-            if(!$customer_subscription_month){
-              // TODO: Notificar con error de suscripción
-            }
-            $customer_subscription_month->status = 'paid';
-            $customer_subscription_month->processing = 1;
-            $customer_subscription_month->invoice_url = $customer_subscription_month->sale->sale_payment->payment->invoice_url;
-            $customer_subscription_month->save();
-          } else if($product_bridge->delivery_type=='reservation'){
-            $send_reservation = true;
-            $reservation = \Solunes\Reservation\App\Reservation::where('sale_id', $sale->id)->first();
-            $reservation = \Reservation::generateReservationPdf($reservation);
-            foreach($reservation->reservation_users as $reservation_user){
-              $reservation_user->ticket_code = \Reservation::generateTicketCode();
-              $reservation_user->manual_ticket_code = \Reservation::generateManualTicketCode();
-              $reservation_user->status = 'paid';
-              $reservation_user->save();
-            }
-            $reservation = \Reservation::generateVoucherPdf($reservation);
-            $reservation->status = 'paid';
-            $reservation->save();
-          } else if($product_bridge->delivery_type=='ticket'){
-            $send_ticket = true;
-            $reservation = \Solunes\Reservation\App\Reservation::where('sale_id', $sale->id)->first();
-            foreach($reservation->reservation_users as $reservation_user){
-              $reservation_user->ticket_code = \Reservation::generateTicketCode();
-              $reservation_user->manual_ticket_code = \Reservation::generateManualTicketCode();
-              $reservation_user->status = 'paid';
-              $reservation_user->save();
-            }
-            $reservation = \Reservation::generateVoucherPdf($reservation);
-            $reservation->status = 'paid';
-            $reservation->save();
-          }
-          $send_custom_emails = true;
+    $send_reservation = false;
+    $send_ticket = false;
+    $send_subscription = false;
+    foreach($sale->sale_items as $sale_item){
+      $product_bridge = $sale_item->product_bridge;
+      if($product_bridge->delivery_type=='normal'){
+        if(config('solunes.inventory')&&config('inventory.reduce_inventory_after_purchase')&&$sale_item->product_bridge->stockable){
+          \Inventory::reduce_inventory($sale->agency, $sale_item->product_bridge, $sale_item->quantity);
         }
+      } else if($product_bridge->delivery_type!='normal'){
+        if($product_bridge->delivery_type=='digital'){
+          \Sales::sendEmailDigitalGood($sale, $customer);
+        } else if($product_bridge->delivery_type=='credit'){
+          \Sales::sendEmailWalletCredit($sale, $customer);
+          if(config('customer.credit_wallet')){
+            \Customer::increaseCreditWallet($customer['id'], $sale_item->id, $sale_item->total);
+          } else {
+            // TODO: Notificación de Error, activar credit_wallet
+          }
+        } else if($product_bridge->delivery_type=='subscription'){
+          $customer_subscription_month = \Solunes\Customer\App\CustomerSubscriptionMonth::where('sale_id', $sale->id)->where('status','pending')->first();
+          if(!$customer_subscription_month){
+            // TODO: Notificar con error de suscripción
+          }
+          $customer_subscription_month->status = 'paid';
+          $customer_subscription_month->processing = 1;
+          $customer_subscription_month->invoice_url = $customer_subscription_month->sale->sale_payment->payment->invoice_url;
+          $customer_subscription_month->save();
+        } else if($product_bridge->delivery_type=='reservation'){
+          $send_reservation = true;
+          $reservation = \Solunes\Reservation\App\Reservation::where('sale_id', $sale->id)->first();
+          $reservation = \Reservation::generateReservationPdf($reservation);
+          foreach($reservation->reservation_users as $reservation_user){
+            $reservation_user->ticket_code = \Reservation::generateTicketCode();
+            $reservation_user->manual_ticket_code = \Reservation::generateManualTicketCode();
+            $reservation_user->status = 'paid';
+            $reservation_user->save();
+          }
+          $reservation = \Reservation::generateVoucherPdf($reservation);
+          $reservation->status = 'paid';
+          $reservation->save();
+        } else if($product_bridge->delivery_type=='ticket'){
+          $send_ticket = true;
+          $reservation = \Solunes\Reservation\App\Reservation::where('sale_id', $sale->id)->first();
+          foreach($reservation->reservation_users as $reservation_user){
+            $reservation_user->ticket_code = \Reservation::generateTicketCode();
+            $reservation_user->manual_ticket_code = \Reservation::generateManualTicketCode();
+            $reservation_user->status = 'paid';
+            $reservation_user->save();
+          }
+          $reservation = \Reservation::generateVoucherPdf($reservation);
+          $reservation->status = 'paid';
+          $reservation->save();
+        }
+        $send_custom_emails = true;
       }
+    }
+    if(config('payments.notify_agency_on_payment')&&$sale->agency){
+        \FuncNode::make_email('successful-payment', [$sale->agency->email], []);
+    }
+    if(config('payments.payment_blocks')){
+        $payment_check = \Solunes\Payments\App\Payment::where('payment_check_id',$sale_payment->payment_id)->first();
+        if($payment_check){
+            \Log::info('payment_check'.$payment_check->id);
+            $payment_check->payment_check_id = NULL;
+            $payment_check->save();
+        }
+    }
+    if(config('solunes.inventory')){
+        \Inventory::successful_sale($sale, $sale_payment);
+    }
+    if(config('sales.sales_email')&&filter_var($customer['email'], FILTER_VALIDATE_EMAIL)){
       if($send_subscription){
         //\Sales::sendEmailSubscription($sale, $customer);
       }
