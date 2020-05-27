@@ -92,7 +92,8 @@ class ProcessController extends Controller {
         $product_bridge_variation_array = [];
         if(config('business.product_variations')){
           $count = 0;
-          foreach($product->product_bridge_variation as $product_bridge_variation){
+          $real_product = $product->product;
+          foreach($real_product->product_bridge_variation as $product_bridge_variation){
             if($product_bridge_variation->stockable){
               if(!$request->has('variation_'.$product_bridge_variation->id)||$request->input('variation_'.$product_bridge_variation->id)=='0'||$request->input('variation_'.$product_bridge_variation->id)==0){
                 return redirect($this->prev)->with('message_error', 'Debe seleccionar todas las opciones requeridas.');
@@ -103,7 +104,7 @@ class ProcessController extends Controller {
               $count++;
             }
           }
-          foreach($product->product_bridge_variation as $product_bridge_variation){
+          foreach($real_product->product_bridge_variation as $product_bridge_variation){
             if(!$product_bridge_variation->stockable){
               if($request->has('variation_'.$product_bridge_variation->id)&&$request->input('variation_'.$product_bridge_variation->id)!='0'&&$request->input('variation_'.$product_bridge_variation->id)!=0){
                 $count++;
