@@ -5,6 +5,9 @@
         <th class="product-thumbnail">Imagen</th>
         <th class="product-name" style="max-width: 200px;">Producto</th>
         <th class="product-price">Precio</th>
+        @if(config('payments.sfv_version')>1||config('payments.discounts')){
+        <th class="product-price">Precio c/Desc</th>
+        @endif
         <th class="product-quantity">Cantidad</th>
         <th class="product-subtotal">Total</th>
         @if($delete)
@@ -20,6 +23,9 @@
           </a></td>
           <td class="product-name" style="max-width: 200px;"><a target="_blank" href="{{ url($item->product_bridge->internal_url) }}">{{ $item->detail }}</a></td>
           <td class="product-price"><span class="amount">{{ $item->currency->name }} {{ $item->price }}</span></td>
+          @if(config('payments.sfv_version')>1||config('payments.discounts')){
+          <td class="product-price"><span class="amount"> @if($item->discount_price>0) {{ $item->currency->name }} {{ $item->discount_price }} @endif </span></td>
+          @endif
           <td class="product-quantity">
             @if($editable)
               <input name="quantity[{{ $item->id }}]" type="number" value="{{ $item->quantity }}">

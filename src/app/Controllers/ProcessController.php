@@ -259,15 +259,24 @@ class ProcessController extends Controller {
   /* Ruta POST para editar el carro de compras */
   public function postUpdateCart(Request $request) {
     if($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->orderBy('updated_at','DESC')->first()){
-      $cart->touch();
+      $coupon_code = NULL;
+      if($request->has('coupon_code')){
+        $range_price = \Solunes\Business\App\PricingRule::where('active','1')->where('coupon_code', $request->input('coupon_code'))->first();
+        if($range_price){
+          $coupon_code = $request->input('coupon_code');
+        }
+      }
       foreach($cart->cart_items as $item){
         if(isset($request->input('product_id')[$item->id])&&$request->input('quantity')[$item->id]>0){
           $item->quantity = $request->input('quantity')[$item->id];
+          $item->discount_price = \Business::getProductPrice($item->product_bridge, $item->quantity, $coupon_code);
           $item->save();
         } else {
           $item->delete();
         }
       }
+      $cart->coupon_code = $coupon_code;
+      $cart->save();
       return redirect($this->prev)->with('message_success', 'Se actualizó su carro de compras correctamente.');
     } else {
       return redirect($this->prev)->with('message_error', 'Hubo un error al actualizar su carro de compras.');
@@ -531,6 +540,9 @@ class ProcessController extends Controller {
       }
       
       // Sale
+      if(config('business.pricing_rules')){
+        $order_cost = \Business::getSaleDiscount($order_cost, $cart->coupon_code);
+      }
       $total_cost = $order_cost + $shipping_cost;
       $currency = $item->currency;
       $sale = new \Solunes\Sales\App\Sale;
@@ -538,6 +550,7 @@ class ProcessController extends Controller {
       if($customer){
         $sale->customer_id = $customer->id;
       }
+      $sale->coupon_code = $cart->coupon_code;
       if($quotation){
         $sale->lead_status = 'quotation-request';
       } else {

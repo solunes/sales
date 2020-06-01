@@ -1,5 +1,9 @@
 <script type="text/javascript">
   function queryShipping(){
+    @if(config('business.pricing_rules'))
+      <?php $real_order_amount = \Business::getSaleDiscount($total, $cart->coupon_code); ?>
+      <?php $total = $real_order_amount; ?>
+    @endif
     var order_cost = {{ $total }};
     var weight = {{ $weight }};
     var map_coordinates = $('#map_coordinates').val();

@@ -27,13 +27,24 @@ class CartItem extends Model {
     public function currency() {
         return $this->belongsTo('Solunes\Business\App\Currency');
     }
-    
+        
+    public function getDiscountAttribute() {
+        return $this->price - $this->discount_price;
+    }
+        
+    public function getRealPriceAttribute() {
+    	if($this->discount_price>0){
+    		return $this->discount_price;
+    	}
+        return $this->price;
+    }
+
     public function getTotalWeightAttribute() {
         return round($this->weight*$this->quantity);
     }
 
     public function getTotalPriceAttribute() {
-        return round($this->price*$this->quantity);
+        return round($this->real_price*$this->quantity);
     }
 
 }

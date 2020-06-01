@@ -31,7 +31,11 @@ class Cart extends Model {
     public function cart_items() {
         return $this->hasMany('Solunes\Sales\App\CartItem', 'parent_id');
     }
-     
+         
+    public function pricing_rule() {
+        return $this->hasOne('Solunes\Business\App\PricingRule', 'coupon_code', 'coupon_code');
+    }
+
     public function user() {
         return $this->belongsTo('App\User');
     }

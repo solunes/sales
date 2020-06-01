@@ -89,6 +89,9 @@ class NodesSales extends Migration
             if(config('sales.sales_agency')){
                 $table->integer('agency_id')->nullable();
             }
+            if(config('business.pricing_rules')){
+                $table->string('coupon_code')->nullable();
+            }
             $table->enum('type', ['cart','buy-now'])->default('cart');
             $table->enum('status', ['holding','sale'])->default('holding');
             $table->timestamps();
@@ -147,6 +150,9 @@ class NodesSales extends Migration
             $table->boolean('invoice')->default(0);
             $table->string('invoice_name')->nullable();
             $table->string('invoice_nit')->nullable();
+            if(config('business.pricing_rules')){
+                $table->string('coupon_code')->nullable();
+            }
             if(config('sales.desk_sale')){
                 $table->enum('type', ['normal','online'])->nullable()->default('normal');
             }

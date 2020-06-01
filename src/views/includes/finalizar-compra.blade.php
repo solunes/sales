@@ -32,6 +32,18 @@
               <th>SUBTOTAL</th>
               <th>{{ $item->currency->name }} <span class="amount">{{ $total }}</span></th>
             </tr>
+            @if(config('business.pricing_rules'))
+              <?php $real_order_amount = \Business::getSaleDiscount($total, $cart->coupon_code); ?>
+              <tr class="cart-subtotal">
+                <th>DESCUENTO</th>
+                <th>{{ $item->currency->name }} <span class="amount">{{ $total-$real_order_amount }}</span></th>
+              </tr>
+              <tr class="cart-subtotal">
+                <th>TOTAL</th>
+                <th>{{ $item->currency->name }} <span class="amount">{{ $real_order_amount }}</span></th>
+                <?php $total = $real_order_amount; ?>
+              </tr>
+            @endif
             <tr>
               <td>Costo de Envío ({{ round($weight, 1) }} kg.)</td>
               <td class="strong">{{ $item->currency->name }} <span class="shipping_cost">0</span></td>
