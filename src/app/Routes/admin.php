@@ -17,6 +17,8 @@ Route::group(['prefix'=>'admin'], function(){
     Route::get('pending-quotations', 'CustomAdminController@getPendingQuotations');
     Route::get('sale-pending-deliveries', 'CustomAdminController@getSalePendingDeliveries');
     Route::get('sale-delivered/{sale_id}', 'CustomAdminController@getSaleDelivered');
+    Route::get('create-fast-sale', 'CustomAdminController@getCreateFastSale');
+    Route::post('create-fast-sale', 'CustomAdminController@postCreateFastSale');
     Route::get('create-manual-sale', 'CustomAdminController@getCreateManualSale');
     Route::post('create-manual-sale', 'CustomAdminController@postCreateManualSale');
     Route::get('create-manual-quotation', 'CustomAdminController@getCreateManualQuotation');

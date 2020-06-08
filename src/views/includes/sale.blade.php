@@ -3,7 +3,7 @@
 
     <div class="order-block">
       <h3>SU ORDEN</h3>
-      @include('sales::includes.cart-summary', ['items'=>$sale->sale_items, 'order_amount'=>$sale->order_amount, 'deliveries'=>$sale->deliveries, 'total_amount'=>$sale->amount])
+      @include('sales::includes.cart-summary', ['items'=>$sale->sale_items, 'order_amount'=>$sale->order_amount, 'deliveries'=>$sale->deliveries, 'total_amount'=>$sale->amount, 'order_amount'=>$sale->order_amount])
 
     </div>
 

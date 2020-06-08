@@ -5,9 +5,9 @@
   {!! Form::open(['url'=>'admin/create-manual-quotation', 'method'=>'post', 'id'=>'create-sale']) !!}
     <p id="notification-bar"></p>
     <div class="row">
-      @if(config('business.barcode'))
+      @if(config('business.product_barcode'))
         <div class="col-sm-1 hidden-xs icon"><i class="fa fa-barcode"></i></div>
-        {!! Field::form_input($i, $dt, ['name'=>'barcode', 'required'=>true, 'type'=>'string'], ['label'=>'Introduzca el código de barras o utilce el lector de código de barras', 'cols'=>5]) !!}
+        {!! Field::form_input($i, $dt, ['name'=>'barcode', 'required'=>true, 'type'=>'string'], ['label'=>'Introduzca el código de barras o utilce el lector', 'cols'=>5]) !!}
       @endif
       <div class="col-sm-1 hidden-xs icon"><i class="fa fa-cart-plus"></i></div>
       {!! Field::form_input($i, $dt, ['name'=>'search-product', 'required'=>true, 'type'=>'select', 'options'=>$products], ['label'=>'Seleccione un producto ', 'cols'=>5]) !!}
