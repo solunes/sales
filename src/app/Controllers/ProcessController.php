@@ -88,7 +88,7 @@ class ProcessController extends Controller {
         $detail = $product->name;
         $count = 0;
         $agency = \Solunes\Business\App\Agency::find($agency_id);
-        $custom_price = \Business::getProductPrice($product, $request->input('quantity'));
+        $custom_price = \Business::getProductPrice($product, $request->input('quantity'), $cart->coupon_code);
         $product_bridge_variation_array = [];
         if(config('business.product_variations')){
           $count = 0;

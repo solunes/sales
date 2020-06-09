@@ -17,14 +17,15 @@
     </thead>
     <tbody>
       @foreach($items as $item)
+        <?php $real_price = \Business::getProductPrice($item->product_bridge, $item->quantity, $cart->coupon_code); ?>
         <tr>
           <td class="product-thumbnail"><a target="_blank" href="{{ url($item->product_bridge->internal_url) }}">
             {!! Asset::get_image('product-bridge-image', 'subdetail', $item->product_bridge->image) !!}
           </a></td>
           <td class="product-name" style="max-width: 200px;"><a target="_blank" href="{{ url($item->product_bridge->internal_url) }}">{{ $item->detail }}</a></td>
-          <td class="product-price"><span class="amount">{{ $item->currency->name }} {{ $item->price }}</span></td>
+          <td class="product-price"><span class="amount">{{ $item->currency->name }} {{ $item->product_bridge->price }}</span></td>
           @if(config('payments.sfv_version')>1||config('payments.discounts')){
-          <td class="product-price"><span class="amount"> @if($item->real_price!=$item->price) {{ $item->currency->name }} {{ $item->real_price }} @else - @endif </span></td>
+          <td class="product-price"><span class="amount"> @if($real_price!=$item->product_bridge->price) {{ $item->currency->name }} {{ $real_price }} @else - @endif </span></td>
           @endif
           <td class="product-quantity">
             @if($editable)
