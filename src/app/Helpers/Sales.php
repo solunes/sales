@@ -345,8 +345,11 @@ class Sales {
     );
     $dates_array = [];
     foreach ($period as $key => $value) {
-      $dates_array[] = $value->format('Y-m-d');
-        //$value->format('Y-m-d')       
+      $day = strtolower($value->format('l'));
+      $tag = 'enable_'.$day;
+      if($shipping->$tag){
+        $dates_array[] = $value->format('Y-m-d');
+      }
     }
     return $dates_array;
   }
