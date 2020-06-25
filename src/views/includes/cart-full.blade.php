@@ -5,7 +5,7 @@
         <th class="product-thumbnail">Imagen</th>
         <th class="product-name" style="max-width: 200px;">Producto</th>
         <th class="product-price">Precio</th>
-        @if(config('payments.sfv_version')>1||config('payments.discounts')){
+        @if(config('payments.sfv_version')>1||config('payments.discounts'))
         <th class="product-price">Precio c/Desc</th>
         @endif
         <th class="product-quantity">Cantidad</th>
@@ -24,7 +24,7 @@
           </a></td>
           <td class="product-name" style="max-width: 200px;"><a target="_blank" href="{{ url($item->product_bridge->internal_url) }}">{{ $item->detail }}</a></td>
           <td class="product-price"><span class="amount">{{ $item->currency->name }} {{ $item->product_bridge->price }}</span></td>
-          @if(config('payments.sfv_version')>1||config('payments.discounts')){
+          @if(config('payments.sfv_version')>1||config('payments.discounts'))
           <td class="product-price"><span class="amount"> @if($real_price!=$item->product_bridge->price) {{ $item->currency->name }} {{ $real_price }} @else - @endif </span></td>
           @endif
           <td class="product-quantity">
