@@ -123,14 +123,25 @@ class CustomAdminController extends Controller {
 	  		$sale_details[] = ['product_bridge_id'=>$product_bridge->id,'amount'=>$request->input('price')[$product_key],'quantity'=>$request->input('quantity')[$product_key],'detail'=>$request->input('product_name')[$product_key]];
 	  	}
 	  	$sale = \Sales::generateSale($user->id, $customer->id, $currency->id, $payment_method->id, $invoice, $invoice_name, $invoice_number, $sale_details, $agency_id, $request->input('detail'));
-	  	if($request->input('status')=='paid'){
-	  		$sale_payment = $sale->sale_payment;
-	  		$payment = $sale_payment->payment;
+  		$sale_payment = $sale->sale_payment;
+  		$payment = $sale_payment->payment;
+	  	if($payment_method->code=='manual-payment'){
       		app('\Solunes\Payments\App\Controllers\PagosttController')->getMakeManualCashierPayment($customer->id, $payment->id);
+		    foreach($sale->sale_items as $sale_item){
+		      $product_bridge = $sale_item->product_bridge;
+		      if($product_bridge->delivery_type=='normal'){
+		        if(config('solunes.inventory')&&$sale_item->product_bridge->stockable){
+		          \Inventory::reduce_inventory($sale->agency, $sale_item->product_bridge, $sale_item->quantity);
+		        }
+		      }
+		    }
       		$payment = \Solunes\Payments\App\Payment::find($payment->id);
       		if($payment->invoice_url){
       			return redirect($payment->invoice_url);
       		}
+      		return redirect($this->prev)->with('message_success', 'Su venta fue procesada correctamente.');
+	  	} else if($payment_method->code=='pagostt') {
+      		return app('\Solunes\Payments\App\Controllers\PagosttController')->getMakeSinglePayment($customer->id, $payment->id);
 	  	}
 
 		return redirect('admin/model/sale/view/'.$sale->id)->with('message_success', 'La venta se realizó correctamente');
