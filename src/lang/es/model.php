@@ -24,5 +24,6 @@ return [
     'shipping' => 'Método de Envío|Métodos de Envío',
     'shipping-city' => 'Ciudad de Envío|Ciudades de Envío',
     'sp-bank-deposit' => 'Depósito Bancario|Depósitos Bancarios',
+    'shipping-time' => 'Hora de Envío|Horas de Envío',
 
 ];
