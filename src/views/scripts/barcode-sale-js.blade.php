@@ -209,6 +209,10 @@
           @endif
           $('#products>tbody>tr:last input.final_price').attr('rel', product_id);
           $('#products>tbody>tr:last a.delete_row').attr('rel', product_id);
+          if(fixNumber(quantity)>fixNumber(max_quantity)){
+            $('#notification-bar').text('La cantidad no puede ser mayor a la de stock...');
+            $('#products>tbody>tr:last input.quantity').val(max_quantity);
+          }
           recalculateProductTotal(product_id);
         },
         error: function() {

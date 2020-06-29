@@ -61,6 +61,19 @@ class ProcessController extends Controller {
     \Artisan::call('fix-sales-status');
     if($product = \Solunes\Business\App\ProductBridge::find($product_id)){
       $cart = \Sales::get_cart($agency_id);
+
+      $agency_id = config('business.online_store_agency_id');
+      $agency = \Solunes\Business\App\Agency::find($agency_id);
+
+      if(config('solunes.inventory')){
+        if(config('sales.check_cart_stock')&&$agency->stockable){
+          $stock = \Business::getProductBridgeStock($product, $agency_id);
+          if($stock<1){
+            return redirect($this->prev)->with('message_error', 'Lo sentimos, no contamos con stock para este producto.');
+          }
+        }
+      }
+
       \Sales::add_cart_item($cart, $product, 1);
       return redirect($this->prev)->with('message_success', 'Se añadió su producto al carro de compras.');
     } else {
@@ -139,7 +152,7 @@ class ProcessController extends Controller {
         if(config('solunes.inventory')){
           if(config('sales.check_cart_stock')&&$agency->stockable){
             $stock = \Business::getProductBridgeStock($product, $agency_id);
-            if($stock==0){
+            if($stock<1){
               return redirect($this->prev)->with('message_error', 'Lo sentimos, no contamos con stock para este producto.');
             } else if($stock<$quantity){
               $quantity = $stock;
@@ -294,6 +307,27 @@ class ProcessController extends Controller {
       } else {
         $array['agency'] = \Solunes\Business\App\Agency::first();
       }
+
+      if(config('solunes.inventory')){
+        if(config('sales.check_cart_stock')&&$array['agency']->stockable){
+          foreach($cart->cart_items as $cart_item){
+            $product = $cart_item->product_bridge;
+            $stock = \Business::getProductBridgeStock($product, $array['agency']->id);
+            if($stock<1){
+              $cart_item->delete();
+            } else if($stock<$cart_item->quantity){
+              $cart_item->quantity = $stock;
+              $cart_item->save();
+            }
+          }
+        }
+      }
+
+      $cart->load('cart_items');
+      if(count($cart->cart_items)==0){
+        return redirect($this->prev)->with('message_error', 'Lo sentimos, su compra no tiene ningún producto válido.');
+      }      
+
       if(\Auth::check()){
         $user = \Auth::user();
         $array['auth'] = true;
