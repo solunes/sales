@@ -126,22 +126,28 @@ class CustomAdminController extends Controller {
   		$sale_payment = $sale->sale_payment;
   		$payment = $sale_payment->payment;
 	  	if($payment_method->code=='manual-payment'){
-      		app('\Solunes\Payments\App\Controllers\PagosttController')->getMakeManualCashierPayment($customer->id, $payment->id);
-		    foreach($sale->sale_items as $sale_item){
-		      $product_bridge = $sale_item->product_bridge;
-		      if($product_bridge->delivery_type=='normal'){
-		        if(config('solunes.inventory')&&$sale_item->product_bridge->stockable){
-		          \Inventory::reduce_inventory($sale->agency, $sale_item->product_bridge, $sale_item->quantity);
-		        }
-		      }
-		    }
+	  		$transaction = \Payments::generatePaymentTransaction($customer->id, [$payment->id], $payment_method->code);
+            $transaction->external_payment_code = $transaction->payment_code;
+            $transaction->status = 'paid';
+            $transaction->save();
+            $transaction = \Solunes\Payments\App\Transaction::find($transaction->id);
+            if(config('payments.pagostt_params.enable_bridge')){
+                $payment_registered = \PagosttBridge::transactionSuccesful($transaction);
+            } else {
+                $payment_registered = \Customer::transactionSuccesful($transaction);
+            }
       		$payment = \Solunes\Payments\App\Payment::find($payment->id);
-      		if($payment->invoice_url){
+
+	      	if($payment->invoice_url){
       			return redirect($payment->invoice_url);
       		}
       		return redirect($this->prev)->with('message_success', 'Su venta fue procesada correctamente.');
 	  	} else if($payment_method->code=='pagostt') {
-      		return app('\Solunes\Payments\App\Controllers\PagosttController')->getMakeSinglePayment($customer->id, $payment->id);
+      		app('\Solunes\Payments\App\Controllers\PagosttController')->getMakeManualCashierPayment($customer->id, $payment->id);
+      		$payment = \Solunes\Payments\App\Payment::find($payment->id);
+      		if($payment->invoice_url){
+      			return redirect($payment->invoice_url);
+      		}
 	  	}
 
 		return redirect('admin/model/sale/view/'.$sale->id)->with('message_success', 'La venta se realizó correctamente');
