@@ -137,6 +137,10 @@ class CustomAdminController extends Controller {
                 $payment_registered = \Customer::transactionSuccesful($transaction);
             }
       		$payment = \Solunes\Payments\App\Payment::find($payment->id);
+      		$sale_payment = $payment->sale_payment;
+      		$sale = $sale_payment->sale;
+      		$sale->status = 'delivered';
+      		$sale->save();
 
 	      	if($payment->invoice_url){
       			return redirect($payment->invoice_url);
