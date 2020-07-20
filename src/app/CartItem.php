@@ -40,11 +40,11 @@ class CartItem extends Model {
     }
 
     public function getTotalWeightAttribute() {
-        return round($this->weight*$this->quantity);
+        return round($this->weight*$this->quantity, 2);
     }
 
     public function getTotalPriceAttribute() {
-        return round($this->real_price*$this->quantity);
+        return round($this->real_price*$this->quantity, 2);
     }
 
 }
