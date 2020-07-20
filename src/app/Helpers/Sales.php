@@ -40,7 +40,11 @@ class Sales {
       $cart_item->product_bridge_id = $product->id;
       $cart_item->currency_id = $product->currency_id;
       $cart_item->quantity = $quantity;
-      $cart_item->price = $custom_price;
+      $cart_item->price = $product->full_price;
+      $discount = $product->full_price - $custom_price;
+      if($discount>0){
+        $cart_item->discount_price = $product->full_price - $custom_price;
+      }
       $cart_item->detail = $detail;
     }
     if(config('sales.delivery')){

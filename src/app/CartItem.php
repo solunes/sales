@@ -29,12 +29,12 @@ class CartItem extends Model {
     }
         
     public function getDiscountAttribute() {
-        return $this->price - $this->discount_price;
+        return $this->discount_price;
     }
         
     public function getRealPriceAttribute() {
     	if($this->discount_price>0){
-    		return $this->discount_price;
+    		return $this->price - $this->discount_price;
     	}
         return $this->price;
     }

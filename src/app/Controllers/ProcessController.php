@@ -517,6 +517,8 @@ class ProcessController extends Controller {
         } else {
           $agency = \Solunes\Business\App\Agency::find(config('business.online_store_agency_id')); // Parametrizar tienda en config
         }
+      } else {
+        $agency = \Solunes\Business\App\Agency::find(config('business.online_store_agency_id')); // Parametrizar tienda en config
       }
       $order_cost = 0;
       $order_weight = 0;
@@ -575,6 +577,7 @@ class ProcessController extends Controller {
       
       // Sale
       if(config('business.pricing_rules')){
+        $past_order_cost = $order_cost;
         $order_cost = \Business::getSaleDiscount($order_cost, $cart->coupon_code);
       }
       $total_cost = $order_cost + $shipping_cost;
@@ -631,14 +634,14 @@ class ProcessController extends Controller {
         $sale_payment->payment_method_id = $request->input('payment_method_id');
         $sale_payment->currency_id = $currency->id;
         $sale_payment->exchange = $currency->main_exchange;
-        $sale_payment->amount = $total_cost;
+        $sale_payment->amount = $past_order_cost;
         if(config('payments.sfv_version')>1||config('payments.discounts')){
           $sale_payment->discount_amount = $discount_amount;
         }
         if(config('sales.delivery')){
           $sale_payment->pay_delivery = 1;
         }
-        $sale_payment->pending_amount = $total_cost;
+        $sale_payment->pending_amount = $past_order_cost;
         $sale_payment->detail = 'Pago por compra online: #'.$sale_payment->id;
         $sale_payment->save();
       }
@@ -730,8 +733,8 @@ class ProcessController extends Controller {
           $sale_item->product_serial_number = $product_bridge->product_serial_number;
         }
         if(config('payments.sfv_version')>1||config('payments.discounts')){
-          $sale_item->discount_price = $product_bridge->discount_price;
-          $sale_item->discount_amount = round($product_bridge->discount_price * $cart_item->quantity);
+          $sale_item->discount_price = $cart_item->discount_price;
+          $sale_item->discount_amount = round($cart_item->discount_price * $cart_item->quantity);
         }
         //$sale_item->weight = $cart_item->weight;
         $sale_item->save();
