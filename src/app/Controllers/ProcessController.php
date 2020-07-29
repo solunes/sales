@@ -553,6 +553,7 @@ class ProcessController extends Controller {
           }
         }
       }
+      
       if(config('sales.delivery')){
         $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $request->input('country_id'), $request->input('city_id'), $order_weight, null);
         if($shipping_array['shipping']===false){
