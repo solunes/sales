@@ -5,9 +5,9 @@ namespace Solunes\Sales\App;
 use Illuminate\Database\Eloquent\Model;
 
 class Sale extends Model {
-	
-	protected $table = 'sales';
-	public $timestamps = true;
+    
+    protected $table = 'sales';
+    public $timestamps = true;
 
     /* Sending rules */
     public static $rules_create_sale = array(
@@ -24,8 +24,6 @@ class Sale extends Model {
         'email'=>'required',
         'cellphone'=>'required',
         'username'=>'required',
-        'nit_number'=>'required',
-        'nit_social'=>'required',
         'shipping_id'=>'required',
         'payment_method_id'=>'required',
         'password'=>'required',
@@ -36,14 +34,12 @@ class Sale extends Model {
         'city_id'=>'required',
         'address'=>'required',
         'cellphone'=>'required',
-        'nit_number'=>'required',
-        'nit_social'=>'required',
         'shipping_id'=>'required',
         'payment_method_id'=>'required',
     );
 
-	/* Creating rules */
-	public static $rules_create = array(
+    /* Creating rules */
+    public static $rules_create = array(
         'user_id'=>'required',
         'customer_id'=>'required',
         'agency_id'=>'required',
@@ -51,17 +47,17 @@ class Sale extends Model {
         'name'=>'required',
         'status'=>'required',
         'invoice'=>'required',
-	);
+    );
 
-	/* Updating rules */
-	public static $rules_edit = array(
-		'id'=>'required',
+    /* Updating rules */
+    public static $rules_edit = array(
+        'id'=>'required',
         'agency_id'=>'required',
         'currency_id'=>'required',
         'name'=>'required',
         'status'=>'required',
         'invoice'=>'required',
-	);
+    );
       
     public function scopeFindId($query, $id) {
         return $query->where('id', $id);
@@ -91,7 +87,7 @@ class Sale extends Model {
     public function currency() {
         return $this->belongsTo('Solunes\Business\App\Currency');
     }
-		
+        
     public function user() {
         return $this->belongsTo('App\User');
     }

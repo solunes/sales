@@ -472,6 +472,11 @@ class ProcessController extends Controller {
   /* Ruta POST para confirmar su compra */
   public function postFinishSale(Request $request) {
     \Artisan::call('fix-sales-status');
+    if($request->has('api_request')&&$request->input('api_request')==true){
+      $api_request = true;
+    } else {
+      $api_request = false;
+    }
     $cart_id = $request->input('cart_id');
     if(auth()->check()){
       $rules = \Solunes\Sales\App\Sale::$rules_auth_send;
@@ -502,6 +507,9 @@ class ProcessController extends Controller {
     }
     $validator = \Validator::make($request->all(), $rules);
     if(!$validator->passes()){
+      if($api_request){
+        return ['success'=>false,'message'=>'Debe llenar todos los campos obligatorios.'];
+      }
       return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
     } else if($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkOwner()->status('holding')->first()){
       $new_user = false;
@@ -535,17 +543,29 @@ class ProcessController extends Controller {
             if(is_integer($stock)){
               if($stock<$item->quantity){
                 //$stock->quantity = $stock->quantity - $item->quantity;
+                if($api_request){
+                  return ['success'=>false,'message'=>'El item "'.$item->product_bridge->name.'" no cuenta con stock suficiente. Actualmente tiene "'.$stock.'" unidades disponibles.'];
+                }
                 return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock suficiente. Actualmente tiene "'.$stock.'" unidades disponibles.')->withInput();
               } else if(!$stock) {
                 //$stock->quantity = 0;
+                if($api_request){
+                  return ['success'=>false,'message'=>'El item "'.$item->product_bridge->name.'" no cuenta con stock.'];
+                }
                 return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock.')->withInput();
               }
             } else {
               if($stock->quantity<$item->quantity){
                 //$stock->quantity = $stock->quantity - $item->quantity;
+                if($api_request){
+                  return ['success'=>false,'message'=>'El item "'.$item->product_bridge->name.'" no cuenta con stock suficiente. Actualmente tiene "'.$stock->quantity.'" unidades disponibles.'];
+                }
                 return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock suficiente. Actualmente tiene "'.$stock->quantity.'" unidades disponibles.')->withInput();
               } else if(!$stock) {
                 //$stock->quantity = 0;
+                if($api_request){
+                  return ['success'=>false,'message'=>'El item "'.$item->product_bridge->name.'" no cuenta con stock.'];
+                }
                 return redirect($this->prev)->with('message_error', 'El item "'.$item->product_bridge->name.'" no cuenta con stock.')->withInput();
               }
             }
@@ -555,8 +575,16 @@ class ProcessController extends Controller {
       }
       
       if(config('sales.delivery')){
-        $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $request->input('country_id'), $request->input('city_id'), $order_weight, null);
+        if($request->has('country_id')){
+          $country_id = $request->input('country_id');
+        } else {
+          $country_id = 1;
+        }
+        $shipping_array = \Sales::calculate_shipping_cost($request->input('shipping_id'), $country_id, $request->input('city_id'), $order_weight, $request->input('map_coordinates'), $agency->id);
         if($shipping_array['shipping']===false){
+          if($api_request){
+            return ['success'=>false,'message'=>'No se encontró el método de envío para esta ciudad, seleccione otro.'];
+          }
           return redirect($this->prev)->with('message_error', 'No se encontró el método de envío para esta ciudad, seleccione otro.')->withInput();
         }
         $shipping_cost = $shipping_array['shipping_cost'];
@@ -573,12 +601,15 @@ class ProcessController extends Controller {
         $user = \Sales::userRegistration($request);
       }
       if(is_string($user)){
+        if($api_request){
+          return ['success'=>false,'message'=>'Hubo un error al finalizar su registro: '.$user];
+        }
         return redirect($this->prev)->with('message_error', 'Hubo un error al finalizar su registro: '.$user);
       }
       
       // Sale
+      $past_order_cost = $order_cost;
       if(config('business.pricing_rules')){
-        $past_order_cost = $order_cost;
         $order_cost = \Business::getSaleDiscount($order_cost, $cart->coupon_code);
       }
       $total_cost = $order_cost + $shipping_cost;
@@ -768,15 +799,36 @@ class ProcessController extends Controller {
 
       $redirect = 'process/sale/'.$sale->id;
       if($quotation){
+        if($api_request){
+          return ['success'=>true,'message'=>'Su cotización fue generada correctamente.'];
+        }
         return redirect($redirect)->with('message_success', 'Su cotización fue generada correctamente.');
       }
       // Revisar redirección a método de pago antes a PAGOSTT, TODO: Configurar para Paypal y Otros
       if(config('sales.redirect_to_payment')&&$sale_payment->payment_method->code=='pagostt'){
         $model = '\\'.$sale_payment->payment_method->model;
+        if($api_request){
+          $payment = \Payments::generatePayment($sale);
+          $cancel_url = url('payments/finish-payment/'.$payment->id);
+          $api_url_array = \Pagostt::generateSalePayment($payment, $cancel_url, true);
+          $payment_url = $api_url_array['payment_url'];
+          $success_callback_page = $api_url_array['success_callback_page'];
+          if($payment_url){
+            return ['success'=>true,'message'=>'Su pedido fue realizado correctamente.','redirect_url'=>$payment_url,'success_callback_page'=>$success_callback_page];
+          } else {
+            return ['success'=>false,'message'=>'Hubo un error al generar el pago.','redirect_url'=>NULL,'success_callback_page'=>NULL];
+          }
+        }
         return \Payments::generateSalePayment($sale, $model, $redirect, NULL);
+      }
+      if($api_request){
+        return ['success'=>true,'message'=>'Su compra fue confirmada correctamente, ahora debe proceder al pago para finalizarla.','redirect_url'=>NULL,'success_callback_page'=>NULL];
       }
       return redirect($redirect)->with('message_success', 'Su compra fue confirmada correctamente, ahora debe proceder al pago para finalizarla.');
     } else {
+      if($api_request){
+        return ['error'=>true,'message'=>'Hubo un error al actualizar su carro de compras.','redirect_url'=>NULL,'success_callback_page'=>NULL];
+      }
       return redirect($this->prev)->with('message_error', 'Hubo un error al actualizar su carro de compras.');
     }
   }
