@@ -55,7 +55,7 @@ class SaleItem extends Model {
 
     public function getTotalPriceAttribute() {
         if($this->discount_price>0){
-            return round($this->discount_price*$this->quantity, 2);
+            return round(($this->price-$this->discount_price)*$this->quantity, 2);
         }
         return round($this->price*$this->quantity, 2);
     }
