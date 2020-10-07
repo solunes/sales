@@ -298,7 +298,7 @@ class ProcessController extends Controller {
 
   /* Ruta GET para finalizar la compra */
   public function getFinishSale($cart_id = NULL, $quotation = false) {
-    if(($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkOwner()->status('holding')->orderBy('updated_at','DESC')->first())||($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->orderBy('updated_at','DESC')->first())){
+    if(($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkOwner()->orderBy('updated_at','DESC')->first())||($cart = \Solunes\Sales\App\Cart::checkOwner()->checkCart()->status('holding')->orderBy('updated_at','DESC')->first())){
       $array['country_id'] = config('sales.default_country');
       $array['city_id'] = config('sales.default_city');
       $array['city_other'] = NULL;
@@ -511,7 +511,7 @@ class ProcessController extends Controller {
         return ['success'=>false,'message'=>'Debe llenar todos los campos obligatorios.'];
       }
       return redirect($this->prev)->with('message_error', 'Debe llenar todos los campos obligatorios.')->withErrors($validator)->withInput();
-    } else if($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkOwner()->status('holding')->first()){
+    } else if($cart_id&&$cart = \Solunes\Sales\App\Cart::findId($cart_id)->checkOwner()->first()){
       $new_user = false;
       if($request->has('quotation')&&$request->input('quotation')!='false'&&$request->input('quotation')!=false){
         $quotation = $request->input('quotation');
