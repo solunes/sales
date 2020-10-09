@@ -79,6 +79,7 @@ class Sales {
     $sale->currency_id = $currency_id;
     $sale->name = $detail;
     $sale->amount = $amount;
+    $sale->order_amount = $amount;
     $sale->invoice = $invoice;
     $sale->invoice_name = $invoice_name;
     $sale->invoice_nit = $invoice_number;
@@ -238,6 +239,7 @@ class Sales {
     $sale->agency_id = $agency_id;
     $sale->name = $name;
     $sale->amount = $total;
+    $sale->order_amount = $total;
     $sale->save();
 
     foreach($sale_details as $sale_detail){
